@@ -32,3 +32,4 @@ function addClass(element, value) {
     else
         element.className = element.className + " " + value;
 }
+
