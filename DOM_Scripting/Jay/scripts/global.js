@@ -35,6 +35,8 @@ function addClass(element, value) {
 
 // 高亮导航页选项块。高亮的选项块为了显示当前所处的网页/
 // 如：当前在主页，则home块会高亮。
+// 同时，利用这个函数，给特定页面的body添加id属性，然后使不通的网页，可以显示不同的背景图。
+// 如：当前在主页，则body id="home"，背景图是主页特定的。
 function highlightPage(){
     if (!document.getElementsByTagName) return false;
     if (!document.getElementById) return false;
