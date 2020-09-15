@@ -33,3 +33,29 @@ function addClass(element, value) {
         element.className = element.className + " " + value;
 }
 
+// 高亮导航页选项块。高亮的选项块为了显示当前所处的网页/
+// 如：当前在主页，则home块会高亮。
+function highlightPage(){
+    if (!document.getElementsByTagName) return false;
+    if (!document.getElementById) return false;
+    let headers = document.getElementsByTagName('header');
+    if (headers.hength === 0) return false;
+    let navs = headers[0].getElementsByTagName('nav');
+    if (navs.length === 0) return false;
+
+    let links = navs[0].getElementsByTagName('a');
+    let linkUrl;
+    let pageUrl = window.location.href;
+    for (let i = 0; i < links.length; i++){
+        linkUrl = links[i].getAttribute('href');
+        if (pageUrl.indexOf(linkUrl) != -1) {
+            links[i].className = "here";
+        }
+    }
+}
+
+
+
+
+// 执行区域
+addLoadEvent(highlightPage);
