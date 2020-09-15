@@ -58,6 +58,7 @@ function highlightPage(){
     }
 }
 
+// 为主页提供一个banner轮播图
 
 
 
