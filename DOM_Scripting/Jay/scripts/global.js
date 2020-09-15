@@ -59,7 +59,10 @@ function highlightPage(){
 }
 
 // 为主页提供一个banner轮播图
-
+    function moveElement(elementID, final_x, final_y, interval){
+        if (!document.getElementById) return false;
+        if (!document.getElementById(elementID)) return false;
+    }
 
 
 // 执行区域
