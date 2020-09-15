@@ -52,6 +52,8 @@ function highlightPage(){
         linkUrl = links[i].getAttribute('href');
         if (pageUrl.indexOf(linkUrl) != -1) {
             links[i].className = "here";
+            let linktext = links[i].lastChild.nodeValue.toLowerCase();
+            document.body.getAttribute("id",linktext);
         }
     }
 }
