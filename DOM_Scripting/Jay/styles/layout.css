@@ -73,7 +73,7 @@ article img {
     outline-style: solid;
 }
 
-/* 设置页面的不同背景图 */
+/* 设置各个页面的不同背景图 */
 #about header {
     background-image: url(../images/lineup.gif);
 }
