@@ -37,7 +37,7 @@ function addClass(element, value) {
 // 如：当前在主页，则home块会高亮。
 // 同时，利用这个函数，给特定页面的body添加id属性，然后使不通的网页，可以显示不同的背景图。
 // 如：当前在主页，则body id="home"，背景图是主页特定的。
-function highlightPage(){
+function highlightPage() {
     if (!document.getElementsByTagName) return false;
     if (!document.getElementById) return false;
     let headers = document.getElementsByTagName('header');
@@ -48,21 +48,55 @@ function highlightPage(){
     let links = navs[0].getElementsByTagName('a');
     let linkUrl;
     let pageUrl = window.location.href;
-    for (let i = 0; i < links.length; i++){
+    for (let i = 0; i < links.length; i++) {
         linkUrl = links[i].getAttribute('href');
         if (pageUrl.indexOf(linkUrl) != -1) {
             links[i].className = "here";
             let linktext = links[i].lastChild.nodeValue.toLowerCase();
-            document.body.setAttribute("id",linktext);
+            document.body.setAttribute("id", linktext);
         }
     }
 }
 
 // 为主页提供一个banner轮播图
-    function moveElement(elementID, final_x, final_y, interval){
-        if (!document.getElementById) return false;
-        if (!document.getElementById(elementID)) return false;
+function moveElement(elementID, final_x, final_y, interval) {
+    if (!document.getElementById) return false;
+    if (!document.getElementById(elementID)) return false;
+    let elem = ducument.getElementById(elementID);
+    if (elem.movement) {
+        clearTimeout(elem.movement);
     }
+    if (!elem.style.left) {
+        elem.style.left = "0px";
+    }
+    if (!elem.style.top) {
+        elem.style.top = "0px";
+    }
+    let xpos = parseInt(elem.style.left);
+    let ypos = parseInt(elem.style.top);
+    if(xpos < final_x) {
+        let dist = Math.ceil((final_x - xpos)/10);
+        xpos = xpos + dist;
+    }
+    if(xpos > final_y) {
+        let dist = Math.ceil((xpos - final_x)/10);
+        xpos = xpos - dist;
+    }
+    if(ypos < final_y) {
+        let dist = Math.ceil((final_y - ypos)/10);
+        ypos = ypos + dist;
+    }
+    if(ypos > final_y) {
+        let dist = Math.ceil((ypos - final_y)/10);
+        ypos = ypos - dist;
+    }
+    elem.style.left = xpos + "px";
+    elem.style.top = ypos + "px";
+    let repeat = "moveElement('"+elementID+"',"+final_x+","+final_y+","+interval+")";
+    elem.movement = setTimeout(repeat, interval);
+
+}
+
 
 
 // 执行区域
