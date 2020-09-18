@@ -109,6 +109,11 @@ function prepareSlideshow() {
     preview.setAttribute("id", "preview");
     slideshow.appendChild(preview);
     insertAfter(slideshow, intro);
+
+    // p237 
+    let links = intro.getElementsByTagName("a");
+    let destination;
+    
 }
 
 
