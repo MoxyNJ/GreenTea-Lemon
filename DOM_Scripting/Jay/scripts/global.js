@@ -94,9 +94,22 @@ function moveElement(elementID, final_x, final_y, interval) {
     elem.style.top = ypos + "px";
     let repeat = "moveElement('"+elementID+"',"+final_x+","+final_y+","+interval+")";
     elem.movement = setTimeout(repeat, interval);
-
 }
 
+// 幻灯片的展示
+function prepareSlideshow() {
+    if(!document.getElementsByTagName && !document.getElementById && !document.getElementById("intro"))
+        return false;
+    let intro = document.getElementById("intro");
+    let slideshow = document.createElement("div");
+    slideshow.setAttribute("id", "slideshow");
+    let preview = document.createElement("img");
+    preview.setAttribute("src", "images/slideshow.gif");
+    preview.setAttribute("alt", "a glimpse of what awaits you");
+    preview.setAttribute("id", "preview");
+    slideshow.appendChild(preview);
+    insertAfter(slideshow, intro);
+}
 
 
 // 执行区域
