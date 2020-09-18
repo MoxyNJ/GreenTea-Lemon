@@ -96,7 +96,7 @@ function moveElement(elementID, final_x, final_y, interval) {
     elem.movement = setTimeout(repeat, interval);
 }
 
-// 幻灯片的展示
+// 幻灯片的展示,位置放在intro段落的后面。
 function prepareSlideshow() {
     if(!document.getElementsByTagName && !document.getElementById && !document.getElementById("intro"))
         return false;
@@ -114,3 +114,4 @@ function prepareSlideshow() {
 
 // 执行区域
 addLoadEvent(highlightPage);
+addLoadEvent(prepareSlideshow);
