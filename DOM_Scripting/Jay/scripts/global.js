@@ -98,23 +98,45 @@ function moveElement(elementID, final_x, final_y, interval) {
 
 // 幻灯片的展示,位置放在intro段落的后面。
 function prepareSlideshow() {
-    if(!document.getElementsByTagName && !document.getElementById && !document.getElementById("intro"))
-        return false;
+    if (!document.getElementsByTagName) return false;
+    if (!document.getElementById) return false;
+    if (!document.getElementById("intro")) return false;
     let intro = document.getElementById("intro");
     let slideshow = document.createElement("div");
-    slideshow.setAttribute("id", "slideshow");
+    slideshow.setAttribute("id","slideshow");
+    let frame = document.createElement("img");
+    frame.setAttribute("src","images/frame.gif");
+    frame.setAttribute("alt","");
+    frame.setAttribute("id","frame");
+    slideshow.appendChild(frame);
     let preview = document.createElement("img");
-    preview.setAttribute("src", "images/slideshow.gif");
-    preview.setAttribute("alt", "a glimpse of what awaits you");
-    preview.setAttribute("id", "preview");
+    preview.setAttribute("src","images/slideshow.gif");
+    preview.setAttribute("alt","a glimpse of what awaits you");
+    preview.setAttribute("id","preview");
     slideshow.appendChild(preview);
-    insertAfter(slideshow, intro);
-
-    // p237 
-    let links = intro.getElementsByTagName("a");
-    let destination;
-    
-}
+    insertAfter(slideshow,intro);
+    let links = document.getElementsByTagName("a");
+    for (let i=0; i<links.length; i++) {
+      links[i].onmouseover = function() {
+        let destination = this.getAttribute("href");
+        if (destination.indexOf("index.html") != -1) {
+          moveElement("preview",0,0,5);
+        }
+        if (destination.indexOf("about.html") != -1) {
+          moveElement("preview",-150,0,5);
+        }
+        if (destination.indexOf("photos.html") != -1) {
+          moveElement("preview",-300,0,5);
+        }
+        if (destination.indexOf("live.html") != -1) {
+          moveElement("preview",-450,0,5);
+        }
+        if (destination.indexOf("contact.html") != -1) {
+          moveElement("preview",-600,0,5);
+        }
+      }
+    }
+  }
 
 
 // 执行区域
