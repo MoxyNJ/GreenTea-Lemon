@@ -84,6 +84,45 @@ JavaScript有 6 种方法可以表示一个字符：
 '\x7A' === 'z' // true
 ```
 
+字符串的遍历：
+
+```javascript
+let x = 'abc'
+for (let point of x) {
+    console.log(point)
+}
+// "a"
+// "b"
+// "c"
+```
+
+
+
+## 2. 模板字符串
+
+---
+
+template string 增强版的字符串：类似于所见即所得，也就是说可以和你输入的样子一样输出（字符串中的回车，也会被正确的显示出来）。
+
+在模板字符串中，变量名用：`${}`  的方式表示出来。
+
+```javascript
+// 以前的写法
+console.log('User ' + user.name + ' is not authorized to do ' + action);
+
+// 模板字符串的写法
+console.log(`User ${user.name} is not authorized to do ${action}`);
+
+```
+
+
+
+
+
+
+
+
+
 
 
 
