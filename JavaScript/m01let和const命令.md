@@ -189,11 +189,36 @@ msg // "The total is 30 (31.5 with tax)"
 
 
 
-**模板标签有诸多应用的地方，**
+### 模板标签的应用
 
-- 模板字符串的限制：如果内嵌其他语言，可能会出现字符串转义，导致语义与内嵌语言不同。
 - 过滤HTML字符串，防止用户输入恶意内容：SaferHTML
 - 实现多语言转换（国际化处理）。
 
+- 实现在Javascript中，嵌入其他语言。
+  - 模板字符串的限制：如果内嵌其他语言，可能会出现字符串转义，导致语义与内嵌语言不同。
 
+
+
+# 三、字符串的新增方法
+
+-----
+
+## String.fromCodePoint()
+
+-------
+
+`String.fromCharCode()` : ES5方法，用于从Unicode码点返回对应的字符。局限性：无法识别码点大于0xFFFF的字符。比如：0x20BB7，会被识别为0x0BB7，最高位的2被舍弃了。
+
+`String.fromCodePoint() ` : ES6方法，可以识别大于0xFFFF的字符。
+
+```javascript
+String.fromCodePoint(0x20BB7)   // "𠮷"
+String.fromCodePoint(0x78, 0x1f680) === 'x\uD83D\uDE80y' // true
+```
+
+
+
+## String.raw()
+
+----
 
