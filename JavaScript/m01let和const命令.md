@@ -218,7 +218,53 @@ String.fromCodePoint(0x78, 0x1f680) === 'x\uD83D\uDE80y' // true
 
 
 
-## String.raw()
+## 实例方法
+
+------
+
+### codePointAt()
+
+扩展运算符（`...`）进行展开运算。
+
+```
+let arr = [...'𠮷a']; // arr.length === 2
+arr.forEach(
+  ch => console.log(ch.codePointAt(0).toString(16))
+);
+// 20bb7
+// 61
+```
+
+
+
+# 四、正则的扩展
+
+------
+
+正则表达式有点难，我先空下了。
+
+
+
+# 五、数值的扩展
 
 ----
+
+## 1. 二进制和八进制
+
+二进制的表示：0b、0B
+
+八进制的表示：0o、00
+
+```javascript
+0b111110111 === 503 // true
+0o767 === 503 // true
+
+// Number方法，转换为十进制
+Number('0b111')   // 7
+Number('0o10')    // 8
+```
+
+
+
+
 
