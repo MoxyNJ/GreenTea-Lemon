@@ -337,3 +337,70 @@ ES202 引入了一种新的数据类型 BigInt（大整数）。只用来表示�
 - BigInt类型，支持：+，-，*，/，**  五个运算符。
 
 - BigInt.asUintN(width, BigInt) ，BigInt.asIntN(width, BigInt) 这两个方法没看懂，可以看一下第四版的教材。
+
+
+
+# 六、函数的扩展
+
+---
+
+## 1.  参数的默认值
+
+----
+
+函数的参数，现在可以指定默认值了，直接在定义参数后面写上即可。
+
+```javascript
+function log(x, y = 'World') {
+    console.log(x, y)
+}
+log('Hello') // Hello World
+log('Hello', 'China') // Hello China
+log('Hello', '') // Hello
+```
+
+
+
+### 特点
+
+- 默认值一旦定义，不可以在函数体中再次修改。
+
+- 函数一旦使用了参数默认值，函数的参数中，不可以有同名参数
+
+  ```javascript
+  function func(x, x, y) { .... }     // 允许 
+  function func(x, x, y = 1) { ... }  // 不允许
+  ```
+
+  
+
+## 解构赋值
+
+---
+
+批量的对一系列变量，进行声明和赋值。
+
+下例中，就声明了三个变量，分别与数组中的元素相等。
+
+```javascript
+let arr = [0, 1, 2]
+let [a, b, c] = arr
+console.log(a) //0
+console.log(b) //1
+console.log(c) //2
+```
+
+### 特点
+
+- 可以指定默认值，当数值未定义，则使用默认值。
+  如果赋的值是undefined，会使用默认值。但是null不会使用默认值，而是赋值为null。
+
+  ```javascript
+  let arr = [ , 1, null]
+  let [a='x' ,b='x' ,c='x'] = arr
+  console.log(a) // x
+  console.log(b) // 1
+  console.log(c) // null
+  ```
+
+  
