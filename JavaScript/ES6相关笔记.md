@@ -137,13 +137,11 @@ v1;  // "aaa"
 
 
 
-### 数组的解构赋值
+## array 的解构赋值
 
 数组的解构，本质上和对象类似。也可以对数组中的各种方法进行解构赋值。
 
-
-
-### 字符串的解构赋值
+## string 的解构赋值
 
 字符串中，数值解构赋值，把字符串看成类似数组的样子了。
 
@@ -162,7 +160,64 @@ let {length : len} = 'hello'
 len     // 5
 ```
 
+## number 和 boolean 的解构赋值
 
+数字和布尔值的解构赋值，会先自动包装成 Number 和 Boolean。
+
+## 函数参数的解构赋值
+
+函数的参数如果是一个数组，那么在传参数的时候，数组已经自动转换成了变量。
+
+下例中，add方法的参数是一个数组，有两个元素分别是x，y。在传入参数后，变成了两个变量：x，y。这其实就是利用了解构赋值。在函数内部，自动使用解构赋值，将参数数组中的两个元素值，分别赋值给两个变量x，y。
+
+```javascript
+function add([x, y]) {
+  console.log(`x=${x}, y=${y}`); // x=1, y=2
+  return x + y
+}
+
+add([1, 2]);
+```
+
+
+
+## 圆括号麻烦
+
+在解构赋值中使用圆括号，会带来许多麻烦，尽量少用吧。
+
+
+
+## 解构赋值的用处
+
+### 交换变量的值
+
+```javascript
+let x = 1;
+let y = 2;
+
+[x, y] = [y, x];
+```
+
+### 从函数中返回多个值
+
+把多个值放入 数组 / 对象中返回。然后在调用该函数后，利用解构赋值把 数组 / 对象中的值取出来。
+
+### 遍历Map结构
+
+利用解构赋值，可以很方便的一次性把 key/value 都获取出来。
+
+```javascript
+// 定义一个map结构
+let map = new Map();
+map.set('first', 'hello')
+map.set('second', 'world')
+
+for (let [key, value] of map) {
+  console.log(key + " is " + value);
+}
+// first is hello
+// second is world
+```
 
 # 二、字符串的表示
 
@@ -474,35 +529,26 @@ log('Hello', '') // Hello
 
   
 
-## 解构赋值
+## 函数的解构赋值
 
 ---
-
-批量的对一系列变量，进行声明和赋值。
-
-下例中，就声明了三个变量，分别与数组中的元素相等。
-
-```javascript
-let arr = [0, 1, 2]
-let [a, b, c] = arr
-console.log(a) //0
-console.log(b) //1
-console.log(c) //2
-```
-
-### 特点
 
 - 可以指定默认值，当数值未定义，则使用默认值。
   如果赋的值是undefined，会使用默认值。但是null不会使用默认值，而是赋值为null。
 
   ```javascript
-  let arr = [ , 1, null]
-  let [a='x' ,b='x' ,c='x'] = arr
-  console.log(a) // x
-  console.log(b) // 1
-  console.log(c) // null
+  function add(x=30, y=40) {
+    return x + y;
+  }
+  
+  add(1,2);   // 3
+  add(1,);   // 41
+add() ;    // 70
+  add(,2);   // 报错
+  add(,)     // 报错
+  add(undefined, undefined)   // 70
   ```
-
+  
   
 
 
