@@ -555,7 +555,6 @@ add() ;    // 70
   add(undefined, undefined)   // 70
   ```
   
-
 - 当函数的参数变成对象时，在调用该方法，也传递一个对象参数。那可以利用解构赋值，把对象中的变量拆解为对应名字的变量。
 
   ```javascript
@@ -616,6 +615,7 @@ var x = 1;
 function f(y=x) {
   console.log(x);  // 1
   x = 2;
+  console.log(x);  // 1 
   console.log(y);  // 1 
 }
 
