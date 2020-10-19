@@ -123,6 +123,7 @@ let { v1, v2 } = { v1 : 'aaa', v2 : 'bbb' };
 v1  // 'aaa'
 v2  // 'bbb'
 
+
 // 最后通常是这样的：
 // 先定义对象
 var person = { 
@@ -133,6 +134,15 @@ var person = {
 let { v1, v2 } = person;
 v1;  // "aaa"
 
+// 函数 + 对象解构赋值
+let func =({ v1, v2 }) => v1 + ' ' + v2
+
+// 函数本身应该的写法
+function func(person) {
+  return person.v1 + ' ' + person.v2
+}
+
+func(person) // "aaa bbb"
 ```
 
 
@@ -592,7 +602,7 @@ add() ;    // 70
 
   
 
-### 属性：func.length
+### 属性：function.length
 
 length属性：保存没有指定默认值的参数个数。（指定了几个，就少几个）
 
@@ -667,6 +677,91 @@ function f(y=x) {
 // 3. 打印全局变量中的x，1
 
 ```
+
+### 属性：function.name
+
+保存函数的函数名。
+
+
+
+# 七、箭头函数
+
+```javascript
+// case 1 
+    // 参数不用加括号，函数只有return不用加中括号
+    let f = function(v) { 
+      reteurn (v + 1)
+    }
+    // 箭头函数：
+    let f = v => (v + 1)
+
+
+// case 2
+    // 没有参数，直接写一个括号
+    let f = function() {return 5}
+    // 箭头函数：
+    let f = () => 5;
+
+
+// case 3
+    // 箭头函数 + 函数解构赋值
+    let person = {
+      v1 : 'aaa',
+      v2 : 'bbb'
+    }
+
+    let f = ({ firstName, lastName }) => firstName + ' ' + lastName;
+
+    // 等同于
+    function f(person) {
+      return person.first + ' ' + person.last;
+    }
+
+    // 调用该函数
+    f(person)   // "aaa bbb"
+```
+
+
+
+### 使用注意点
+
+1. 箭头函数中的 this，指向定义时所在的对象，而不是使用时所在的对象。是固定不变的.
+   - 不是因为箭头函数内部有绑定`this`的机制，实际原因是箭头函数根本没有自己的`this`，导致内部的`this`就是外层代码块的`this`。正是因为它没有`this`，所以也就不能用作构造函数。
+     - 这三个变量也不存在，是指向外层函数的对应变量：`arguments`、`super`、`new.target`。
+
+2. 箭头函数中，arguments 对象，不存在。
+
+3. 箭头函数不能用做 Generator 函数，不可使用 yield 命令
+
+4. 不可以使用 new，当作构造函数来使用。
+
+
+
+## 尾调用
+
+尾调用（Tail Call）：某个函数的最后一步，是调用另一个函数。 
+
+```javascript
+// 尾调用
+// 顺序：先执行f函数，然后执行g函数，最后返回g函数（如果有return）。
+function f(x) {
+	return g(x)
+}
+
+// 不是尾调用，g()函数，只是在f()函数中调用。
+// 顺序：先执行f函数，然后执行g函数，接着返回g函数，最后返回f函数。
+function f(x) {
+  g(x);
+}
+```
+
+### 尾调用优化
+
+在一个函数中调用另一个函数，如此套娃下去，会形成一个“调用栈”。即如果 在 f1函数中调用 f2函数，会产生“现场保存”的问题。f2函数在调用中，会保存f1函数的变量值等等内容。直到f2执行完，f1执行完，现场保存的内容才被删除。
+
+但是尾调用是函数的最后一步操作，不需要保存上一个函数的相关数据。
+
+
 
 
 
