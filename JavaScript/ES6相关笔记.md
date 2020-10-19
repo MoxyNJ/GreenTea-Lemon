@@ -802,11 +802,26 @@ Rest参数，把调用函数时的所有参数，都变成一个数组。相比�
 
 
 
+## 应用
+
+### 替代函数的 apply 方法
+
+apply()可以利用其参数2传递到是数组，但最终可以拆开的特性，被ES5之前使用。
+
+```javascript
+// apply() 拆开数组
+function func(a1,a2,a2){
+  
+}
+func.apply(null, [arg1, arg2, ...]) // 使用 apply()
+func(arg1, arg2, ...)   // 使用 apply() 相当于达到这个效果
+```
 
 
 
+明天先看apply的处理方法，然后在返回来看数组的扩展
 
-
+一定要把apply、bind、call这三个方法弄清楚，每次都搞不懂，这是核心知识。
 
 
 
