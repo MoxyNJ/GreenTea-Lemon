@@ -875,3 +875,89 @@ var newFunc = f1.bind(person)
 
 
 
+### 复制数组
+
+把一个数组的内容，深拷贝。而不是两个不同变量名，指向相同的数组。
+
+```javascript
+const a1 = [1, 2]
+
+// 浅拷贝，只是把a2指向了a1，两个变量指向同一个数组。
+const a2 = a1
+
+// concat()方法
+const a2 = a1.concat();
+
+// ... 方法一
+const a2 = [...a1]
+
+// ... 方法二
+const [...a2] = a1
+```
+
+
+
+### 合并数组
+
+目前，数组的合并都是浅拷贝。即合并后的新数组，与合并前的旧数组，相同下标都指向同一个地址。
+
+```javascript
+const arr1 = ['a', 'b'];
+const arr2 = ['c'];
+const arr3 = ['d', 'e'];
+
+// ES5 的合并数组
+const arr = arr1.concat(arr2, arr3);
+arr // [ 'a', 'b', 'c', 'd', 'e' ]
+
+// ES6 的合并数组
+const arr = [...arr1, ...arr2, ...arr3]
+arr // [ 'a', 'b', 'c', 'd', 'e' ]
+
+// 浅拷贝
+arr1[0] === arr[0]   // true
+arr2[0] === arr[2]   // true 
+```
+
+
+
+### 与解构复制结合
+
+```javascript
+const [v1, ...vn] = [1, 2, 3, 4, 5, 6, 7]
+v1   // 1
+vn   // [2, 3, 4, 5, 6, 7]
+
+// 只能放在最后一个参数，否则报错
+const [...vn, v1] = [1, 2, 3, 4, 5];
+const [v1, ...vn, v2] = [1, 2, 3, 4, 5];
+// 报错
+```
+
+
+
+### 字符串转换为数组
+
+```javascript
+let str = 'hello'
+[...str]    // [ "h", "e", "l", "l", "o" ]
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
