@@ -1067,8 +1067,7 @@ Array.prototype.copyWithin(target, start = 0, end = this.length)
 // 回调函数用到三个参数：
 [1, 2, 3, 4, 5, 6, 7].find(
   (value, index, arr) => {
-  	if(value > 3 && arr[index] > 5)
-			return true
+			return (value > 3 && arr[index] > 5)
   }
 )
 // 6
@@ -1078,6 +1077,20 @@ let person = {
  	name : 'Moxy',
   age : 25,
 }
+
+function cp(value) {
+  if(value === this.age) {
+    console.log(this.name)
+    return true
+  }
+}
+
+// 这里的回调函数，可以使用箭头函数，箭头函数是定义时确定this，是固定不变的，不是运行时变化。
+[10, 15, 20, 25, 30].find(cp, person) 
+// "Moxy"
+// 25
+
+// 🙅‍错误的写法，这里的this在定义时，指向window函数，所以不可以这样使用。
 let p = [10, 15, 20, 25, 30].find((value) => {
   if(value === this.age){
     console.log(this.name)
@@ -1087,23 +1100,204 @@ let p = [10, 15, 20, 25, 30].find((value) => {
 
 ```
 
-
-
 ### `findIndex()`
 
 与`find()` 几乎相同。唯一的不同，是没有符合条件的成员，返回 `-1` 
 
 
 
+## 5. fill()
+
+作用：给定值，填充一个数组。
+
+参数1：填充的内容
+
+参数2（可选）：填充的起始位置
+
+参数3（可选）：填充的结束位置（不包括）
+
+返回：填充后的数组(其实就是原数组)。
+
+```javascript
+// 填充number
+let arr = ['a', 'b', 'c', 'd']
+arr.fill(10, 2, 3)  // (4) ["a", "b", 10, "d"]
+arr     // (4) ["a", "b", 10, "d"]
+
+// 填充对象
+let person = {
+  name : "Moxy",
+  age : 25,
+}
+let arr = ['a', 'b', 'c', 'd']
+arr.fill(person, 2, 4)  
+// (4) ["a", "b", {name: "Moxy", age: 25}, {name: "Moxy", age: 25}]
+// arr[3]填充的那个对象，和person指向同一个内存地址，即同一个对象。是浅拷贝。
+```
 
 
 
+## 6. entries()，keys() 和 values()
+
+作用：遍历数组。都会返回一个遍历器对象（Iterator）。可以用`let ... of`循环遍历。
+
+### `entries()`：k/v 遍历
+
+### `keys()`：k 遍历
+
+### `values()`：v 遍历
+
+```javascript
+// 使用 for of 方法遍历
+for (let index of ['a', 'b'].keys()) {
+  console.log(index);
+}
+// 0
+// 1
+
+for (let elem of ['a', 'b'].values()) {
+  console.log(elem);
+}
+// 'a'
+// 'b'
+
+for (let [index, elem] of ['a', 'b'].entries()) {
+  console.log(index, elem);
+}
+// 0 "a"
+// 1 "b"
+
+// 使用 next() 遍历
+let myIterator = ['a', 'b'].entries()
+myIterator.next().value   // 0 "a" 
+myIterator.next().value   // 1 "b"
+```
 
 
 
+## 7. includes()
+
+作用：类似字符串includes()方法。判断某个数组是否包含特定的值。
+
+返回：布尔值
+
+```javascript
+[1, 2, 3].includes(2)     // true
+[1, 2, 3].includes(4)     // false
+[1, 2, NaN].includes(NaN) // true
+```
 
 
 
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
+
+
+
+### 
+
+```javascript
+
+```
 
 
 
