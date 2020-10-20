@@ -819,9 +819,59 @@ func(arg1, arg2, ...)   // 使用 apply() 相当于达到这个效果
 
 
 
-明天先看apply的处理方法，然后在返回来看数组的扩展
+### 回顾 `apply() call() bind()` 
 
-一定要把apply、bind、call这三个方法弄清楚，每次都搞不懂，这是核心知识。
+```javascript
+// 作用域一：window作用域
+function sum(num1, num2, num3) {
+  // 作用域二：sum函数作用域
+  return num1 + num2 + num3
+}
+function callSum(num1, num2, num3) {
+  // 作用域三：callSum作用域
+  return sum.apply(this, arguments)
+}
+
+callSum(10,20,30);    			
+
+```
+
+- 要点一：调用顺序。调用callSum函数，而callSum函数又调用sum函数。
+
+- 要点二：this的指向。此时使用apply()方法调用sum函数，设定sum函数的this，传入的第一个参数指向哪里，sum函数的this就指向哪里。在本例中，传入的`this`是callSum中的，指向全局变量window，此时sum中的this指向全局变量。
+
+  - this，表示调用这个方法的对象是谁。当前：表示是window调用这个方法的。
+
+- 要点三：apply和call的参数区别。使用apply()，call()，作用是一样的。第二个参数是都是调用sum函数时，原本应当传入的参数。区别是call()和正常的sum调用一样，参数一个一个进去。而apply是只能传入一个参数，这个参数可以是数组（包含了所有原本要传入的参数），可以是arguments对象（把callSum的参数全部传入到sum函数中）。
+
+- 要点四：apply()可以拆分数组：上例子中，sum.apply(this, arguments)的调用，实际上最终在传给sum()方法参数的时候，先自动把arguments对象拆分成了一个个单独的参数，才传递给sum()。
+
+  - 应用：`func.apply(null, array)` 这样可以把一个数组，自动拆分后传递给func()函数，参数1设置为 null，有一个缺点，使func原本的this值变成空。而现在ES6得到了改进，可以使用`...` 来拆分数组，apply()这种拆分方式过时。 
+
+    ```javascript
+    var x = 1  // 全局变量 x
+    let person = {
+      x : 2,    // person对象中的变量 x
+      sum : function(v1, v2, v3) {
+        console.log(this.x)
+      },
+    }
+    
+    person.sum(1, 2, 3)   // this保存person，打印：2
+    person.sum.apply(null, [1, 2, 3])   // 删掉了this，打印：1
+    ```
+
+### 区分：`bind()`
+
+这个方法会返回一个新建的函数（方法）。
+
+call() 和 apply()，不会新建函数，也不会改变原函数的 this 指向，只是临时性的“借调”。而 bind() 会直接创建一个新的函数，它是永久性的改变了this值。
+
+```javascript
+var newFunc = f1.bind(person)
+
+// 复制一个f1()函数，命名为newFunc()，改变newFunc()函数的this指向person对象。
+```
 
 
 
