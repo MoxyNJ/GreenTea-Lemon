@@ -1179,29 +1179,73 @@ myIterator.next().value   // 1 "b"
 
 作用：类似字符串includes()方法。判断某个数组是否包含特定的值。
 
-返回：布尔值
+参数1：要查找的值。
+
+参数2（可选）：搜索的起始位置，如果负数，则倒着数（从1开始数，不是从0）。
+
+返回：布尔值。是否包含
 
 ```javascript
 [1, 2, 3].includes(2)     // true
 [1, 2, 3].includes(4)     // false
 [1, 2, NaN].includes(NaN) // true
+
+[1, 2, 3, 4].includes(3, -1)  // false
+[1, 2, 3, 4].includes(3, -2)  // true
 ```
 
 
 
-### 
+### 对比：`indexOf()` 
+
+作用：查找数组中是否有特定的值。
+
+返回：第一个匹配的数组下标，或没找到返回 -1
 
 ```javascript
-
+// indexOf() 的问题：
+// indexOf() 匹配机制是使用 === ，会对NaN误判：
+[NaN].indexOf(NaN)   // -1
 ```
 
 
 
-### 
+### 对比：Map 和 Set 中的 has() 方法
+
+- Map 的`has()`方法，是用来查找键名的：
+  - `Map.prototype.has(key)`、`WeakMap.prototype.has(key)`、`Reflect.has(target, propertyKey)`。
+- Set 的`has()`方法，是用来查找值的：
+  - `Set.prototype.has(value)`、`WeakSet.prototype.has(value)`。
+
+
+
+## 8. flat() 和 flatMap()
+
+### `flat()`
+
+flat  a.水平的、平坦的。  n. 公寓、单元房
+
+作用1：如果数组中的元素，还是一个数组，则使用`flat()`可以展开（拉平）这个数组，变成元素。使原数组变成一个一维的数组。
+
+作用2：如果数组中，有的元素为空：`[1, 2, , 3]` 会清除空位 `[1, 2, 3]`
+
+参数：要拉平的层数，默认为1。`Infinity`表示不论有几层，都给他拉开
+
+返回：展开后的新数组，原数组不会被影响。
 
 ```javascript
-
+[1, 2, [3, [4, 5]]].flat()   // [1, 2, 3, [4, 5]]
+[1, 2, [3, [4, 5]]].flat(2)  // // [1, 2, 3, 4, 5]
+[1, 2, [3, [4, 5]]].flat(Infinity)  // // [1, 2, 3, 4, 5]
 ```
+
+### `flatMap()`
+
+作用：
+
+参数：
+
+返回：
 
 
 
