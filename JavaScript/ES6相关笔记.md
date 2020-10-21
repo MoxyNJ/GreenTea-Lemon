@@ -1284,26 +1284,90 @@ flat  a.水平的、平坦的。  n. 公寓、单元房
 
 # 八、对象的扩展
 
+## 1. 对象的简洁表示法
 
+对于属性：一个变量名，指代了 “变量名 ： 变量值”，变得更简洁。 
+
+对于方法：`一个方法名()`，指代了 “`方法名 ： function()`”，变得更简洁。
+
+
+
+- 这样是可以的：直接在对象中添加已经定义好的变量，作为属性
+  - 省略了冒号和后面的赋值。
+  - 属性名就是变量名，属性值就是变量指向的地址中的值。
+- 这样是可以的：在对象中定义方法，不写function，而是直接`方法名()` 的方式。
+  - 省略了冒号和前面的function关键字。
 
 ```javascript
+// 属性的简写
+let name = 'Moxy' // 属性
+let person {   // 对象
+  name
+}
+person.name  // "Moxy"
+name  // "Moxy"
 
+
+// 方法的简写
+let person = {
+  callName(){
+    return "Moxy"
+  }
+}
+// 以前的写法：
+let person = {
+  callName : function() {
+    return "Moxy"
+  }
+}
+
+// 以后这种形式别认不出来,大括号中其实是一个对象。
+module.exports = { getItem, setItem, clear };
+// 相当于：
+module.exports = {
+  getItem : getItem,
+  setItem : setItem,
+  clear : clear,
+}
+
+// 以后这种输出形式要认出来：
+let person1 = { name: "Moxy"}
+let person2 = { name: "Ninjee"}
+console.log({person1, person2})  // 利用了对象的简洁表示法，变量名 = 变量名 ：变量值
+// 相当于：console.log({person1: {...}, person2 : {...} })
 ```
 
 
 
+## 2. 属性名表达式
 
+ES5时代的属性定义：
+
+- 标识符作属性名：`.` 点运算符
+- 表达式作属性名：`[ ]` 方括号运算符
+- 字面量方式：大括号中使用`：` 冒号运算符
 
 ```javascript
-
+// 点运算符
+obj.name = 'Moxy'
+// 方括号运算符
+obj.['a' + 'g' + 'e'] = 25
+// 冒号运算符
+var obj = {
+  name : 'Moxy'
+  age : 25
+}
 ```
 
+ES6新增方式：
 
-
-
+- 在使用`: ` 冒号运算符，允许使用`[ ]` 方括号运算符 
 
 ```javascript
-
+let person = {
+  'first name': 'Moxy',   // 字符串
+  [last name] : 'Ninjee'  // 方括号
+}
 ```
 
 
