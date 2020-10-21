@@ -1372,23 +1372,109 @@ let person = {
 
 
 
+## 3. name 属性
 
+- 对象的方法：保存方法名。
+- 对象的方法，使用 getter 和 setter 函数。则 name 属性保存在：get.name 和 set.name。
+- bind() 方法创造的函数，name 保存在 bind().name 中
+- `Function` 构造函数创造的函数， name 属性保存的值：`anonymous`
+- 对象的方法名，是一个Symbol，name 属性保存的值：这个 Symbol值定义时的字符串描述。
+
+
+
+## 4. 属性的可枚举、遍历
+
+### 4.1 可枚举性 enumerable
+
+当`Object.getOwnPropertyDescriptor` 中，`enumerable` 的属性为 false 时，是不可枚举的。
+
+以下方法用到了 可枚举属性：
+
+- `for...in`循环：遍历。对象自身可枚举的 + 继承可枚举的属性。
+- `Object.keys(obj)`：返回数组，成员是 key。对象自身且可枚举的属性。
+- `JSON.stringify(obj)`：串行化。对象自身且可枚举的属性。
+- `Object.assign(obj)`： 返回新数组。拷贝。对象自身且可枚举的属性。
 
 ```javascript
+let person = {
+  name : 'Moxy',
+}
+Object.getOwnPropertyDescriptor(person, 'name')
+// configurable: true
+// enumerable: true    // 可枚举性。
+// value: "Moxy"
+// writable: true
+
+
+```
+
+- Class 的原型方法，都是不可枚举的。
+- 几乎所有Js自带的各种方法，都不可枚举（有待考证，我记得在Js高级程序设计书中有提到过）
+
+
+
+### 4.2 遍历
+
+**五种方法**
+
+- `for...in`循环：遍历。对象自身可枚举的 + 继承可枚举的属性。
+- `Object.keys(obj)`：返回一个数组，成员key 是对象自身、且可枚举的属性（不含Symbol属性）
+- `Object.getOwnPropertySymbols(obj)`： 返回一个数组，成员 key 对象自身的**所有 Symbol 属性**的 key。
+- `Object.getOwnPropertyNames(obj)`：返回一个数组，成员 key 是对象自身的**所有属性**（不含Symbol属性）
+- `Reflect.ownKeys(obj)`： 返回一个数组，成员 key 是对象自身的**所有属性**（含有Symbol） 
+
+**遍历过程 & 排序**
+
+- 遍历全部 数值 key：数值升序排列。
+- 遍历全部 字符串 key：加入时间升序排列。
+- 遍历全部 Symbol key：加入时间升序排列。
+
+
+
+## 5. super
+
+具体怎么用暂时没搞懂，看完Class再说。
+
+```javascript
+Object.setPrototypeOf(obj1, obj2);
+// 作用：修改 参数1 的原型对象为 参数2。
 
 ```
 
 
 
+## 6. 对象的扩展运算符 `...`
 
+### 6.1 解构赋值
+
+模式匹配：左边是一个对象，那么右边也必须是对象。
+
+下例中：`...d` 会把等式右边所有没有匹配上的变量，全赋值到一个新建的对象中。即 d 变量指向一个对象。
 
 ```javascript
-
+let {a, b, c, ...d} = {a:1, b:2, d:3, e:4 }
+a // 1
+b // 2
+c // undefined
+d // {d:3, e:4}
 ```
 
+要点
+
+- 解构赋值中的 ... 运算符，必须是最后一个参数，不能写在前面。这很好理解，如果写在前面，按顺序执行代码的时候，轮到执行 ... 运算符，会把等式右边剩余尚未匹配的变量，全部匹配到 ... 中，那么 ... 后面的参数就没有意义了。
+- 解构赋值是浅拷贝。（数组、对象、函数是引用内存地址，不是复制）
+
+### 6.2 扩展运算符
 
 
-### 
+
+
+
+赛
+
+
+
+ 
 
 ```javascript
 
