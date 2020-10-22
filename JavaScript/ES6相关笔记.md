@@ -1595,6 +1595,23 @@ let firstName = person ? person.name : undefined
 
 # 8. Null判断运算符
 
+原先：使用 或 来设置默认值。
+但是会有一个问题，如果默认值为：null、undefined、空字符串、false、0。默认值都会生效。
+
+```javascript
+let newPerson = oldPerson || 'Moxy'
+```
+
+改进：ES2020 定义了 Null 判断运算符 `??` ，只有左侧的值为 `null` 或 `undefined` 时，才会返回右侧的值。
+
+```javascript
+let newPerson = oldPerson ?? 'Moxy'
+```
+
+
+
+# 九、对象的新增方法
+
 ```javascript
 
 ```
@@ -1604,6 +1621,78 @@ let firstName = person ? person.name : undefined
 ```javascript
 
 ```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
 
 
 
