@@ -1612,22 +1612,84 @@ let newPerson = oldPerson ?? 'Moxy'
 
 # 九、对象的新增方法
 
-```javascript
 
+
+## 1. Object.is()
+
+和严格相等运算符的作用基本一直。
+
+Object.is 和 === 区分：
+
+```javascript
+Object.is('foo', 'foo')   // true
+Object.is({}, {})         // false
+
+Object.is(+0, -0) // false
++0 === -0         //true
+
+Object.is(NaN, NaN) // true
+NaN === NaN         // false
 ```
 
 
 
-```javascript
+## 2. Object.assign()
 
+在上面的 ... 扩展运算符有讲解。要搭配起来理解。
+
+作用：对象的合并。将源对象（source）的所有可枚举属性，复制到目标对象（target）。
+
+参数1：目标对象，
+参数2：源对象，
+参数3（可选）：源对象，
+
+返回：无
+
+要点：
+
+- 目标对象与源对象有同名属性，或多个源对象有同名属性，则后面的属性会覆盖前面的属性。
+- 只拷贝源目标自身的、且可枚举的属性
+- 如果参数只有一个，则会直接返回该对象（不是对象的话，会转换成对象）
+- 浅拷贝。只是在拷贝属性的值（如果是基本类型，就是数值；如果是引用类型，就是地址）
+
+```javascript
+Object.assign(target, source1, source2)
+target   // 合并后的对象
 ```
 
 
 
+## 3. Object.getOwnPropertyDescriptors()
 
+**Object.getOwnPropertyDescriptor()**
+
+作用：找到目标对象的一个属性的描述对象（descriptor）
+
+**Object.getOwnPropertyDescriptors()**
+
+作用：找到目标对象的所有的自身属性，他们的描述对象。
+
+参数：目标对象
+
+返回：一个对象。保存着找到的描述对象。该对象的属性名，就是目标对象的属性名，该对象的属性值，就是目标对象这个属性的描述对象。
 
 ```javascript
+const obj = {
+  foo: 123,
+  get bar() { return 'abc' }
+};
 
+Object.getOwnPropertyDescriptors(obj)
+// { foo:
+//    { value: 123,
+//      writable: true,
+//      enumerable: true,
+//      configurable: true },
+//   bar:
+//    { get: [Function: get bar],
+//      set: undefined,
+//      enumerable: true,
+//      configurable: true } }
 ```
 
 
