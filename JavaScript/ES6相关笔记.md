@@ -1612,8 +1612,6 @@ let newPerson = oldPerson ?? 'Moxy'
 
 # 九、对象的新增方法
 
-
-
 ## 1. Object.is()
 
 和严格相等运算符的作用基本一直。
@@ -1958,6 +1956,12 @@ let person = new Map().set('name', 'Moxy').set('age', 25).set('man', true)
 let person2 = Object.fromEntries(person)
 
 ```
+
+
+
+# 十、Symbol
+
+
 
 
 
