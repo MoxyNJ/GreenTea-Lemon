@@ -1694,27 +1694,133 @@ Object.getOwnPropertyDescriptors(obj)
 
 
 
+#### 回顾：
+
+ECMA的两种属性：
+
+1. 数据属性：有四个 descriptor。
+   1. Configurable：是否可以：delete删除属性、修改属性特性、修改属性为访问器属性。
+   2. Enumerable：是否可以遍历
+   3. Writable,：是否可以写入
+   4. Value：读取get该属性时，会读取这里的内容。
+2. 访问器属性：有四个 descriptor。不包含value数据值。
+   1. Configurable：是否可以：delete删除属性、修改属性特性、修改属性为访问器属性。
+   2. Enumerable：是否可以遍历
+   3. Get：读取属性时调用该位置保存的函数。默认：undefined
+   4. Set：写入属性时调用该位置保存的函数。默认：undefined
+
+访问器属性的定义：
+
+1. ES5，创建对象时：可以直接定义：`set 属性名() {...}	`  和 `get 属性名() {...}	` 
+
+2. 如果已经定义为数据属性，想添加get set 修改为访问器属性，必须通过`Object.defineProperty()`。
+
+3. ES6，创建对象时：可以在class中定义：constructor、get、set。
+
+   ```javascript
+   // ES5 方法
+   var person1 = {
+     _name : "Moxy",
+     set name(value) { this._name = value },
+   	get name() { return this._name}
+   }
+   
+   // 已经创建对象的方法
+   var person2 = {_name : "Moxy"}
+   
+    Object.defineProperty(person2, "name", {
+      configurable : false,
+      enumerable : false,
+      set : function(value) { this._name = value },
+      get : function() { return this._name}
+    })
+   
+   // ES6 方法
+   class person3 {
+     constructor(){ this._name = 'moxy' }
+     set name(value) { this._name = value}
+   	get name() { return this._name}
+   }
+   
+   ```
+
+   
+
+访问器属性的访问，像正常的访问数据的方式就可以。（ES5，ES6尚不清楚）
+
+1. get 的访问：person.name = 'Moxy'
+2. set 的访问：person.name
+
+`Object.getOwnPropertyDescriptors()` 这个方法就是为了弥补，`Object.assign()`无法正确拷贝访问器属性。遇到访问器属性（无法拷贝 get 和 set 属性），会自动转换为数据属性。
+
+完整拷贝对象所有属性（数据属性+访问器属性）的实现方式：
+
+1. `Object.getOwnPropertyDescriptors()` 获取对象中所有的属性（数据属性 + 访问器属性）
+2. `Object.defineProperties(obj, 所有的属性)` 把所有的属性，利用该方法“写入”新对象中。
+
 ```javascript
+// 使用 Object.assign()， 访问器属性转换成了数据属性
+let person = {
+  _name: "Moxy",
+  age : 25,
+}
+let person2 = {}
+Object.assign(person2, person)
+Object.getOwnPropertyDescriptor(person2, '_name')
+// configurable: true
+// enumerable: true
+// value: "Moxy"
+// writable: true
+
+
+// 两个函数配合复制，实现了把对象中，所有的访问器属性的，全部复制
+let person = {
+  name : "moxy",
+  set name(value) { console.log(`set value is : ${value}`)},
+  get name() {console.log(`get value`)},
+}
+let person2 = {}
+Object.defineProperties(person2, Object.getOwnPropertyDescriptors(person))
+Object.getOwnPropertyDescriptor(person2, 'name')
+// configurable: true
+// enumerable: true
+// get: ƒ name()
+// set: ƒ name(value)
+
+
+
+
+// 如果只是单个复制一个访问器属性，这样也可,但是不优雅。
+// 需要注意的是：Object.getOwnPropertyDescriptor 返回的是特定属性的[[特征值]]。
+// 使用[[特征值]]的时候，需要前面再加上属性名， name : 
+let person = {
+  name : "moxy",
+  set name(value) { console.log(`set value is : ${value}`)},
+  get name() {console.log(`get value`)},
+}
+let person2 = {}
+Object.defineProperties(person2, { name : Object.getOwnPropertyDescriptor(person,'name')} )
+Object.getOwnPropertyDescriptor(person2, 'name')
 
 ```
 
 
 
-
+### 配合 Oject.create() 实现对象的浅拷贝（浅克隆）
 
 ```javascript
+// 获取指定对象的原型对象
+Object.getPrototypeOf(person)    
+//依照proto为原型，添加propertiesObject为属性（可选），创建一个新的对象。
+Object.create(proto, [propertiesObject]) 
 
+let person2 = Object.create(Object.getPrototypeOf(person),
+  Object.getOwnPropertyDescriptors(person));
 ```
 
 
 
-```javascript
-
-```
-
-
-
-
+## 4. 
 
 ```javascript
 
