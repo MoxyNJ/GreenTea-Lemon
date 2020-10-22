@@ -1820,37 +1820,142 @@ let person2 = Object.create(Object.getPrototypeOf(person),
 
 
 
-## 4. 
+## 4. `__proto__` 属性
+
+### Object.setPrototypeOf()，Object.getPrototypeOf()
+
+### 4.1  `__proto__` 属性
+
+一个引用。指向当前对象的原型对象（prototype）。
+
+继承：
 
 ```javascript
+// ES5
+const obj = {
+  method: function() { ... }
+};
+obj.__proto__ = someOtherObj;
 
+// ES6
+var obj = Object.create(someOtherObj);
+obj.method = function() { ... };
+```
+
+应当不直接用`__proto__`属性，而是用 set get 和 create 来访问/修改`__proto__`。
+
+- Object.setPrototypeOf()（写操作：当前对象写入一个原型对象。）
+  Object.getPrototypeOf()（读操作：读取当前对象的对原型对象。）
+  Object.create()（生成操作：把某个对象当作原型对象，创建一个新对象。）
+
+### 4.2 Object.setPrototypeOf()
+
+作用：设置一个对象的原型对象（prototype）。
+
+参数1：目标对象 obj
+参数2：原型对象 proto
+
+返回：参数对象本身
+
+```javascript
+let father = {
+  name: "moxy"
+}
+let son = Object.setPrototypeOf({ } , father);
+// son {
+// 	__proto__: 
+// 		name: "moxy"
+// }
+
+// 相当于：但是不推荐这样用。
+let son = {
+  __proto__: father
+}
 ```
 
 
 
-```javascript
+### 4.3 Object.getPrototypeOf()
 
+作用：读取一个对象的原型对象。
+
+参数：要读取的对象
+
+返回：引用：执行那个原型对象
+
+```javascript
+Object.getPrototypeOf(son)
+// {name: "moxy"}
 ```
 
 
 
+## 5. Object.keys()，Object.values()，Object.entries()
 
+为`for...of`循环遍历的方法。具体请看：《属性的遍历》
+
+### 5.1 Object.keys()
+
+作用：获取对象自身的、可遍历的属性名 key
+
+参数：特定对象
+
+返回：数组。成员是特定对象自身的、所有可遍历的属性名 key
+
+### 5.1 Object.values()
+
+作用：获取对象自身的、可遍历的属性值 value
+
+参数：特定对象
+
+返回：数组。成员是特定对象自身的、所有可遍历的属性值 value
+
+### 5.1 Object.entries()
+
+作用：获取对象自身的、可遍历的键值对 k/v
+
+参数：特定对象
+
+返回：数组。成员是对象，特定对象自身的、所有可遍历的键值对 k/v
+
+
+
+## 6. Object.fromEntries() 
+
+作用：将一个键值对数组转为对象。是`Object.entries()`的逆操作。
+
+参数：多组键值对，看例子。
+
+返回：生成的对象
 
 ```javascript
-
+let person = Object.fromEntries([
+  ['name','Moxy'],
+  ['age', 25],
+  ['man', true],
+])
+// age: 25
+// man: true
+// name: "Moxy"
 ```
 
-
-
-```javascript
-
-```
-
-
-
-
+### 应用：Map结构的配合使用
 
 ```javascript
+// 方式一
+let person = new Map([
+  ['name','Moxy'],
+  ['age', 25],
+  ['man', true],
+]) 
+let person2 = Object.fromEntries(person)
+// age: 25
+// man: true
+// name: "Moxy"
+
+// 方式二
+let person = new Map().set('name', 'Moxy').set('age', 25).set('man', true)
+let person2 = Object.fromEntries(person)
 
 ```
 
