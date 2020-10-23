@@ -1963,7 +1963,7 @@ let person2 = Object.fromEntries(person)
 
 原始数据类型，Symbol，表示一个独一无二的值。
 
-参数：接受一个string，表示对这个Symbol实例的描述。
+参数：接受一个string，表示对这个Symbol实例的**描述**。**描述符**
 
 ```javascript
 let s1 = Symbol('s')
@@ -1973,6 +1973,97 @@ s2.toString()   // "Symbol(s)"
 s1 === s2       // false，可以看出，虽然字符串相等，但两个Symbol还是不同。
 ```
 
+## 特点
+
+1. Symbol值不能与其他类型参与运算，报错
+
+```javascript
+let sym = Symbol('S')
+"this is " + sym   // 报错
+`this is ${sym}`   // 报错
+```
+
+2. Symbol值可以转字符串、布尔值
+3. Symbol值不可以转number。
+
+```javascript
+let sym = Symbol('S')
+
+// 转字符串
+String(sym)     // Symbol('S')
+sym.toString()  // Symbol('S')
+
+// 转布尔值
+Boolean(sym)    // true
+!sym            // false
+```
+
+
+
+### Symbol.prototype.description
+
+相当于：toString()
+
+```javascript
+sym.toString()  // Symbol('S')
+sym.description  // 'S' 
+
+```
+
+
+
+### 属性名 Symbol 的写法
+
+```javascript
+let name = Symbol()       // 属性
+let callName = Symbol()   // 方法
+
+// 对象定义时
+let person = {
+  [name] : "moxy"
+ 	[callName]() { console.log(this[name]) },
+}
+
+// 对象已定义
+let person = {}
+person[name] = "moxy"
+person[callName] = function() {
+    console.log(this[name]);    
+}
+
+// 修改描述符：
+let person = {}
+Object.defineProperty(person, name, {
+  value : "Hello",
+})
+```
+
+
+
+### 属性名 Symbol的使用
+
+不可以用点运算符，只能用方括号运算符。
+
+- 使用Symbol类型的引用（变量），与普通变量相比，就是多加一个[方括号]即可。不能使用点运算符。
+
+```javascript
+let name = Symbol("name");
+let callName = Symbol("callName")
+let person = {}
+
+// 定义属性
+person.name = "moxy"  // 属性名是普通字符串
+person[name] = "moxy" // 属性名是Symbol类型
+person[callName]() {      //定义一个名称是Symbol类型的函数
+  console.log(this.[name])
+}
+
+// 使用属性
+person[name]          // "moxy"
+person["name"]        // undefined
+person[callName]()    // "moxy"
+```
+
 
 
 
@@ -1983,9 +2074,73 @@ s1 === s2       // false，可以看出，虽然字符串相等，但两个Symbo
 
 
 
+
+
 ```javascript
 
 ```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
