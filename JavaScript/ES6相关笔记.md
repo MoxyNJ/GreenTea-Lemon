@@ -2095,15 +2095,39 @@ let personSymbol = Object.getOwnPropertySymbols(person)
 
 
 
+### `Reflect.ownKeys()`
+返回所有类型的键名，包括常规键名和 Symbol 键名。
 
+
+
+## 6. Symbol.for()，Symbol.keyFor() 
+
+### Symbol.for()
+
+作用：创建/赋值 一个Symbol类型。可以使用同一个 Symbol 标识符。
+
+参数：字符串，要创建/赋值的 Symbol 的标识符。
+
+- 过程：根据参数字符串，搜索是否已经有该标识符的 Symbol类型，如果有，则引用其地址；如果没有，则根据参数，创建一个新的 Symbol类型。
+
+- Symbol.for( ) 创建的Symbol，有一个**登记的过程**。登记在全局环境中供搜索，而Symbol() 不会。
 
 ```javascript
+let s1 = Symbol.for('name');
+let s2 = Symbol.for('name');
 
+s1 === s2 // true
 ```
 
 
 
+### `Symbol.keyFor()`
 
+作用：根据标识符 string，在已经登记的 Symbol名单中，查找该 Symbol。
+
+参数：string，要查找的标识符
+
+返回：引用。找到的 Symbol 地址。 / undefined 没找到。
 
 ```javascript
 
