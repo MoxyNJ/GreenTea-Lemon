@@ -2066,10 +2066,31 @@ person[callName]()    // "moxy"
 
 
 
+## 属性名的遍历
 
+遍历对象的时候，以下方法会**忽略**是 Symbol的属性名：
+
+1.  `for...in`、`for...of`循环
+2. `Object.keys()`、`Object.getOwnPropertyNames()``
+3. ``JSON.stringify()`
+
+### `Object.getOwnPropertySymbols()` 
+
+作用：获取指定对象的所有 Symbol属性名。
+
+参数：对象
+
+返回：数组。成员当前对象的所有 Symbol值的属性名
 
 ```javascript
+let person = {}
+let a = Symbol('a')
+let b = Symbol('b')
+person[a] = "aaa"
+person[b] = "bbb"
 
+let personSymbol = Object.getOwnPropertySymbols(person)
+// (2) [Symbol(a), Symbol(b)]
 ```
 
 
