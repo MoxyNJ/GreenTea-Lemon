@@ -1961,12 +1961,16 @@ let person2 = Object.fromEntries(person)
 
 # 十、Symbol
 
+原始数据类型，Symbol，表示一个独一无二的值。
 
-
-
+参数：接受一个string，表示对这个Symbol实例的描述。
 
 ```javascript
-
+let s1 = Symbol('s')
+let s2 = Symbol('s')
+s1.toString()   // "Symbol(s)"
+s2.toString()   // "Symbol(s)"
+s1 === s2       // false，可以看出，虽然字符串相等，但两个Symbol还是不同。
 ```
 
 
