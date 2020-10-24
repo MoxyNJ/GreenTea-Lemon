@@ -2246,18 +2246,53 @@ arr1.concat(obj, arr2)  // 可以展开了
 
 
 
+### Symbol.species
 
+指向一个构造函数。创建衍生对象时，调用该属性中的函数。
+
+
+
+例子中，Father类，继承 Array数组。然后 a 是 Father 的实例化，b 是 a 的衍生对象。
+
+a 和 b 既是 Father 的实例，也是 Father 的实例。
 
 ```javascript
+class Father extends Array { }
 
+let a = new Father(1,2,3)   // Father(3) [1, 2, 3]
+let b = a.map(x => x*2)     // Father(3) [2, 4, 6]
+
+b instanceof Father  // true
+b instanceof Array   // true
 ```
 
 
 
+如果给 Father 类中，设置 Symbol.species 指向调用方法。该方法是一个构造函数，衍生对象在被创建时，会调用该方法。
 
+定义`Symbol.species`属性采用`get`取值器。
 
 ```javascript
+// 默认的`Symbol.species`属性的写法。
+static get [Symbol.species]() {
+  return this;
+}
 
+// 对上例的Father设置一个衍生对象调用方法
+class Father extends Array { 
+	static get [Symbol.species]() { return Array }  // 调用Array创建衍生对象，而不是 Father
+}
+
+let a = new Father(1,2,3)   // Father(3) [1, 2, 3]
+let b = a.map(x => x*2)     // Father(3) [2, 4, 6]
+
+// b 是被Array创建的
+b instanceof Father // false
+b instanceof Array // true
+
+// a 不受影响
+a instanceof Father // true
+a instanceof Array // true
 ```
 
 
