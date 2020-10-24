@@ -2131,11 +2131,120 @@ s1 === s2 // true
 
 
 
-## 8. 内置的 Symbol 属性
+## 8. 内置的 Symbol “值”
 
-### Symbol.haslnstance
+### Symbol.hasInstance
 
 指向一个内部方法。当其他对象使用 instanceof 运算符，判断是否为该对象的实例时，调用该方法。
+
+下例中，调用 instanceof 函数，最终调用了 Person类中的，Symbol.hasInstance。
+
+函数的返回：布尔值，true 表示 instanceof 判断类相同，false 表示不相同。
+
+```javascript
+// 例子一
+class Person {
+  [Symbol.hasInstance](value) {
+    return value instanceof Array;
+  }
+}
+
+let person1 = new Person()
+[1,2,3] instanceof person1   // true
+
+// 例子二
+// class + static 类方式
+class DoubleNumber {
+  static [Symbol.hasInstance](value) {
+    return Number(value) % 2 === 0    // 判断是否是 2 的倍数
+    // true，表示是2的倍数，
+  }
+}
+
+// 等同于： const 方式
+const DoubleNumber2 = {
+  [Symbol.hasInstance](value) {
+    return Number(value) % 2 === 0
+  }
+}
+
+1 instanceof DoubleNumber  // false 不能被2整除
+2 instanceof DoubleNumber  // true 可以被2整除
+```
+
+
+
+### Symbol.isConcatSpreadable
+
+Spreadable  a. 可扩展的，可传播的
+
+该属性是一个布尔值。表示对象用于`Array.prototype.concat()`时，是否可以展开。
+
+如果是数组：默认**支持展开**，值为 undefined。如果等于true，也是支持展开。
+如果是类数组对象：默认**不支持展开**。
+
+#### 回顾 concat()
+
+作用：合并两个/多个数组。
+
+参数：要合并的数组。
+
+返回：新数组，合并后的数组（浅拷贝，只拷贝值）。
+
+问题：合并的数组/类数组对象中，会有是作为整体合并，还是展开为一个个元素再合并的问题。
+
+```javascript
+let arr1 = ['a','b','c']
+let arr2 = [1,2,3]
+let arr3 = ['x','y','z']
+
+let allArr = arr1.concat(arr2, arr3)
+// (9) ["a", "b", "c", 1, 2, 3, "x", "y", "z"]
+
+```
+
+
+
+如果是数组：默认**支持展开**，值为 undefined。如果等于true，也是支持展开。
+
+```javascript
+let arr1 = ['a','b','c']
+let arr2 = [1,2,3]
+let arr3 = ['x','y','z']
+
+arr1[Symbol.isConcatSpreadable]  // 数组默认：undefined
+let allArr1 = arr1.concat(arr2, arr3)
+// (9) ["a", "b", "c", 1, 2, 3, "x", "y", "z"]
+
+arr2[Symbol.isConcatSpreadable] = false
+let allArr2 = arr1.concat(arr2, arr3)
+// (7) ["a", "b", "c", Array(3), "x", "y", "z"]
+//                    (3) [1, 2, 3]
+```
+
+
+
+如果是类数组对象：默认**不支持展开**。
+
+```javascript
+let arr1 = [1,2,3]
+let arr2 = [6,7,8]
+let obj = {
+  length: 3,
+  0: 'a',
+  1: 'b',
+  2: 'c',
+}
+arr1.concat(obj, arr2)    // 默认不支持展开
+//(7) [1, 2, 3, {…}, 6, 7, 8]
+//              {0: "a", 1: "b", 2: "c", length: 3}
+
+obj[Symbol.isConcatSpreadable] = true
+arr1.concat(obj, arr2)  // 可以展开了
+// (9) [1, 2, 3, "a", "b", "c", 6, 7, 8]
+```
+
+
 
 
 
