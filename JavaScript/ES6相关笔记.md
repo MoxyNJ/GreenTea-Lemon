@@ -2129,6 +2129,16 @@ s1 === s2 // true
 
 返回：引用。找到的 Symbol 地址。 / undefined 没找到。
 
+
+
+## 8. 内置的 Symbol 属性
+
+### Symbol.haslnstance
+
+指向一个内部方法。当其他对象使用 instanceof 运算符，判断是否为该对象的实例时，调用该方法。
+
+
+
 ```javascript
 
 ```
