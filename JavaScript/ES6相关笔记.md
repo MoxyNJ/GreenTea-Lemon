@@ -2327,12 +2327,16 @@ b instanceof Promise // true
 
 
 
+Symbol.match、Symbol.replace、Symbol.search、Symbol.split、 实际上就是对应的String字符串中的方法。个人认为，多设计一个Symbol的目的，就是为了可以方便的，在一个新建的实例对象中“覆盖 / 重写”该方法。
+
 ### Symbol.match
+
+`match()` ：可在字符串内检索指定的值，或找到一个或多个正则表达式的匹配。
 
 作用：指向一个函数。调用时，需要一个String实例来调用。`str.match(Obj)`，"str"最终会作为参数，传递给match 指向的那个函数。在对象添加了Symbol.match属性后，就会有两个调用match的方式：
 
-- String实例：调用字符串对象的`match()`方法。
-- 对象：调用对象的 `[Symbol.match]()` 方法。
+- String实例：调用字符串对象的`prototype.match()`方法。
+- 对象实例：调用对象的 `[Symbol.match]()` 方法。
 
 参数：实例对象，里面保存着Symbol.match属性。
 
@@ -2352,50 +2356,102 @@ p[Symbol.match]('value')  // "执行该方法：value"
 
 
 // 下面两个调用，效果是一样的
-str.prototype.match(newObj) 
+'str'.prototype.match(newObj) 
 newObj[Symbol.match]('str')
 
+//如果采用正则匹配 ：regexp
+String.prototype.match(regexp)
+regexp[Symbol.match](this)
 ```
 
 
 
 ### Symbol.replace
 
-作用：指向一个方法。
+`replace()` ：用于在字符串中用一些字符替换另一些字符，或替换一个与正则表达式匹配的子串。
 
-参数：
+Symbol.replace 的两个调用方法：
 
-返回：
+- 字符串实例：调用字符串对象的`prototype.replace()`方法。
+- 对象实例：调用实例对象的`[Symbol.replace](this, )` 方法。
+
+作用：指向一个方法。方式与上文 match 大致相同。
+
+参数1： 实例对象。
+参数2：
+
+返回：方法的返回值。
 
 ```javascript
-
+// 下面两个调用，效果是一样的
+'str'.prototype.replace(searchValue, replaceValue)
+searchValue[Symbol.replace](this, replaceValue)
 ```
 
 
 
+### Symbol.search
 
+search() ：用于检索字符串中指定的子字符串，或检索与正则表达式相匹配的子字符串。
 
 ```javascript
-
+// 下面两个调用，效果是一样的
+String.prototype.search(regexp)
+regexp[Symbol.search](this)
 ```
 
 
 
-
+### Symbol.split
 
 ```javascript
-
+// 下面两个调用，效果是一样的
+String.prototype.split(separator, limit)
+separator[Symbol.split](this, limit)
 ```
 
 
 
+### Symbol.iterator
 
+该属性，指向该对象的默认遍历器方法。
 
 ```javascript
+const person = {}
+person[Symbol.iterator] = function*() {
+  yield 1
+  yield 2
+  yield 3
+}
 
+[...person]   // (3) [1, 2, 3]
+// 或：
+for(let value of person){
+    console.log(value)
+}
+// 1
+// 2
+// 3
 ```
 
 
+
+### Symbol.toPrimitive
+
+作用：执行一个方法。该方法的触发：该对象被转为原始类型的值。
+
+参数：字符串参数，表示当前的运算模式：
+	Number：转成数值
+	String：转成字符串
+	Default：数值，字符串都可转
+
+返回：该对象对应的原始类型值。
+
+
+
+### Symbol.toStringTag
+
+作用：指向一个方法。在该对象上，调用`Object.prototype.toString`
 
 
 
