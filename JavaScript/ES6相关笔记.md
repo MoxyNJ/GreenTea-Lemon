@@ -2341,8 +2341,17 @@ class Person {
 		return '执行该方法：' + value
 	}
 }
+let p = new Person()
 
-'value'.match(new Person())   // "执行该方法：value"
+'value'.match(p)   // "执行该方法：value"
+// 相当于
+p[Symbol.match]('value')  // "执行该方法：value"
+
+
+// 下面两个调用，效果是一样的
+str.prototype.match(newObj) 
+newObj[Symbol.match]('str')
+
 ```
 
 
