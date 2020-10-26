@@ -2248,9 +2248,7 @@ arr1.concat(obj, arr2)  // 可以展开了
 
 ### Symbol.species
 
-指向一个构造函数。创建衍生对象时，调用该属性中的函数。
-
-
+指向一个构造函数。创建衍生对象时，调用该属性中的函数。`Symbol.species`是一个 getter 函数。
 
 例子中，Father类，继承 Array数组。然后 a 是 Father 的实例化，b 是 a 的衍生对象。
 
@@ -2295,6 +2293,88 @@ a instanceof Father // true
 a instanceof Array // true
 ```
 
+#### Promise
+
+Promise对象，会返回一个新的Promise实例。如果调用 then方法，会继续返回一个Promise实例。
+
+```javascript
+class T1 extends Promise {}
+
+let a = new T1 (r => r)
+let b = a.then (r => r)
+
+a === b  // false 两个Promise实例不相等
+b instanceof T1
+b instanceof Promise  // 可以看到，b是由T1的构造函数创建的。
+```
+
+
+
+如果希望 then() 方法返回的Promise实例，是由 Promise沟村函数创建的，而不是 T1，需要用到 Symbol.species。创建一个 getter函数。
+
+```javascript
+class T2 extends Promise {
+  static get [Symbol.species]() {
+    return Promise;
+  }
+}
+
+let a = new T2(r => r)
+let b = a.then(v => v) 
+b instanceof T2 // false
+b instanceof Promise // true
+```
+
+
+
+### Symbol.match
+
+作用：指向一个函数。调用时，需要一个String实例来调用。`str.match(Obj)`，"str"最终会作为参数，传递给match 指向的那个函数。
+
+参数：实例对象，里面保存着Symbol.match属性。
+
+返回：函数的返回值。
+
+```javascript
+class Person {
+	[Symbol.match](value){
+		return '执行该方法：' + value
+	}
+}
+
+'value'.match(new Person())   // "执行该方法：value"
+```
+
+
+
+### Symbol.replace
+
+作用：指向一个方法。
+
+参数：
+
+返回：
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
 
 
 
@@ -2323,22 +2403,17 @@ a instanceof Array // true
 
 
 
+```javascript
+
+```
 
 
 
 
 
+```javascript
 
-
-
-
-
-
-
-
-
-
-
+```
 
 
 
