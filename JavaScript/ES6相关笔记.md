@@ -1957,8 +1957,6 @@ let person2 = Object.fromEntries(person)
 
 ```
 
-
-
 # 十、Symbol
 
 原始数据类型，Symbol，表示一个独一无二的值。
@@ -2451,9 +2449,37 @@ for(let value of person){
 
 ### Symbol.toStringTag
 
-作用：指向一个方法。在该对象上，调用`Object.prototype.toString`
+作用：指向一个方法。在该对象上，调用`Object.prototype.toString` 时，如果该属性存在，则采取以下方案：
+
+- 调用该属性指向的方法；
+- 该方法在执行后，return '字符串'。则该字符串就是该对象的类型（instanceof 判断类型)
+
+也就是说，这个属性可以用来定制`[object Object]`或`[object Array]`中`object`后面的那个字符串。
+
+```javascript
+// 方法一
+let person = {}
+a[Symbol.toStringTag] =  'func'
+a.toString()   // "[object func]"
+
+// 方法二
+class person {
+   get [Symbol.toStringTag]() {    // 问题1：为什么这里必须要有 get？
+    return 'func'
+  }
+}
+
+let personSon = new person()
+personSon.toString()
+
+// 问题2: 为什么 person[Symbol.toStringTag] 是 undefined？
+```
 
 
+
+### Symbol.unscopables
+
+与 with 相关，感觉用不到，没细看。
 
 ```javascript
 
@@ -2461,13 +2487,7 @@ for(let value of person){
 
 
 
-
-
-```javascript
-
-```
-
-
+#
 
 
 
