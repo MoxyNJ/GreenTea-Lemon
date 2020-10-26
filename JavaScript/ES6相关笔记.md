@@ -2329,7 +2329,10 @@ b instanceof Promise // true
 
 ### Symbol.match
 
-作用：指向一个函数。调用时，需要一个String实例来调用。`str.match(Obj)`，"str"最终会作为参数，传递给match 指向的那个函数。
+作用：指向一个函数。调用时，需要一个String实例来调用。`str.match(Obj)`，"str"最终会作为参数，传递给match 指向的那个函数。在对象添加了Symbol.match属性后，就会有两个调用match的方式：
+
+- String实例：调用字符串对象的`match()`方法。
+- 对象：调用对象的 `[Symbol.match]()` 方法。
 
 参数：实例对象，里面保存着Symbol.match属性。
 
