@@ -2481,25 +2481,41 @@ personSon.toString()
 
 与 with 相关，感觉用不到，没细看。
 
-```javascript
+# 十、Map 和 Set 结构
 
+## 1. Set
+
+类似数组的数据结构，但是成员的值都是唯一的。也就是说不会有重复的值。
+
+```javascript
+// 初始化：可以接受具有Iterator接口的数据结构
+const set = new Set([1,2,3,4,5])
+[...set]   // (5)[1,2,3,4,5]
+set.size   // 5
+
+// 添加：重复的成员不会被添加
+set.add([1,2,100])     // Set(6) {1, 2, 3, 4, 5, 100}
+[...set]   // [1,2,3,4,5,100]
+
+// 去除数组中重复成员的方法：
+[...new Set([1,2,2,3,3,4])]  //(4) [1, 2, 3, 4]
 ```
 
 
 
-# Map 和 Set 结构
+Set新增数值不发生类型转换： 5 和 “5” 是两个不同的值。
 
-
-
-```javascript
-
-```
-
-
-
-
+判断的算法：Same-value-zero equality 类似于“===”。不同点： Set 加入值是，NaN等于自身；严格相等运算符 NaN 不等于自身：
 
 ```javascript
+NaN === NaN   // false
+
+// 可以看到，不会重复添加两个NaN，说明内部判断 NaN相等
+let set = new Set([1, NaN, 2])
+set.add(NaN, 3)       // Set(3) {1, NaN, 2}
+
+// add添加，参数如果带[方括号]，会直接变成添加该数组：
+set.add([NaN, 3])     // Set(3) {1, NaN, [NaN, 3]}
 
 ```
 
