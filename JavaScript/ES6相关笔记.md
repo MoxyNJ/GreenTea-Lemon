@@ -2624,14 +2624,62 @@ let difference = new Set([...a].filter(x => !b.has(x)));
 
 
 
-```javascript
+## WeakSet
 
+特点：类似 Set 结构，不重复的值的集合。
+
+不同的是：
+
+	1. 成员只能是对象（不能是 Number、Boolean、Symbol、String）；
+ 	2.  WeakSet 的对象是**弱引用**，即垃圾回收机制：**不考虑WeakSet对垃圾回收的影响**。换句话说，就是如果某个对象，其他方式的引用次数为 0 后，就会被垃圾回收，WeakSet的引用不在考虑范围内。
+ 	3. 参数：数组/类数组对象，成员必须是对象，也就是非基本数据类型都可以。
+ 	4. WeakSet 不能遍历，因为成员是弱引用，随时都可能消失。WeakSet没有 size属性，没有 forEach 属性。
+
+```javascript
+// 创建 WeakSet数据结构
+const ws = new WeakSet();
+
+//参数：一个数组/类数组对象，成员必须是非基本数据类型（对象、数组等等）
+const a = [[1,2],[3,4]]
+const ws = new WeakSet(a)
+// WeakSet {Array(2), Array(2)} 
+// 可以看到，a数组 的成员，变成WeakSet保存的对象中的成员，不是a数组是WeakSet的成员。
+
+const b = [1,2,3,4]
+const ws2 = new WeakSet(b)
+// Uncaught TypeError: Invalid value used in weak set
+// 类型错误：b数组的成员，都是数字，所以不可以。
+
+const c = ['happy', 'every', 'day']
+const ws3 = new WeakSet(c)
+// Uncaught TypeError: Invalid value used in weak set
+// 类型错误：c数组的成员，都是字符串，不可以。
+
+const d = [['happy', 'every'], ['day', '!']]
+const ws4 = new WeakSet(c)
+// WeakSet {Array(2), Array(2)}
 ```
 
 
 
-```javascript
+### 实例方法
 
+- **WeakSet.prototype.add(value)**：向 WeakSet 实例添加一个新成员。
+- **WeakSet.prototype.delete(value)**：清除 WeakSet 实例的指定成员。
+- **WeakSet.prototype.has(value)**：返回一个布尔值，表示某个值是否在 WeakSet 实例之中。
+
+```javascript
+class obj1 {}
+class obj2 {}
+class obj3 {}
+const ws = new WeakSet([obj1])  // 创建一个WeakSet数据结构，参数必须是数组、类数组对象。
+
+ws.add(obj2)   // WeakSet {ƒ, ƒ}
+ws.add(obj3)   // WeakSet {ƒ, ƒ, ƒ}
+ws.has(obj2)   // true
+ws.delete(obj2)  // true
+ws.has(obj2)     // false
+ws.delete(obj2)  // false
 ```
 
 
