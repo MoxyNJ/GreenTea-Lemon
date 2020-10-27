@@ -2840,15 +2840,29 @@ for (let item of map.entries()) {
 // (2) [3, "ccc"]
 // (2) [4, "ddd"]
 
-// 等同于：map.entries()
+// 等同于：map.entries()，再次复习：Map成员是双值对的数组
 for (let [key, value] of map) {
   console.log(key, value);
 }
+// 因为Map的默认遍历器接口，就是 entries()
+map[Symbol.iterator] === map.entries  // true
 ```
 
 
 
+#### Map 结构转换为数组
+
 ```javascript
+// 使用 [...扩展运算符]
+[...map.keys()]
+// (4) [1, 2, 3, 4]
+[...map.values()]
+// (4) ["aaa", "bbb", "ccc", "ddd"]
+[...map.entries()]
+// (4) [Array(2), Array(2), Array(2), Array(2)]
+// (4) [[1, "aaa"], [2, "bbb"], [3, "ccc"], [4, "ddd"]]
+[...map]   // 默认遍历器，调用：entries()
+// (4) [[1, "aaa"], [2, "bbb"], [3, "ccc"], [4, "ddd"]]
 
 ```
 
