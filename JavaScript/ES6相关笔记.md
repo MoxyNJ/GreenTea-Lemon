@@ -2684,6 +2684,178 @@ ws.delete(obj2)  // false
 
 
 
+## 3. Map
+
+JavaScript 的对象（Object），本质上是键值对的集合（Hash 结构）。传统用字符串当作键。
+
+Map数据结构，是一种Hash结构，类似对象，也是k/v对组合。不同的是，key不仅仅是字符串或symbol，支持多种类型。
+
+- Object 结构：“字符串/Symbol —— 值” 对应
+- Map 结构：“值——值” 对应
+
+构造函数： new Map()，接受参数：一个数组，数组的成员是多个数组，每个数组成员是`[key, value]` 组合。
+
+```javascript
+// 创建
+const m = new Map();
+
+// 添加，读取
+m.set(person, 'Moxy')
+m.get(person)    // "Moxy"
+
+// 判断是否存在，删除
+m.has(person)    // true
+m.delete(person) // true
+
+m.has(person)    // false
+m.has(person)    // false
+```
+
+#### 构造函数传入参数创建：
+
+```javascript
+// 构造函数传入参数创建：
+const m = new Map([
+  ['name', 'Moxy'],
+  ['age', 25],
+  ['man', true],
+])
+// Map(3) {"name" => "Moxy", "age" => 25, "man" => true}
+
+// 背后的逻辑是：
+const items = [
+  ['name', 'Moxy'],
+  ['age', 25],
+  ['man', true],  
+]
+
+const map = new Map()
+items.forEach(
+	([key, value]) => map.set(key,value)
+)
+// Map(3) {"name" => "Moxy", "age" => 25, "man" => true}
+
+// 注意：使用forEach循环，赋值时，注意要添加[方括号]：[key, value],因为要与items中形式一致。
+```
+
+> 事实上，不仅仅是数组，任何具有 Iterator 接口、且每个成员都是一个**双元素数组**的数据结构（详见《Iterator》一章）都可以当作`Map`构造函数的参数。这就是说，`Set`、`Map`，都可以用来生成新的 Map。
+
+```javascript
+const set = new Set([
+  ['name', 'Moxy'],
+  ['age', 25],
+  ['man', true]
+])
+const m1 = new Map(set)
+// Map(3) {"name" => "Moxy", "age" => 25, "man" => true}
+```
+
+
+
+### 要点：
+
+- 对同一个键多次赋值，后面的值将覆盖前面的值。
+- 只有对同一个对象的引用，Map 结构才将其视为同一个键。这一点要非常小心。
+- 反过来说，如果两个内容相同的数组，作为两个键放入Map中，因为内存地址的不同，也会判定为两个键。
+
+```javascript
+// 1. 对同一个键多次赋值，后面的值将覆盖前面的值。
+map.set('name', 'Moxy').set('name', 'NJ')
+// Map(1) {"name" => "NJ"}
+
+// 2. 只有对同一个对象的引用，Map 结构才将其视为同一个键。
+// 如果是基本类型：Boolean、Number、String，不存在地址引用问题；
+// 如果面对的是数组、对象等，会发现这样无法读取：
+const map = new Map();
+
+map.set(['a'], 555);
+map.get(['a'])     // undefined
+// 这是因为，['a'] 是一个数组，两个数组的引用地址是完全不相同的，所以无法读取到。
+// 必须用同一个变量来引用：
+let k1 = ['a']
+map.set(k1, 555);
+map.get(k1)   // 555
+
+// 3. 如果两个内容相同的数组，作为两个键放入Map中，因为内存地址的不同，也会判定为两个键。
+const map = new Map()
+map.set(['a'], 555);
+map.set(['a'], 666);
+map.set(['a'], 777);
+map  // Map(3) {["a"] => 555, ["a"] => 666, ["a"] => 777}
+```
+
+
+
+### Map实例属性：
+
+- size属性：保存Map结构的成员总数。
+
+### Map实例方法：
+
+1. Map.prototype.set(key, value)：
+
+- 作用：给 Map结构中添加成员。
+- 参数：key + value
+- 返回：添加后的Map。所以可以采用链式写法来添加成员：`map.set(1, 'a').set(2, 'b').set(3, 'c')`
+
+2. Map.prototype.get(key)
+
+- 作用：读取 key对应的 value。找不到返回 undefined
+
+3. Map.prototype.has(key)
+
+- 作用：返回一个布尔值，判断key是否在当前Map实例中
+
+4. Map.prototype.delete(key)
+
+- 作用：删除某个 key。返回 true成功，false失败
+
+5. Map.prototype.clear()
+
+- 作用：删除所有成员，无返回值。
+
+### Map的遍历方法：
+
+Map 结构拥有：3 个遍历器生成函数 + 1 个遍历方法。遍历顺序 ===  插入顺序。
+
+- `Map.prototype.keys()`：返回 key 的遍历器。
+- `Map.prototype.values()`：返回 value 的遍历器。
+- `Map.prototype.entries()`：返回 [ key , value] 的遍历器。
+- `Map.prototype.forEach()`：遍历 Map 的所有成员。
+
+```javascript
+const map = new Map([
+  [1, 'aaa'],
+  [2, 'bbb'],
+  [3, 'ccc'],
+  [4, 'ddd'],
+])
+
+// map.entries()
+for (let item of map.entries()) {
+  console.log(item);
+}
+// (2) [1, "aaa"]
+// (2) [2, "bbb"]
+// (2) [3, "ccc"]
+// (2) [4, "ddd"]
+
+// 等同于：map.entries()
+for (let [key, value] of map) {
+  console.log(key, value);
+}
+```
+
+
+
+```javascript
+
+```
+
+
+
+
+
 ```javascript
 
 ```
@@ -2714,6 +2886,22 @@ ws.delete(obj2)  // false
 
 
 
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
 
 
 ```javascript
@@ -2724,9 +2912,7 @@ ws.delete(obj2)  // false
 
 
 
-```javascript
 
-```
 
 
 
