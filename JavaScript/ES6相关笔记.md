@@ -2493,12 +2493,25 @@ const set = new Set([1,2,3,4,5])
 [...set]   // (5)[1,2,3,4,5]
 set.size   // 5
 
+
 // 添加：重复的成员不会被添加
 set.add([1,2,100])     // Set(6) {1, 2, 3, 4, 5, 100}
 [...set]   // [1,2,3,4,5,100]
 
+
 // 去除数组中重复成员的方法：
+// 方法一：
 [...new Set([1,2,2,3,3,4])]  //(4) [1, 2, 3, 4]
+
+// 方法二：
+function func(array) {
+  return array.from(new Set(array))
+}
+func([1,2,2,3])   //[1,2,3]
+// 利用原理：参数array生成一个Set结构（消除重复成员），再用Array.from将Set结构转为数组。
+let set = new Set([1,2,2,3])
+let array = Array.from(set)   // [1,2,3]
+
 ```
 
 
@@ -2519,6 +2532,153 @@ set.add([NaN, 3])     // Set(3) {1, NaN, [NaN, 3]}
 
 ```
 
+
+
+### Set 的实例属性和方法
+
+#### 实例属性：
+
+- `Set.prototype.constructor`：构造函数，默认就是`Set`函数。
+- `Set.prototype.size`：返回`Set`实例的成员总数。
+
+#### Set 实例的方法
+
+分为两大类：操作方法（用于操作数据）和遍历方法（用于遍历成员）。
+
+#### 四个操作方法：
+
+- `Set.prototype.add(value)`：添加某个值，返回 Set 结构本身。
+- `Set.prototype.delete(value)`：删除某个值，返回一个布尔值，表示删除是否成功。
+- `Set.prototype.has(value)`：返回一个布尔值，表示该值是否为`Set`的成员。
+- `Set.prototype.clear()`：清除所有成员，没有返回值。
+
+#### 四个遍历方法：
+
+- `Set.prototype.keys()`：返回键名的遍历器
+- `Set.prototype.values()`：返回键值的遍历器。values是它的默认遍历器
+- `Set.prototype.entries()`：返回键值对的遍历器
+- `Set.prototype.forEach()`：使用回调函数遍历每个成员，无返回值。
+
+```javascript
+let set = new Set(['red', 'green', 'yellow'])
+for(let v of set.keys()) {
+  console.log(v)
+}
+// red 	
+// green	 
+// yellow
+
+
+for(let v of set.entries()) {
+  console.log(v)
+}
+// ["red", "red"]
+// ["green", "green"]
+// ["blue", "blue"]
+
+
+// 默认遍历器，就是values()。
+Set.prototype[Symbol.iterator] === Set.prototype.values    // true
+// 所以，可以直接用 for of 遍历，不需要 values()
+for(let v of set) {
+  console.log(v)
+}
+
+
+// forEach()，参数固定（可省略）：值、键、对象本身
+set.forEach((value, key, mySet) => 
+  console.log(key + " : " + value ))
+// red : red
+// green : green
+// yellow : yellow
+
+
+// ...扩展运算符内部使用for...of循环，所以也可以用于Set结构
+[...set]  // red   green    yellow
+// ...遍历循环，相当于一个数组了
+[...set] instanceof Array      //true
+```
+
+
+
+数组的`map`和`filter`方法也可以间接用于 Set ，实现 并集、交集、差集：
+
+- `filter()`: 规定一个条件。符合条件的元素将被返回，组成新数组。
+- `map()` : 返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值。
+
+```javascript
+let a = new Set([1,2,3])
+let b = new Sete([2,3,4])
+
+// 并集
+let union = new Set([...a, ...b])
+// Set {1, 2, 3, 4}
+
+// 交集
+let intersect = new Set([...a].filter(x => b.has(x)))  // 从 a 中，依次判断是否含有b成员
+// Set {2, 3}
+
+// 差集：a 相对于 b 的差集
+let difference = new Set([...a].filter(x => !b.has(x)));
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
 
 
 
