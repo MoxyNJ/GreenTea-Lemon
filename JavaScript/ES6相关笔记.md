@@ -2822,6 +2822,9 @@ Map 结构拥有：3 个遍历器生成函数 + 1 个遍历方法。遍历顺序
 - `Map.prototype.values()`：返回 value 的遍历器。
 - `Map.prototype.entries()`：返回 [ key , value] 的遍历器。
 - `Map.prototype.forEach()`：遍历 Map 的所有成员。
+  - 两个参数：回调函数 + 函数中this指向的对象
+    - 回调函数：三个参数（key，value，map）
+    - this指向的对象：引用，指向一个对象。在回调函数中使用this，会执行这个对象。
 
 ```javascript
 const map = new Map([
@@ -2846,6 +2849,27 @@ for (let [key, value] of map) {
 }
 // 因为Map的默认遍历器接口，就是 entries()
 map[Symbol.iterator] === map.entries  // true
+
+
+// forEach方法：value、key、map 三个参数，可以省略。
+map.forEach((value, key, map) => {
+  console.log("Key: %s, Value: %s", key, value);
+});
+// Key: 1, Value: aaa
+// Key: 2, Value: bbb
+// Key: 3, Value: ccc
+// Key: 4, Value: ddd
+
+// forEach方法：第二个参数传入一个对象，可以绑定this
+// 此时需要注意：不可以使用箭头函数，会出现 this 的固定定义问题（this在箭头函数是定义是确定的）
+let person = { name : "moxy"}
+map.forEach(function(value, key, map) {
+  console.log("Name: %s, Key: %s, Value: %s",this.name, key, value);
+}, person);
+// Name: moxy, Key: 1, Value: aaa
+// Name: moxy, Key: 2, Value: bbb
+// Name: moxy, Key: 3, Value: ccc
+// Name: moxy, Key: 4, Value: ddd
 ```
 
 
@@ -2866,9 +2890,20 @@ map[Symbol.iterator] === map.entries  // true
 
 ```
 
+#### Map结构的遍历和过滤：
+
+转换为数组后，配合 `map()` 和 `filter()`，可以实现Map 的遍历和过滤。
 
 
 
+## 4. WeakMap
+
+`WeakMap`结构与`Map`结构类似，也是用于生成键值对的集合。
+
+不同点：
+
+1. `WeakMap`只接受对象（引用数据类型）作为键名（`null`除外）。不支持原始数据类型（Boolean、Number等）
+2. 
 
 ```javascript
 
