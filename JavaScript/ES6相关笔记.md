@@ -2898,12 +2898,24 @@ map.forEach(function(value, key, map) {
 
 ## 4. WeakMap
 
-`WeakMap`结构与`Map`结构类似，也是用于生成键值对的集合。
+`WeakMap`结构与`Map`结构类似，也是用于生成键值对的集合。**弱引用**。
+
+补充：JavaScript 的七种数据类型
+
+1. 基本数据类型 / 原始数据类型：Nudefined, Null, String, Boolean, Number, Symbol
+2. 引用数据类型 ： Object
 
 不同点：
 
-1. `WeakMap`只接受对象（引用数据类型）作为键名（`null`除外）。不支持原始数据类型（Boolean、Number等）
-2. 
+1. `WeakMap`只接受对象（引用数据类型）作为键名（`null`除外）。不支持原始数据类型（其他 6 种）
+2. `WeakMap`的键名所指向的对象，不计入垃圾回收机制。（和WeakSet相同，可以看看WeakSet）
+3. 没有遍历操作（即没有`keys()`、`values()`和`entries()`方法），也没有`size`属性。
+4. 无法清空，即不支持`clear`方法。
+   - 3 和 4，都是因为WeakMap是**弱引用**，遍历会具有不确定性，无法准确的给出“当前时间点”一定存在的成员。（这一点课MySQL数据库学习的，事务的安全问题很相似）
+
+`WeakMap`只有四个方法可用：`get()`、`set()`、`has()`、`delete()`。
+
+### WeakMap 和 WeakSet，可以避免内存泄漏风险，现在还没掌握什么是内存泄漏。
 
 ```javascript
 
