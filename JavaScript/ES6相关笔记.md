@@ -3269,19 +3269,20 @@ Object.keys(target)  // (3) ["a", "b", "c"]
 Object.keys(proxy)   // ["a"]
 // 由于拦截keys()操作后，ownKeys()方法中没有进行遍历，而是只输出了一个成员属性，["a"]。
 
+
+// 特点 1:
 // 如果对 handler部分，进行修改：
 let handler = {
   ownKeys(target) {
-    return ["d"];     // 改成成员中没有的属性名，返回空
+    return ["d"];     // 返回值，修改为成员中没有的属性名，返回空
   }
 };
-
 Object.keys(proxy)    // []
 
 // 如果对 handler部分，进行修改：
 let handler = {
   ownKeys(target) {
-    return "换个类型";     // 改成成员中没有的属性名，返回空
+    return "换个类型";     // 返回值，修改为其他不合法类型，报错
   }
 };
 Object.keys(proxy) // Uncaught TypeError: CreateListFromArrayLike called on non-object
@@ -3289,8 +3290,49 @@ Object.keys(proxy) // Uncaught TypeError: CreateListFromArrayLike called on non-
 
 
 
-```javascript
+### 特点：
 
+1. `ownKeys()`方法返回的数组成员，只能是字符串或 Symbol 值。如果有其他类型的值，或者返回的根本不是数组，就会报错。
+2. 如果目标对象自身包含不可配置的属性，则该属性必须被`ownKeys()`方法返回，否则报错。
+3. 目标对象是不可扩展的（non-extensible），这时`ownKeys()`方法返回的数组之中，必须包含原对象的所有属性，且不能包含多余的属性，否则报错。
+
+ 特点 2， 3看一下
+
+```javascript
+// 特点 2
+let obj = {};
+Object.defineProperty(obj, 'a', {
+  configurable: false,    // 不可配置属性，不可以修改
+  enumerable: true,
+  value: 10 }
+)
+
+let p = new Proxy(obj, {
+  ownKeys: function(target) {
+    return ['b'];
+  }
+})
+
+Object.getOwnPropertyNames(p)     // 返回值必须有 'a' 属性，因为'a' 不可以修改
+// Uncaught TypeError: 'ownKeys' on proxy: trap result did not include 'a'
+
+
+
+// 特点 3
+let obj = {
+  a: 1
+}
+
+Object.preventExtensions(obj);
+
+let p = new Proxy(obj, {
+  ownKeys: function(target) {
+    return ['a', 'b'];     // 返回的数组中，包含多余的属性 b，报错。
+  }
+})
+
+Object.getOwnPropertyNames(p)
+// Uncaught TypeError: 'ownKeys' on proxy: trap returned extra keys but proxy target is non-extensible
 ```
 
 
