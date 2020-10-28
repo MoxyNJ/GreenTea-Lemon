@@ -2624,7 +2624,7 @@ let difference = new Set([...a].filter(x => !b.has(x)));
 
 
 
-## WeakSet
+## 2. WeakSet
 
 特点：类似 Set 结构，不重复的值的集合。
 
@@ -2916,6 +2916,10 @@ map.forEach(function(value, key, map) {
 `WeakMap`只有四个方法可用：`get()`、`set()`、`has()`、`delete()`。
 
 ### WeakMap 和 WeakSet，可以避免内存泄漏风险，现在还没掌握什么是内存泄漏。
+
+# 十一、Proxy
+
+
 
 ```javascript
 
