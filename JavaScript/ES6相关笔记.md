@@ -2921,6 +2921,11 @@ map.forEach(function(value, key, map) {
 
 一种“元编程”（meta programming），对编程语言进行编程。Proxy提供了一个中间环节，即外界访问某个对象时，中间假设的一个“拦截”，可以对访问的数据进行过滤/改写。
 
+**个人理解**：Proxy一旦拦截了即将进行的操作，就会只执行Proxy中的拦截代码，原始函数调用就不执行了。例如：在拦截  get() 操作的时候。如果不架设 Proxy 拦截，那么get() 方法中的代码会正常执行。一旦架设了 Proxy 去拦截 get() 操作，那么原本 get() 中的代码就不会被执行。转而去执行 Proxy 中 get() 中的拦截代码。所以，其实在Proxy中，对get() 的拦截代码，也是一个几乎一模一样的 get() 函数（参数个数，get操作等等，一摸一样）。
+
+- 个人的再理解：原本的 get() 代码到底会不会执行？我不确定，因为拦截了相应的操作后（比如拦截get），执行拦截代码的返回值依然要和原本要执行的操作返回值类型匹配：
+  - 比如`Object.keys()`要遍历对象中的成员，返回成员属性名。那么，拦截函数`ownKeys()`的返回值，就必须是类型相同的“数组/类数组对象”，否则会报错。“数组/类数组对象”中，必须是对象中，真实存在的属性名，如果是其他内容，不会传递，而是传递‘空’。【详情见下面的`ownKeys()`】
+
 Proxy，代理，“代理器”。
 
 #### 补充：
@@ -3136,31 +3141,150 @@ target()  // "target"
 let handler = {
   has(target, key) {
     if (key[0] === '_'){
-      return false
+      return false    // false，查找失败。
     }
     return key in target
   }
 }
+
+let person = {
+  _name: "Moxy",
+  name: "NJ",
+}
+
+let proxy = new Proxy(target, handler)
+
+'_name' in p    // false
+'name' in p     // true
+
+```
+
+#### 特点：
+
+1. `has()`方法拦截的是`HasProperty`，不是`HasOwnProperty`，即`has()`不判断某属性是对象自身/继承而来。
+2. 虽然`for...in`循环也用到了`in`运算符，但是`has()`拦截对`for...in`循环不生效。
+   -  `ownKeys()`方法可以拦截。它拦截读取对象自身属性的相关操作。
+
+
+
+### `construct()`
+
+作用：拦截`new`命令。为了使new操作符在生成的Proxy对象上生效，target 目标对象，自身必须有[[Construct]]内部方法（即 `new target` 已经定义，可以有效使用）。
+
+参数(3)：
+
+1. target ：目标对象、
+2. arguments ：cnstructor 构造函数的参数（类数组/数组）、
+3. newTarget(可选）：创造实例对象时，`new`命令作用的构造函数（下面例子的`p`）
+
+返回：一个对象。
+
+```javascript
+// 语法模版
+let p = new Proxy(target, {
+  construct: function(target, argumentsList, newTarget) {
+  }
+})
+```
+
+#### 特点：
+
+1. 方法返回的必须是一个对象，否则会报错。
+2. `construct()`拦截的是构造函数，所以它的目标对象必须是函数，否则就会报错。
+3. `construct()`方法中的`this`指向的是`handler`，而不是实例对象。
+
+没太看懂，不太会，暂时放弃。
+
+
+
+### `deleteProperty()`
+
+作用：拦截`delete`操作，如果这个方法抛出错误或者返回`false`，当前属性就无法被`delete`命令删除。
+
+```javascript
+// 应用：
+let target = {
+  name: "Moxy",
+  _name: "NJ",
+}
+
+let p = new Proxy(target, {
+  deleteProperty: function(target, key) {
+    // "不变量"，判断函数。判断是否可以执行 delete 函数。
+    invariant(key, 'delete')
+    delete target[key]
+    return true
+  }
+})
+function invariant(key, func) {
+  if(key[0] === '_') {
+    throw new Error(`正在执行${func}方法，无法删除私有变量！`)
+  }
+}
+delete p.name    // true
+delete p._name   // Uncaught Error: 正在执行delete方法，无法删除私有变量！
 ```
 
 
 
+### `getPrototyoeOf()`
+
+作用：可以拦截要获取的对象原型。具体来说，拦截下面这些操作：
+
+- `Object.prototype.__proto__`
+- `Object.prototype.isPrototypeOf()`
+- `Object.getPrototypeOf()`
+- `Reflect.getPrototypeOf()`
+- `instanceof`
+
+返回：一个对象，或者 null。
+
+
+
+### `ownKeys()`
+
+作用：拦截对象自身属性的读取操作。具体来说，拦截下面这些操作：
+
+- `Object.getOwnPropertyNames()`
+- `Object.getOwnPropertySymbols()`
+- `Object.keys()`
+- `for...in`循环
+
 ```javascript
+let target = {
+  a: 1,
+  b: 2,
+  c: 3
+};
 
-```
+let handler = {
+  ownKeys(target) {
+    return ["a"];
+  }
+};
 
+let proxy = new Proxy(target, handler);
 
+Object.keys(target)  // (3) ["a", "b", "c"]
+Object.keys(proxy)   // ["a"]
+// 由于拦截keys()操作后，ownKeys()方法中没有进行遍历，而是只输出了一个成员属性，["a"]。
 
-```javascript
+// 如果对 handler部分，进行修改：
+let handler = {
+  ownKeys(target) {
+    return ["d"];     // 改成成员中没有的属性名，返回空
+  }
+};
 
-```
+Object.keys(proxy)    // []
 
-
-
-
-
-```javascript
-
+// 如果对 handler部分，进行修改：
+let handler = {
+  ownKeys(target) {
+    return "换个类型";     // 改成成员中没有的属性名，返回空
+  }
+};
+Object.keys(proxy) // Uncaught TypeError: CreateListFromArrayLike called on non-object
 ```
 
 
