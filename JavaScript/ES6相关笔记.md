@@ -2952,14 +2952,6 @@ Reflect.get(person, "callName", smallPerson) // "NJ", 指向了 smallPerson对�
 
 
 
-### 要点
-
-1. Proxy 实际可以用自己的定义覆盖了语言的原始定义：重载（overload）运算符（比如点运算符）
-2. 要启用 在目标函数上架设的Proxy代理，必须用Proxy实例来读取属性，而不是用目标函数
-3. Proxy 可以是其他对象的原型对象。假设：一个object对象，是proxy的
-
-
-
 ### 构造函数
 
 ```javascript
@@ -2986,7 +2978,7 @@ proxy.name    // "拦截成功，无法读取数据。"
 
 
 
-object.proxy。
+#### object.proxy 属性
 
 默认：undefined，可以将定义好的proxy对象，绑定到这个属性上：
 
@@ -3006,14 +2998,54 @@ object.proxy.name  // "拦截成功，无法读取数据"
 
 
 
-```javascript
+### 要点
 
+1. Proxy 实际可以用自己的定义覆盖了语言的原始定义：重载（overload）运算符（比如点运算符）
+2. 要启用 在目标函数上架设的Proxy代理，必须用Proxy实例来读取属性，而不是用目标函数
+3. Proxy 可以是其他对象的原型对象。假设：一个object对象，其原型对象是一个proxy对象，那可以对object未初始化的数据进行代理。（原因：如果访问一个属性，子对象中查找不到，会按照原型链去查找父对象，而父对象是一个Proxy，会进行代理）
+
+```javascript
+// 3 父对象proxy，对 person中，未初始化的属性做一个回应：“尚未初始化”
+let proxy = new Proxy({}, {
+    get: function(target, propKey){
+        return '尚未初始化'
+    }
+})
+
+let person = Object.create(proxy)
+person.name = "Moxy" 
+
+person.name   // "Moxy"
+person.age    // "尚未初始化"
 ```
 
 
 
-```javascript
+## 2 Proxy 拦截操作（13）：
 
+- **get(target, propKey, receiver)**：拦截对象属性的读取
+- **set(target, propKey, value, receiver)**：拦截对象属性的设置，返回一个布尔值。
+- **has(target, propKey)**：拦截`propKey in proxy`的操作，返回一个布尔值。
+- **deleteProperty(target, propKey)**：拦截`delete proxy[propKey]`的操作，返回一个布尔值。
+- **ownKeys(target)**：拦截`Object.getOwnPropertyNames(proxy)`、 `Object.getOwnPropertySymbols(proxy)`、 `Object.keys(proxy)`、`for...in`循环，返回一个数组。
+  - 返回对象所有的、自身的属性。`Object.keys()`返回仅对象自身的、可遍历的属性。
+- **getOwnPropertyDescriptor(target, propKey)**：拦截`Object.getOwnPropertyDescriptor(proxy, propKey)`，返回属性的描述对象。
+- **defineProperty(target, propKey, propDesc)**：拦截`Object.defineProperty(proxy, propKey, propDesc）`、`Object.defineProperties(proxy, propDescs)`，返回一个布尔值。
+- **preventExtensions(target)**：拦截`Object.preventExtensions(proxy)`，返回一个布尔值。
+- **getPrototypeOf(target)**：拦截`Object.getPrototypeOf(proxy)`，返回一个对象。
+- **isExtensible(target)**：拦截`Object.isExtensible(proxy)`，返回一个布尔值。
+- **setPrototypeOf(target, proto)**：拦截`Object.setPrototypeOf(proxy, proto)`，返回一个布尔值。如果目标对象是函数，那么还有两种额外操作可以拦截。
+- **apply(target, object, args)**：拦截 Proxy 实例作为函数调用的操作，比如`proxy(...args)`、`proxy.call(object, ...args)`、`proxy.apply(...)`。
+- **construct(target, args)**：拦截 Proxy 实例作为构造函数调用的操作，比如`new proxy(...args)`。
+
+
+
+### 2.2 `set()`
+
+四个参数：目标对象、属性名、属性值、Proxy实例本身。
+
+```javascript
+let 
 ```
 
 
