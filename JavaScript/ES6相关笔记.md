@@ -3040,32 +3040,107 @@ person.age    // "尚未初始化"
 
 
 
-### 2.2 `set()`
+### `set()`
 
 四个参数：目标对象、属性名、属性值、Proxy实例本身。
 
 ```javascript
-let 
+const handler = {
+  // 定义get函数
+  get(target, key) {
+    isPrivate(key, 'get')    // 判断是否访问的是私有变量
+    return target[key]
+  },
+  // 定义set函数
+  set(target, key, value) {
+    isPrivate(key, 'set')    // 判断是否写入的是私有变量
+    target[key] = value
+    return true    // 严格模式下，如果没有返回true，就会报错（赋值失败）
+  },
+}
+
+// 定义 isPrivate 函数，判断是否访问的是私有变量，私有变量默认 ‘_’开头
+function isPrivate(key, func){
+  if(key[0] === '_')
+    throw new Error(`正在执行${func}方法，不能直接访问私有变量！`)
+}
+
+// 定义 person对象
+let person = {
+  _name: "Moxy",
+  set name(value){
+    this._name = value
+  },
+	get name(){
+    return this._name
+  },
+}
+
+// 定义Proxy对象，将hander绑定上去。
+const p = new Proxy(person, handler)
+
+// 测试：
+p.name       // "Moxy"
+p._name      // Uncaught Error: 正在执行get方法，不能直接访问私有变量！
+p._name = "NJ"  // Uncaught Error: 正在执行set方法，不能直接访问私有变量！
+p.name = "NJ"   // "NJ"
+
 ```
 
 
 
-```javascript
+### `apply()`
 
+作用：拦截函数的调用、`call`和`apply`操作
+
+参数(3)：目标对象、目标对象的this指向的对象、目标对象的参数（数组/类数组对象）
+
+返回：
+
+和 Reflect.apply() 的行为大致相似。
+
+```javascript
+let handler = {
+  apply(target, thisArgument, argumentsList) {
+    return Reflect.apply(...arguments)
+  }
+}
+```
+
+简单应用，Reflect还没学，所以先不看了。
+
+```javascript
+function target(){
+    return 'target'
+}
+let handler = {
+    apply() {
+        return 'Proxy'
+    }
+}
+let p = new Proxy(target, handler)
+p()       // "Proxy"
+target()  // "target"
 ```
 
 
 
-```javascript
+### `has()`
 
-```
+作用：拦截`HasProperty`操作，即判断对象是否具有某个属性时，会被拦截。典型的操作就是`in`运算符。
 
-
-
-
+参数(2)：target目标对象，查询的属性名
 
 ```javascript
-
+// 应用：隐藏 ‘_’开头的私有属性，不被in运算符发现。
+let handler = {
+  has(target, key) {
+    if (key[0] === '_'){
+      return false
+    }
+    return key in target
+  }
+}
 ```
 
 
