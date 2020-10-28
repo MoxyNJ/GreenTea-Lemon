@@ -2919,10 +2919,89 @@ map.forEach(function(value, key, map) {
 
 # 十一、Proxy
 
+一种“元编程”（meta programming），对编程语言进行编程。Proxy提供了一个中间环节，即外界访问某个对象时，中间假设的一个“拦截”，可以对访问的数据进行过滤/改写。
 
+Proxy，代理，“代理器”。
+
+#### 补充：
 
 ```javascript
+Reflect.get(target, propertyKey[, receiver])
+```
 
+作用：从目标对象上，获取指定属性值。
+
+参数1: 目标对象
+参数2: 要获取的属性名 key
+参数3: 可选，设置一个this指向的对象。要获取的属性中，有getter函数，那么其中 this会指向receiver对象。
+
+返回：属性值
+
+```javascript
+// Reflect.get()
+let person = {
+    name : 'Moxy',
+    get callName(){ return this.name }
+}
+let smallPerson = { name : "NJ" }
+
+Reflect.get(person, "callName")              // "Moxy" , 默认指向了目标对象
+Reflect.get(person, "callName", null)        // "", null 指向了 window对象
+Reflect.get(person, "callName", smallPerson) // "NJ", 指向了 smallPerson对象
+```
+
+
+
+### 要点
+
+1. Proxy 实际可以用自己的定义覆盖了语言的原始定义：重载（overload）运算符（比如点运算符）
+2. 要启用 在目标函数上架设的Proxy代理，必须用Proxy实例来读取属性，而不是用目标函数
+3. Proxy 可以是其他对象的原型对象。假设：一个object对象，是proxy的
+
+
+
+### 构造函数
+
+```javascript
+let proxy = new Proxy(target, handler)
+
+```
+
+target：要拦截的目标对象；
+handler：一个配置对象，用来定义拦截的行为。
+
+```javascript
+let proxy = new Proxy(person,{
+  get : function(target, propKey){
+    return "拦截成功，无法读取数据。"
+  }
+})
+proxy.name  // "拦截成功，无法读取数据。"
+proxy.age   // "拦截成功，无法读取数据。"
+
+// 要点2:不能用目标函数读取，否则无效。必须用Proxy实例：
+person.name   // "Moxy"
+proxy.name    // "拦截成功，无法读取数据。"
+```
+
+
+
+object.proxy。
+
+默认：undefined，可以将定义好的proxy对象，绑定到这个属性上：
+
+```javascript
+let p = new Proxy(person,{
+  get: function(target, propKey){
+    return "拦截成功，无法读取数据"
+  }
+})
+
+let object = {
+  proxy : p
+}
+object.proxy // Proxy {name: "Moxy", age: 25, class: true}
+object.proxy.name  // "拦截成功，无法读取数据"
 ```
 
 
@@ -2951,9 +3030,45 @@ map.forEach(function(value, key, map) {
 
 
 
+
+
 ```javascript
 
 ```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
 
 
 
