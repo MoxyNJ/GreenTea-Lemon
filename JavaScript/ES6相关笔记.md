@@ -2917,7 +2917,7 @@ map.forEach(function(value, key, map) {
 
 ### WeakMap 和 WeakSet，可以避免内存泄漏风险，现在还没掌握什么是内存泄漏。
 
-# 十一、Proxy
+# 十一、Proxy 代理
 
 一种“元编程”（meta programming），对编程语言进行编程。Proxy提供了一个中间环节，即外界访问某个对象时，中间假设的一个“拦截”，可以对访问的数据进行过滤/改写。
 
@@ -3365,6 +3365,120 @@ p.func()         // true
 ```
 
 
+
+# 十二、Reflect 反射
+
+## 1. 设计目的
+
+1.  将`Object`对象的一些明显属于语言内部的方法（比如`Object.defineProperty`）。
+   - 现阶段是两种共存。
+2. 修改某些`Object`方法的返回结果，让其变得更合理。
+   - 比如，`Object.defineProperty(obj, name, desc)`在无法定义属性时，会抛出一个错误，而`Reflect.defineProperty(obj, name, desc)`则会返回`false`。
+3. 让`Object`操作都变成函数行为。
+   - 某些`Object`操作是命令式，比如`name in obj`和`delete obj[name]`，而`Reflect.has(obj, name)`和`Reflect.deleteProperty(obj, name)`让它们变成了函数行为。
+4. `Reflect`对象的方法与`Proxy`对象的方法一一对应，只要是`Proxy`对象的方法，就能在`Reflect`对象上找到对应的方法。
+   - 这样的目的，有这样一种情况：对某个对象进行某些操作的时候（调用某个方法），希望在该操作生效时，可以执行一些其他代码。这就需要Proxy + Reflect了：先用 Proxy代理，拦截某些特定操作，然后执行 Reflect反射，把拦截的操作原封不动的先执行，最后便可以执行自己的代码了：
+
+```javascript
+// 举例一：Proxy代理的方法，一定会有 Reflect反射的方法，与之对应。
+Proxy(target, {
+  set(target, name, value, receiver){
+    // 利用Reflect执行拦截的该操作。
+    let success = Reflect.set(target, name, value, receiver) 
+    // 执行完拦截的操作，
+		if (success){
+      console.log(`property ${name} on ${target} set to ${value}`)
+    }
+    return success
+  }
+})
+
+// Proxy方法，拦截target对象的属性赋值行为。
+// 然后用Reflect.set方法，将值赋值给对象的属性，确保完成原有的行为
+// 最后再部署额外的功能。
+
+// 举例二：Proxy代理的方法，一定会有 Reflect反射的方法，与之对应。
+let person = {
+  _name: "Moxy",
+  get name(){
+    return this._name
+  },
+}
+
+let p = new Proxy(person, {
+  get(person, name) {
+    console.log(`get function: ${person}, ${name}`)
+    return Reflect.get(person, name)
+  }
+})
+
+person.name    // "Moxy"
+p.name
+// get function: [object Object], name
+// "Moxy"
+```
+
+
+
+## 2. 静态方法
+
+`Reflect`对象一共有 13 个静态方法，与 `Proxy`对象的方法是一一对应的：
+
+- Reflect.apply(target, thisArg, args)
+- Reflect.construct(target, args)
+- Reflect.get(target, name, receiver)
+- Reflect.set(target, name, value, receiver)
+- Reflect.defineProperty(target, name, desc)
+- Reflect.deleteProperty(target, name)
+- Reflect.has(target, name)
+- Reflect.ownKeys(target)
+- Reflect.isExtensible(target)
+- Reflect.preventExtensions(target)
+- Reflect.getOwnPropertyDescriptor(target, name)
+- Reflect.getPrototypeOf(target)
+- Reflect.setPrototypeOf(target, prototype)
+
+# 十三、Promise 对象
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
 
 
 
