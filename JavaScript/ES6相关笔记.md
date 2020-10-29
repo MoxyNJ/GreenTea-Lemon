@@ -3463,28 +3463,76 @@ p.name
 
 - 无法取消，一旦新建Promise，就会立即执行，无法中途取消。
 - 如果不设置回调函数，`Promise`内部抛出的错误，不会反应到外部。
-- 
+- 当处于`pending`状态时，无法得知目前具体进展（刚开始，还是即将完成）
+
+## 2. 基本用法
+
+- Promise 参数：一个回调函数
+  - 这个函数有两个参数：resolve 和 reject。是JavaScript引擎提供，不需要自己部署
+- 在完整的 Promise 中，要设置一个if else 判断语句，来选择 Promise的结果：
+  - resolve(value)：结果执行成功，返回参数 value。
+  - reject(error)：结果执行失败，返回参数 error。
+- 返回：Promise在执行完毕，返回的是一个新的 Promise类型。
 
 ```javascript
-
+let promise = new Promise((resolve, reject) => {
+  // code
+  
+  if (/* 异步操作成功 */){
+    resolve(value)
+  } else {
+    reject(error)
+  }
+})
 ```
 
 
 
-```javascript
+Promise执行完毕后，可以使用 then() 继续调用：
 
+- `then(function(value){..}, function(error){..})`
+  - 有两个参数，分别是两个回调函数。这两个函数的触发条件：上一个 Promise的执行结果是成功/失败。
+  - 如果是成功 `resolve`：则执行第一个函数，传递参数 value。
+  - 如果是失败 `reject`：则执行第二个函数，传递参数 error。
+
+```javascript
+promise.then((value) => {
+	// 上一个promise执行成功，触发此处代码
+}, (error) => {
+	// 上一个promise执行失败，触发此处代码
+})
 ```
 
 
 
-```javascript
+### 回顾
 
+`setTimeOut()
+
+```javascript
+var timeoutID = scope.setTimeout(function[, delay, arg1, arg2, ...]);
 ```
 
+参数：
 
+1. function：回调函数。在 delay 延迟数毫秒后，执行该函数。该函数也可以是 code，直接编译执行，但是不推荐，这样不安全。
+2. delay：可选，延迟的毫秒数。如果不设置，默认是 0 ，表示在下一个周期立即执行。
+3. arg1, ... , argN：可选，附加参数。在执行回调函数之前， 会作为参数传递给回调函数。
+
+### Promise 
 
 ```javascript
+  // Promise一旦创建，就立即执行，所以往往嵌在一个函数的return中。
+  function MyTime(ms){
+    return new Promise((resolve, reject ) => {
+      setTimeout (resolve, ms, 'done')
+    })
+  }
 
+MyTime(1000).then((value) => {
+  console.log(value);
+})
+// 1秒钟后，输出：done
 ```
 
 
