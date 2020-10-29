@@ -3337,8 +3337,31 @@ Object.getOwnPropertyNames(p)
 
 
 
-```javascript
+## Proxy.revocable()
 
+作用：获取一个可以取消的 Proxy。比如：目标对象不允许直接访问，必须通过代理访问。一旦访问结束，收回代理权（取消Proxy），就可以紧致访问。
+
+参数(2)：target 目标函数，handler 配置对象
+
+
+
+## This 问题
+
+Proxy 的代理，会带来一个 This 上的问题：
+
+- Proxy 不是透明代理：如果在一个目标对象上设置的 Proxy 代理，不做任何拦截。也无法保证和目标代理的行为完全一致。核心原因：Proxy代理后，this 关键字会指向Proxy代理。
+
+```javascript
+let person = {
+  func(){
+    console.log(this === p)
+  }
+}
+
+let p = new Proxy(person,{ })
+
+person.func()    // false
+p.func()         // true
 ```
 
 
