@@ -3491,7 +3491,7 @@ let promise = new Promise((resolve, reject) => {
 Promise执行完毕后，可以使用 then() 继续调用：
 
 - `then(function(value){..}, function(error){..})`
-  - 有两个参数，分别是两个回调函数。这两个函数的触发条件：上一个 Promise的执行结果是成功/失败。
+  - 有两个参数，分别是两个执行函数。这两个函数的触发条件：上一个 Promise的执行结果是成功/失败。
   - 如果是成功 `resolve`：则执行第一个函数，传递参数 value。
   - 如果是失败 `reject`：则执行第二个函数，传递参数 error。
 
@@ -3515,7 +3515,7 @@ var timeoutID = scope.setTimeout(function[, delay, arg1, arg2, ...]);
 
 参数：
 
-1. function：回调函数。在 delay 延迟数毫秒后，执行该函数。该函数也可以是 code，直接编译执行，但是不推荐，这样不安全。
+1. function：执行函数。在 delay 延迟数毫秒后，执行该函数。该函数也可以是 code，直接编译执行，但是不推荐，这样不安全。
 2. delay：可选，延迟的毫秒数。如果不设置，默认是 0 ，表示在下一个周期立即执行。
 3. arg1, ... , argN：可选，附加参数。在执行回调函数之前， 会作为参数传递给回调函数。
 
