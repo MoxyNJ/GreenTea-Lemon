@@ -3618,8 +3618,40 @@ p1.then(null, (reason) => {console.error(reason)})   // 第一个参数位置，
 
 
 
-```javascript
+# 🔟🔟  Class 的基本语法
 
+## 1. 
+
+与旧体系： function 构造对象的区别和联系
+
+1. Person定义的所有方法，实际上是定义在了Person.prototype中。包括 constructor() 构造方法。
+   1. Person的实例对象，moxy。其 moxy.constructor === Person.prototype.constructor 两者相等。
+2. 区分：构造函数 / 构造方法
+   1. 构造函数：JavaScript 的 ES5 就一直存在的函数。实例化Person时，会调用构造函数。即 new 会调用构造函数。
+   2. 构造方法：一个普通函数。JavaScript 的 ES6 出现了class类概念后，作出的一个语法糖。类似Java中的构造方法，把初始化的变量（属性），放在构造方法中。
+3. Person === Person.prototype.constructor 两者相等。后者就是指向了Person本体，用于 new 构造函数。
+4. 实例化对象：moxy
+   1. moxy.constructor === Person.prototype.constructor   
+
+```javascript
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+  
+  toString() {
+    return `${this.name} : ${this.age}`
+  }
+}
+
+typeof Person   //  "function"
+Person === Person.prototype.constructor   // true
+Person === Person.constructor      // false
+
+let moxy = new Person('Moxy', 25)
+moxy.constructor === Person.prototype.constructor   // true
+moxy.prototype   // undefined
 ```
 
 
