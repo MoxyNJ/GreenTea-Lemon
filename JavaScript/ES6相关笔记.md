@@ -3537,7 +3537,64 @@ MyTime(1000).then((value) => {
 
 
 
+
+
+## 实例方法
+
+### Promise.prototype.then()
+
+作用：为期约实例添加处理程序。
+
+参数1:可选，onResolved 处理程序：期约进入 resolve 状态时，执行该函数。
+参数2:可选，onRejected 处理程序：期约进入 reject 状态时，执行该函数。
+
+返回：一个新期约实例。
+
+#### onResolved 处理程序
+
+then() 返回的新期约实例，是基于 onResolved函数 的返回值构建的：
+
+onResolved函数的返回值处理方案：
+
+1. 没有提供 onResolved 函数：
+   调用 `Promise.resolve()` 传入上一个Promise传递的过来参数，生成一个新Promise实例。
+2. 提供了 onResolved 函数：
+   1. onResolved函数提供了返回值，调用 `Promise.resolve()` ，传入返回值，生成一个新Promise实例。
+   2. onResolved函数没有提供返回值，调用`Promise.resolve()`，传入`undefined`。
+
 ```javascript
+let p = Promise.resolve('foo')
+
+let p1 = p.then()   
+let p2 = p.then(onResolved => {
+  return '返回值'
+})
+let p3 = p.then(onResolved =>{})
+p1    // Promise {<fulfilled>: "foo"}
+p2    // Promise {<fulfilled>: "返回值"}
+p3    // Promise {<fulfilled>: undefined}
+```
+
+
+
+
+
+
+
+特点：
+
+1. 如果只想提供 onRejected 处理程序，那需要在第一个参数位置填写“null”。
+
+
+
+```javascript
+// 1. 只设置 onRejected 处理程序的正确方法：
+p1 = new Promise((resolve, reject) => {
+  setTimeout(reject, 0, '失败')
+})
+p1.then(null, (reason) => {console.error(reason)})   // 第一个参数位置，填 null
+// 失败
+
 
 ```
 
