@@ -3630,8 +3630,9 @@ p1.then(null, (reason) => {console.error(reason)})   // 第一个参数位置，
    1. 构造函数：JavaScript 的 ES5 就一直存在的函数。实例化Person时，会调用构造函数。即 new 会调用构造函数。
    2. 构造方法：一个普通函数。JavaScript 的 ES6 出现了class类概念后，作出的一个语法糖。类似Java中的构造方法，把初始化的变量（属性），放在构造方法中。
 3. Person === Person.prototype.constructor 两者相等。后者就是指向了Person本体，用于 new 构造函数。
+   1. Person.constructor 是“native code”，构造Person的构造函数，是一个原始代码。
 4. 实例化对象：moxy
-   1. moxy.constructor === Person.prototype.constructor   
+   1. moxy.constructor === Person.prototype.constructor，构造Person的构造函数，就是 Person 本体。
 
 ```javascript
 class Person {
@@ -3648,9 +3649,11 @@ class Person {
 typeof Person   //  "function"
 Person === Person.prototype.constructor   // true
 Person === Person.constructor      // false
+Person.constructor    // ƒ Function() { [native code] }
 
 let moxy = new Person('Moxy', 25)
 moxy.constructor === Person.prototype.constructor   // true
+moxy.constructor === Person     // true
 moxy.prototype   // undefined
 ```
 
