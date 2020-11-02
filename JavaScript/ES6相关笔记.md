@@ -3664,17 +3664,30 @@ moxy.prototype   // undefined
 1. `Object.assign`：可以添加类的新方法，在 `prototype` 上面。
 2. 类中创建的方法，都是不可枚举的 non-enumerable。
 3. 如果类中没有定义`constructor`方法，就会自动添加一个空的`constructor`方法。
-   1. `constructor`方法，
+4. `constructor`方法的返回值默认是返回对象实例（this）。如果指定返回另一个对象，则之前代码中创建的各种方法和变量无效了（这里的无效指的是没有创建到返回到那个对象上）
 
 ```javascript
-// 1. Object.assign()
+// 1. 用 Object.assign()，添加方法。
 Object.assign(Person.prototype, {
   callName(){ return `My name is : ${this.name}` },
   callAge(){ return `My age is : ${this.age}` },
 })
 
+// 4. 返回另一个对象
+class Happy{}
+class Person {
+  constructor(name) {
+    this.name = name;
+    // return Object.create(Happy);
+    return new Happy()
+  }
+}
 
+let h1 = new Person('moxy', 25)   // happy {}，创建的对象是个空对象， 是Happy实例
+let h2 = new Person()             // happy {}，创建的对象是个空对象, 是Happy实例
 
+h2 instanceof Happy    // true
+h2 instanceof Person   // false
 ```
 
 
