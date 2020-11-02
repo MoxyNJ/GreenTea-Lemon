@@ -3657,14 +3657,18 @@ moxy.constructor === Person     // true
 moxy.prototype   // undefined
 ```
 
-
-
-### 特点：
+## 特点：
 
 1. `Object.assign`：可以添加类的新方法，在 `prototype` 上面。
 2. 类中创建的方法，都是不可枚举的 non-enumerable。
 3. 如果类中没有定义`constructor`方法，就会自动添加一个空的`constructor`方法。
 4. `constructor`方法的返回值默认是返回对象实例（this）。如果指定返回另一个对象，则之前代码中创建的各种方法和变量无效了（这里的无效指的是没有创建到返回到那个对象上）
+5. 类的定义不能声明提升。
+6. 函数不受块作用域限制，而类受块作用域限制（函数只受函数作用域限制）。
+
+
+
+1. 1. 
 
 ```javascript
 // 1. 用 Object.assign()，添加方法。
@@ -3673,12 +3677,14 @@ Object.assign(Person.prototype, {
   callAge(){ return `My age is : ${this.age}` },
 })
 
+
 // 4. 返回另一个对象
 class Happy{}
 class Person {
   constructor(name) {
     this.name = name;
-    // return Object.create(Happy);
+    // return Object.create(Happy);    
+    // 用这个方法感觉是和 Class体系 不匹配的，返回的不是Happy实例
     return new Happy()
   }
 }
@@ -3692,7 +3698,76 @@ h2 instanceof Person   // false
 
 
 
+## 组成
 
+- 构造方法: `constructor`
+- 实例方法: `func`
+- 获取函数: `get`
+- 设置函数: `set`
+- 静态类方法: `static`
+
+
+
+## 特点：
+
+1. 类的定义方法：类声明、类表达式。
+   1. 类声明： `class Person {} `
+   2. 类表达式：`let P = class Pname {}`  P和Pname的作用域范围是不对等的：P的范围根据let进行定义；而Pname的作用范围仅限于Pname。
+
+```javascript
+// 1. 类名的作用域范围： P 和 Pname
+let P = class Pname {
+}
+
+// class内部作用域：
+let p = new P()
+p.callName()   //Pname Pname
+
+// 外部作用域：
+P.name    // "Pname"
+Pname.name   // Uncaught ReferenceError: Pname is not defined
+```
+
+
+
+## 2. 类的构造函数
+
+### 1. 实例化的过程： 
+
+1. new 调用构造函数：`constructor()`
+2. 创建一个新对象，进行如下操作：
+   1. 新对象的 [[Prototype]] 指针赋值为构造函数的 prototype 属性。
+   2. constructo() 的 this 指向新对象（this 指向新对象）。
+3. 执行 `constructor()` 中的代码（通常是给新对象添加属性/变量）。
+4. 执行 `constructor()` 的 return 语句
+   1. 默认： `return this`，即返回刚才创建的新对象，这就是一个实例对象。
+   2. 如果对return做了修改，则返回 return中的代码（新对象就不会被返回了，新对象没有被变量指向，会被垃圾回收机制销毁）。
+
+```javascript
+// 4 return 问题。
+class Person {
+  constructor(value){
+    this.name = 'Moxy';
+    if (value)
+      return {bar: 'bar'}
+  }
+}
+
+let p1 = new Person
+let p2 = new Person(true)
+
+p1 instanceof Person    // true
+p2 instanceof Person    // false
+```
+
+
+
+
+
+### 2. 特点：
+
+1. new 实例化：`new Person()`  如果不传入参数，则可省略括号：`new Person`。
+2. 
 
 ```javascript
 
