@@ -3632,7 +3632,7 @@ p1.then(null, (reason) => {console.error(reason)})   // 第一个参数位置，
 3. Person === Person.prototype.constructor 两者相等。后者就是指向了Person本体，用于 new 构造函数。
    1. Person.constructor 是“native code”，构造Person的构造函数，是一个原始代码。
 4. 实例化对象：moxy
-   1. moxy.constructor === Person.prototype.constructor，构造Person的构造函数，就是 Person 本体。
+   1. moxy.constructor === Person.prototype.constructor，构造 moxy 的构造函数，就是 Person 本体。
 
 ```javascript
 class Person {
@@ -3659,9 +3659,143 @@ moxy.prototype   // undefined
 
 
 
+### 特点：
+
+1. `Object.assign`：可以添加类的新方法，在 `prototype` 上面。
+2. 类中创建的方法，都是不可枚举的 non-enumerable。
+3. 如果类中没有定义`constructor`方法，就会自动添加一个空的`constructor`方法。
+   1. `constructor`方法，
+
+```javascript
+// 1. Object.assign()
+Object.assign(Person.prototype, {
+  callName(){ return `My name is : ${this.name}` },
+  callAge(){ return `My age is : ${this.age}` },
+})
+
+
+
+```
+
+
+
+
+
 ```javascript
 
 ```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
+
+
+
+```javascript
+
+```
+
+
 
 
 
