@@ -3730,9 +3730,15 @@ Pname.name   // Uncaught ReferenceError: Pname is not defined
 
 
 
+
+
+
+
+
+
 ## 2. 类的构造函数
 
-### 1. 实例化的过程： 
+### 2.1 实例化的过程： 
 
 1. new 调用构造函数：`constructor()`
 2. 创建一个新对象，进行如下操作：
@@ -3762,30 +3768,143 @@ p2 instanceof Person    // false
 
 
 
-
-
-### 2. 特点：
+### 2.2 特点：
 
 1. new 实例化：`new Person()`  如果不传入参数，则可省略括号：`new Person`。
-2. 
+2. 类本身使用 new 调用时，会被当成构造函数。
+   1. 类中的 constructor方法，不会被当成构造函数，这只是一个普通的构造方法。一个普通函数。在实例化一个新对象时，会先调用这个构造方法 constructor() ，来创建 / 返回一个实例化对象，并定义**自有属性/变量**。
+3. `Object.constructor`：“谁创造的我？”。指向构造该对象的构造函数。
+   1. Person.constructor：指向 Function() { [native code] }，即构造它的是C源代码。
+   2. p.constructor：指向 Person，构造它的就是Person。
+4. `Object.prototype.constructor`：“我能创造什么？”。意为，用 new 调用“Object'”，可以创造的实例对象。
+   1. Person.prototypes.constructor：指向 Person。即，调用 new Person()，就会创造一个Person的实例。
+   2. p.prototype.constructor：报错，尚未定义该函数。表明 实例对象 p ,本身不具有创造其他实例对象的能力，不可以通过 new p()，来实例化一个对象。 
 
 ```javascript
+3. & 4. constructor 的问题：
+class Person {};
+let p = new Person;
 
+// Obj.constructor “谁创造的我？”
+Person.constructor    // ƒ Function() { [native code] }
+p.consructor          // class Person {};
+
+// Obj.prototype.constructor “我能创造谁？”
+Person.prototype.constructor  // class Person {};
+p.prototype.constructor       
+       // Uncaught TypeError: Cannot read property 'constructor' of undefined
 ```
 
 
 
+## 3. 实例、原型、类成员
 
+1. 接着上面讨论的内容，在Person类中：
+   1. constructor() 构造方法中定义的属性，是私有属性。不同的实例对象中，可以自行修改；
+   2. 其余的属性，是公有属性，最终被定义在 prototype 原型 中，不同的实例对象共享这些属性。
+
+2. `consturctor()` 构造方法中，可以定义的变量有：私有属性、私有方法（用`this` 来调用）。
+   - `this` 就是代表“新建的那个实例对象”。所有一切私有属性/方法，都要加`this.xxx`。
+
+3. 类方法就相当于对象属性，方法名（键名）可以用：
+   - `callName()`，字符串。
+   - `[callName]()`，Symbol。
+   - `['call' + 'Name']()`，计算的值。
+4. 静态类成员。`static`关键字，每个类上只能有一个静态成员。该方法中的 this 指向类本身（指向 Person）
+   1. constructor()：私有属性（属性 / 方法），定义在实例对象中， person.name。
+   2. 类中的方法：公有属性（方法），定义在类的原型对象上， Person.prototype.callName。
+   3. 类的静态方法：类的方法，定义在类中，Person.callMyName。
+5. 在定义类的时候，不显示支持添加数据成员（属性），只能添加方法。
+   - 换句话说，不显示支持在类中像添加公有方法那样，添加公有属性（数据属性）；
+   - 换句话说，不显示支持在定义类的时候，直接在原型对象中（在 Person.prototype中），添加公有属性。
+     - 可以定义完类之后，用 Person.prototype.xxx 添加 数据成员（属性）。
+6. 迭代器和生成器。可以在原型上定义生成器，也可以在类上定义静态生成器。
 
 ```javascript
+1. 公有属性（prototype 原型），私有属性（constructor 构造方法）
+class Person {
+  constructor(name){
+    this.name = name;
+    this.callName = () => { return this.name}
+	}
+  name = "Father";
+}
+let p1 = new Person('Moxy')
+let p2 = new Person('NJ')
 
-```
+
+4. 静态类成员
+  class Person {
+    // 构造方法上的属性，是定义在每个实例对象上。
+    constructor(name) {
+      this.name = name
+    }
+    // 类中的普通方法，是定义在原型对象上（prototype）。
+    callName() {
+      return this.name
+    }
+    // 类中的静态方法，是定义在类本身中。
+    static callMyName() {
+      return this
+    }
+  }
+
+Person.callMyName.this   // undefined,这里不知道为什么是undefined
+Person.callMyName.this() === Person    // true，this指向 Person本身。
 
 
+5. 不支持在类中直接添加数据成员。 问题！问题！问题！！！
+class Person {
+  constructor(name){
+    this.name = name;
+  };
+  name1 = 'Moxy1';   // 原型对象变量。类中定义，本应在：Person.prototype.name1 中保存。
+}
+
+Person.name2 = "Moxy2";   // 静态变量。本应在Person.name2 中保存。
+Person.prototype.name3 = "Moxy3"; // 原型对象变量。在 Person.prototype.name3 中保存。
+
+let p = new Person;
+
+p       // Person {name1: "Moxy1", name: "Moxy"}
+p.name     // "Moxy"
+p.name1    // "Moxy1"，      原型对象变量，实例对象可以调用。
+p.name2    // undefined，    静态变量，实例对象不可调用。
+p.name3    // "Moxy3"，      原型对象变量，实例对象可以调用。
+Person.name1    // undefined       原型对象变量，类不可调用。
+Person.name2    // "Moxy2"         静态变量，类中调用。
+Person.name3    // undefined       原型对象变量，类不可调用。
+Person.prototype.name1     // undefined   原型对象变量，应该保存在prototype中，但是不显示支持。
+Person.prototype.name2     // undefined   静态变量，不保存在prototype中
+Person.prototype.name3     // "Moxy3"     原型对象变量，保存在prototype中
 
 
+6. 迭代器的定义：
+class Person {
+  constructor() {
+    this.number = ['one', 'two', 'three']
+  }
+  * publicIterator() {
+    yield* this.number.values()
+  }
+  
+  
+  static * staticIterator() {
+    // yield *this.number.values()  // 静态方法中的this，代表Person本身。
+    yield*[1, 2, 3].values()
+  }
+}
+let p = new Person
 
-```javascript
+let t1 = Person.staticIterator()
+let t2 = p.publicIterator()
+
+for (let value of t1) {
+  console.log(value)      // 1 2 3
+}
+for (let value of t2) {
+  console.log(value)      // one two three
+}
 
 ```
 
