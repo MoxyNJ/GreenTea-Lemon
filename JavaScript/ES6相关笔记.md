@@ -2250,7 +2250,7 @@ arr1.concat(obj, arr2)  // 可以展开了
 
 例子中，Father类，继承 Array数组。然后 a 是 Father 的实例化，b 是 a 的衍生对象。
 
-a 和 b 既是 Father 的实例，也是 Father 的实例。
+a 和 b 既是 Father 的实例，也是 Array 的实例。
 
 ```javascript
 class Father extends Array { }
@@ -3968,7 +3968,7 @@ let b = new Bus
 b.name    // "vehicle"
 ```
 
-**4.1.1 Super 的要点：**
+### 4.1.1 Super 的要点：
 
 1. 只能在**派生类**的构造方法、静态方法、普通方法中使用。
 2. 不能单独使用`super`，只能调用方法，也就是说必须在后面加（括号）。
@@ -3996,7 +3996,7 @@ b.name    // "vehicle"
 
 - Object.prototype.costructor === Person 类本身，代表：“我能创造什么？”。意为，用 new Person()，可以创造的实例对象。
 
-#### 4.3.1 应用
+### 4.3.1 应用
 
 **1. 抽象接口的实现、基类的实现：**
 
@@ -4046,7 +4046,74 @@ let b = new Bus   // Bus {}
 let c = new Car   // Uncaught Error: 必须定义callName()函数
 ```
 
+### 4.4 继承内置类型
 
+如果继承内置的类型（比如 Array、String）。可以扩展内置类型的功能
+
+- 比如可以定义一个 SuperArray，继承 Array。这样可以在 SuperArray上，额外定义一个使数组成员随机排序的算法。
+
+#### 内置类型 & `[Symbol.speices]`
+
+在 Symbol章节有讲到，可以复习一下。简单来说，就是：
+
+1. SuperArray继承了内置类型Array，同时SuperArray内，自定义了一个数组算法 `test()`。
+2. 然后，a1是SuperArray的实例化对象。
+3. a2，是a1执行 a1.test() 返回的新数组。
+4. a2既属于 Array，也属于 SuperArray。
+5. 如果在SuperArray中定义了`  static get [Symbol.species](){ return Array }` ，那么a2就只能是由Array创建的对象，只属于Array了。它也没有继承 SuperArray的方法（没有test方法了）。
+
+
+
+Foo、Bar、Baz 是引用，指向一个匿名方法。这个匿名方法在调用后，会返回一串代码。传递一个类型是类的参数后，这串代码是一个新建“参数类”的代码（不会执行这串代码，只是返回）。
+
+```javascript
+class Vehicle
+let Foo = (SuperClass) => class extends SuperClass { foo(){ console.log("foo") } }
+
+let foo = Foo(Vehicle)
+foo  //  class extends SuperClass { foo(){ console.log("foo") } }
+// foo 获得一串代码，这串代码需要用 new 执行，是创建一个类，
+```
+
+如果对 foo 执行，会实例化一个继承了 foo方法的、Vehicle实例化的对象 ： `foo()`
+
+```javascript
+let f1 = new foo()    // 实例化一个
+f1.foo()   // "foo"
+f1 instanceof Vehicle   // true
+```
+
+如果连续嵌套，即可实现多继承效果
+
+```javascript
+class Vehicle {}
+let Foo = (SuperClass) => class extends SuperClass {
+  foo(){
+    console.log('foo');
+  }
+}
+let Bar = (SuperClass) => class extends SuperClass {
+  bar(){
+    console.log('bar');
+  }
+}
+let Baz = (SuperClass) => class extends SuperClass {
+  baz(){
+    console.log('baz');
+  }
+}
+
+// 定义一个 Bus 类，继承了 Foo方法 执行后返回的类。这样逐层嵌套
+class Bus extends Foo(Bar(Baz(Vehicle))) {}
+let b = new Bus()
+b.foo() // foo
+b.bar() // bar
+b.baz() // baz
+b instanceof Vehicle // true
+b instanceof Bus // true
+```
+
+进一步改进：通过写辅助函数，可以把嵌套调用展开（略了）。
 
 
 
