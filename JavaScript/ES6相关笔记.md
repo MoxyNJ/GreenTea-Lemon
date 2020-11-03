@@ -3819,6 +3819,7 @@ p.prototype.constructor
    - 换句话说，不显示支持在定义类的时候，直接在原型对象中（在 Person.prototype中），添加公有属性。
      - 可以定义完类之后，用 Person.prototype.xxx 添加 数据成员（属性）。
 6. 迭代器和生成器。可以在原型上定义生成器，也可以在类上定义静态生成器。
+7. 添加默认迭代器 `[Symbol.iterator]`，可以把类的实例对象，变成一个可以迭代的对象。
 
 ```javascript
 1. 公有属性（prototype 原型），私有属性（constructor 构造方法）
@@ -3906,30 +3907,143 @@ for (let value of t2) {
   console.log(value)      // one two three
 }
 
+
+7. 添加默认的迭代器：
+class Person {
+  constructor() {
+    this.number = ['one', 'two', 'three']
+  }
+  [Symbol.iterator]() {     // 添加默认的迭代器，直接返回迭代器实例。
+    return this.number.values()
+  }
+}
+let p = new Person
+
+for (let value of p) {
+  console.log(value)
+}
 ```
 
 
 
+## 4. 继承
 
+1. 类继承的机制，底层的实现原理依然是原型链。表现：类和它原型上定义的方法，都会带到派生类（子类）
+2. 类支持单继承。`extends` 关键字，继承含有 ： `[[Constructor]]`  + 原型 的对象。
+   1. 只要含有 “`[[Constructor]]`+ 原型” 就可以继承，不仅可以继承类，还可以继承普通的构造函数（为了向后兼容）。
+3. `extends`关键字，也可以在类表达式中使用：`let Son = class extends Father{ }`
+
+### 4.1 Super 关键字
+
+1. 只能在派生类中使用。且只能用于类构造方法、实例方法、静态方法中。
+2. 在派生类的构造方法中，若调用父类构造方法，使用以下两种方式效果相同：
+   - `super()`，该形式只有在调用父类构造方法时出现。
+   - `super.constructor()`
+3. 在派生类的静态方法中，若调用父类的静态方法，使用：`super.staticFunc()`调用，不可以省略方法名。
 
 ```javascript
+2. & 3. super 在构造方法 & 静态方法的调用。
+class Vehicle {
+  constructor(){
+    this.name = 'vehicle';
+  }
+  static callName(){
+    console.log('vehicle');
+  }
+}
 
+class Bus extends Vehicle {
+  constructor(){
+    super()       // 调用父类构造方法，只能在子类的构造方法中调用。
+  }
+
+  static callMyName(){
+    super.callName();   // 调用父类静态方法，只能在子类的静态方法中调用。
+  }
+}
+
+Bus.callMyName()   // "vehicle"
+
+let b = new Bus
+b.name    // "vehicle"
 ```
 
+**4.1.1 Super 的要点：**
+
+1. 只能在**派生类**的构造方法、静态方法、普通方法中使用。
+2. 不能单独使用`super`，只能调用方法，也就是说必须在后面加（括号）。
+3. 在子类的构造方法中，不可以在调用`super()`之前，使用 this 关键字。 和之前的作用域问题一样，会出现语义不清的问题。**通常情况下，`super()`永远是最先调用的。
+4. 只有在构造函数中，不能在调用 super() 之前使用 this。其他静态方法、普通方法是可以的。
+5. 如果在子类中，没有定义构造方法，则会自动调用 super() 从父类中，定义属性。
+6. 如果在子类中，定义啦构造方法，要么必须调用 super()，要么就返回一个其他对象（相当于弃用了该构造函数的运行结果，被垃圾回收机制回收）。
+
+### 4.2 `[[HomeObject]]` 
+
+类的构造方法、静态方法，拥有：`[[HomeObject]]`特性。该特性是一个指针，指向定义该方法的对象。比如：上文的`constructor()`方法，始终指向Vehicle类。
+
+- super 依赖于 `[[HomeObject]]`，始终指向该特性。这是在JavaScript定义时就规定的，不可以在运行时动态指定。即，在运行时可以调整类中 this 的指向，但是无法改变 super 的指向，它就是按照原型链，指向类的原型。
 
 
 
+### 4.3 new.target 
+
+`new.target`是一个指针，始终指向该类自身的构造函数(`Object.prototype.constructor`)。也是在定义时就确定好的。通常在实例化对象后，使用 `new.target`去访问创造它的类。
+
+- 作用：可以判断该对象/函数，是否是通过 new（构造函数）创造的。
+  - 在通过 new 创造的实例对象或函数， `new.target` 指向那个构造函数（那个类）。
+    - 举例： p实例对象 中的 new.target，指向Person类。
+  - 不是通过 new 创造的对象或函数，new.tatget 等于 undefined。
+
+- Object.prototype.costructor === Person 类本身，代表：“我能创造什么？”。意为，用 new Person()，可以创造的实例对象。
+
+#### 4.3.1 应用
+
+**1. 抽象接口的实现、基类的实现：**
+
+抽象接口，类似Java中的那样，这种类可以被继承，但是不可以被实例化。利用`new.target`可以实现：
 
 ```javascript
+// 假设：Vehicle 是一个抽象类
+class Vehicle {
+  constructor(value){
+    if(new.target === Vehicle)
+      throw new Error('Vehicl是接口，不可以实例化')
+    this.name = value;
+  }
+}
 
+class Car extends Vehicle {
+  constructor(value){
+    super(value);
+  }
+}
+
+let c = new Car('BMW')         // Car {name: "BMW"}
+let v = new Vehicle('Smart')   // Uncaught Error: Vehicl是接口，不可以实例化
 ```
 
+**2. 要求子类必须定义某个方法：**
 
-
-
+利用在父类构造方法中，使用：`this`关键字，子类的构造方法在通过 super 调用父类的构造方法时，this 就指向了子类创建的那个新对象。 
 
 ```javascript
+class Vehicle {
+  constructor(value){
+    if(!this.callName){   // 判断：如果this.callName不存在
+      throw new Error('必须定义callName()函数')
+    }
+  }
+}
 
+class Car extends Vehicle { }
+
+class Bus extends Vehicle {
+  callName(){
+  }
+}
+
+let b = new Bus   // Bus {}
+let c = new Car   // Uncaught Error: 必须定义callName()函数
 ```
 
 
