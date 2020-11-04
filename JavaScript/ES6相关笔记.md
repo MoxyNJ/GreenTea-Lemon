@@ -3620,7 +3620,7 @@ p1.then(null, (reason) => {console.error(reason)})   // 第一个参数位置，
 
 # 🔟🔟  Class 的基本语法
 
-## 1. 
+## 1. 对比
 
 与旧体系： function 构造对象的区别和联系
 
@@ -3665,10 +3665,8 @@ moxy.prototype   // undefined
 4. `constructor`方法的返回值默认是返回对象实例（this）。如果指定返回另一个对象，则之前代码中创建的各种方法和变量无效了（这里的无效指的是没有创建到返回到那个对象上）
 5. 类的定义不能声明提升。
 6. 函数不受块作用域限制，而类受块作用域限制（函数只受函数作用域限制）。
-
-
-
-1. 1. 
+7. 类和模块，内部默认严格模式。
+8. ES6 的类，就是 ES5的构造函数的一层包装，所以函数的许多特性都被`Class`继承。
 
 ```javascript
 // 1. 用 Object.assign()，添加方法。
@@ -3696,8 +3694,6 @@ h2 instanceof Happy    // true
 h2 instanceof Person   // false
 ```
 
-
-
 ## 组成
 
 - 构造方法: `constructor`
@@ -3706,13 +3702,13 @@ h2 instanceof Person   // false
 - 设置函数: `set`
 - 静态类方法: `static`
 
-
-
 ## 特点：
 
 1. 类的定义方法：类声明、类表达式。
    1. 类声明： `class Person {} `
-   2. 类表达式：`let P = class Pname {}`  P和Pname的作用域范围是不对等的：P的范围根据let进行定义；而Pname的作用范围仅限于Pname。
+   2. 类表达式：`let P = class Pname {}`  P和Pname的作用域范围是不对等的：
+      1. P 的范围根据let进行定义；
+      2. Pname 的作用范围仅限于Pname。
 
 ```javascript
 // 1. 类名的作用域范围： P 和 Pname
@@ -3727,12 +3723,6 @@ p.callName()   //Pname Pname
 P.name    // "Pname"
 Pname.name   // Uncaught ReferenceError: Pname is not defined
 ```
-
-
-
-
-
-
 
 
 
@@ -3932,6 +3922,7 @@ for (let value of p) {
 2. 类支持单继承。`extends` 关键字，继承含有 ： `[[Constructor]]`  + 原型 的对象。
    1. 只要含有 “`[[Constructor]]`+ 原型” 就可以继承，不仅可以继承类，还可以继承普通的构造函数（为了向后兼容）。
 3. `extends`关键字，也可以在类表达式中使用：`let Son = class extends Father{ }`
+4. `Object.getPrototypeOf()`，可以获取当前子类直接继承的那个父类。
 
 ### 4.1 Super 关键字
 
@@ -4114,6 +4105,37 @@ b instanceof Bus // true
 ```
 
 进一步改进：通过写辅助函数，可以把嵌套调用展开（略了）。
+
+# 补充：原型、____proto____ 、prototype
+
+前提：
+
+1. 都是对象。function、`__proto__`、prototype 都是对象。
+2. 自顶至下，大致是这样的：Object对象、Function对象、Person对象。
+3. 对象是被构造函数创建的。构造函数中，用于共享的属性/方法，都存放在它的原型对象中。所以
+4. 对象，和创造它的构造函数的原型对象，有千丝万缕的联系。
+5. **构造函数：主要用来创建一个新对象，然后把构造函数中的属性，定义到新对象中。**
+
+定义：
+
+1. `__proto__` === `[[prototype]]` 。
+   - 这两者是相等的，只是浏览器把原本无法获取的`[[prototype]]`显示表示出来了。
+2. `[[prototype]]`：隐式原型。每个 Object对象，都会有一个`[[prototype]]`隐式原型。
+3. prototype：显式原型。每个 Function函数，都会有一个prototype显式原型。
+
+关系：
+
+- 假定一个对象名为 A 。A 对象的隐式原型，就指向创建 A 对象的构造函数 (constructor)的显式原型。
+- 假定一个对象名为 A。 A对象的`[[prototype]]`指向创建 A 对象的构造函数 (constructor)的prototype。
+
+作用：
+
+- 显式原型 prototype：实现基于原型的继承 + 属性共享。
+- 隐式原型 `[[prototype]]`：构成原型链，实现基于原型的继承。寻找一个属性，是沿着原型链找的。
+
+// 待续(在小问题2 中，下面附加的网页中有写。)
+
+
 
 
 
