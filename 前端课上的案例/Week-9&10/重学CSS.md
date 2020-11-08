@@ -16,13 +16,13 @@ CSS的标准语法：
 - @charset：企业一般有预知，用的少。
 - @import：用的少。
 - rules
-  - @media：用的少。
+  - @media
   - @page
   - rule
 
  
 
-## 2. CSS @规则的研究
+## 2. CSS @规则
 
 At-rules
 
@@ -36,6 +36,26 @@ At-rules
 - @supports ：https://www.w3.org/TR/css3-conditional/
 
 - @namespace ：https://www.w3.org/TR/css-namespaces-3/
+
+
+
+## 3. CSS 规则
+
+rules
+
+- 选择器 Selector
+  - •	https://www.w3.org/TR/selectors-3/
+  - •	https://www.w3.org/TR/selectors-4/
+- 声明
+  - Key
+    - Properties
+    - Variables：https://www.w3.org/TR/css-variables/
+  - Value
+    - https://www.w3.org/TR/css-values-4/
+
+
+
+
 
 
 
