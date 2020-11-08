@@ -117,10 +117,48 @@ rules
    // 保存提取的字符串，存储在js文件中的standards变量中，留有备用。
     ```
 
-5. 1
+5. 制作爬虫工具，在w3c的任意一个页面中运行，可以遍历到每个需要的标准文档。
 
    ```javascript
+   let standards = [复制的JSON.stringify];
    
+   let iframe = document.createElement("iframe");
+   document.body.innerHTML = "";
+   document.body.appendChild(iframe);
+   
+   function happen(element, event) {
+       return new Promise(function(resolve){
+           let handler = () => {
+               resolve();
+               element.removeEventListener(event, handler);
+           }
+           element.addEventListener(event, handler);
+       })
+   }
+   
+   void async function() {
+       for(let standard of standards) {
+           iframe.src = standard.url;
+           console.log(standard.name);
+           await happen(iframe, "load");
+       }
+   }();
+   ```
+
+6. 假设：想提取标准文档中的class="propdef"，也就是相关属性的定义信息：
+
+   ```javascript
+   // 如果想抓取带有 class="propdef"的内容
+   // 在每个标准文档中，看DOM结构发现“属性内容”，在 propdef中。
+   // 对 匿名async函数进行修改即可显示。
+   void async function() {
+       for(let standard of standards) {
+           iframe.src = standard.url;
+           console.log(standard.name);
+           await happen(iframe, "load");
+           console.log(iframe.contentDocument.querySelectorAll(".propdef"));
+       }
+   }();
    ```
 
    

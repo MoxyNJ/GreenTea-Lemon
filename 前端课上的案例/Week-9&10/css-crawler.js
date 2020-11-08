@@ -431,21 +431,21 @@ function happen(element, event) {
     })
 }
 
-// void async function() {
-//     for(let standard of standards) {
-//         iframe.src = standard.url;
-//         console.log(standard.name);
-//         await happen(iframe, "load");
-//     }
-// }();
-
-// 如果想抓取带有 class="propdef"的内容（在每个标准文档中，看DOM结构发现“属性内容”，在 propdef中。
 void async function() {
     for(let standard of standards) {
         iframe.src = standard.url;
         console.log(standard.name);
         await happen(iframe, "load");
-        console.log(iframe.contentDocument.querySelectorAll(".propdef"));
     }
 }();
+
+// 如果想抓取带有 class="propdef"的内容（在每个标准文档中，看DOM结构发现“属性内容”，在 propdef中。
+// void async function() {
+//     for(let standard of standards) {
+//         iframe.src = standard.url;
+//         console.log(standard.name);
+//         await happen(iframe, "load");
+//         console.log(iframe.contentDocument.querySelectorAll(".propdef"));
+//     }
+// }();
 
