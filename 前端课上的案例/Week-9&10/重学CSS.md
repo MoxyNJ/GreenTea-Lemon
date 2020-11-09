@@ -55,7 +55,7 @@ rules
 
 
 
-## 3. 收集：标准信息
+## 4. 🧪 实验：收集CSS标准文档的相关信息
 
 通过爬虫的方法，抓取W3C网页的内容，提取有价值信息。
 
@@ -115,17 +115,26 @@ rules
    )
    
    // 保存提取的字符串，存储在js文件中的standards变量中，留有备用。
-    ```
+   ```
 
 5. 制作爬虫工具，在w3c的任意一个页面中运行，可以遍历到每个需要的标准文档。
 
    ```javascript
    let standards = [复制的JSON.stringify];
    
+   // 把原网页的内容，替换为一个iframe框架。
    let iframe = document.createElement("iframe");
    document.body.innerHTML = "";
    document.body.appendChild(iframe);
    
+   
+   // handler变量，指向一个匿名函数：作用是执行resolve()，即promise状态为完成，然后清空监听。
+   // 具体的使用：
+   // 传递的参数为：iframe框架，"load"加载事件。
+   // 返回一个Promise对象，该对象执行：
+   		// element.addEventListener(event, handler)
+   		// 先定义一个监听事件，如果iframe框架，load加载完毕，就执行回调函数 hander
+   		// handler中，会先把Promise状态置为“已完成”，然后取消事件监听。
    function happen(element, event) {
        return new Promise(function(resolve){
            let handler = () => {
@@ -136,13 +145,18 @@ rules
        })
    }
    
+   // 遍历standards中每个成员，讲每个成员都加载一次，到iframe中。然后尝试打印一下成员的标题
+   // 测试是否加载成功。
+   // 使用 async/asait的目的，是为了确保每次当前网页加载完成，然后在执行下一次循环
+   		// 是为了提供一个断点，提供的方法是用Promise添加一个事件，监听到后再取消这个事件。特别巧妙。
    void async function() {
        for(let standard of standards) {
-           iframe.src = standard.url;
-           console.log(standard.name);
+           iframe.src = standard.url;    // 新建一个 iframe框架，载入 url
+           console.log(standard.name);   // 打印url对应的标题
            await happen(iframe, "load");
        }
    }();
+   // 这里使用小括号，直接执行了该函数。
    ```
 
 6. 假设：想提取标准文档中的class="propdef"，也就是相关属性的定义信息：
@@ -153,15 +167,59 @@ rules
    // 对 匿名async函数进行修改即可显示。
    void async function() {
        for(let standard of standards) {
-           iframe.src = standard.url;
-           console.log(standard.name);
-           await happen(iframe, "load");
+           iframe.src = standard.url; 
+           console.log(standard.name);   
+           await happen(iframe, "load"); 
            console.log(iframe.contentDocument.querySelectorAll(".propdef"));
+         //  这里假设想要提取属性相关的定义，直接在DOM中找到该定义的位置，然后提取。
        }
    }();
-   ```
+```
 
-   
+- 面对大量信息，运用自动化手段，提取相关文档的信息。
+
+# 二、CSS选择器
+
+HTML的命名空间：HTML、SVG、MathML。有三个命名空间，在CSS选择器中，需要用 ｜ 单竖线进行分割。
+
+## 1. 选择器语法
+
+**简单选择器**
+
+- `*`： 通用选择器，适配任何元素
+- `div`：type selector，类型选择器。根据元素的tagName属性选择。 
+- `.cls`：class selector。可以用空白做分隔符，指定多个class，只要匹配一个就可以了。
+- `#id`：id selector。严格匹配。
+- `[attr=value]`：属性选择器。[属性名字=值]，包含了 class 和 id 选择器。（可匹配多个）
+- `:hover`：伪类选择器，表达元素特殊的状态，与HTML没有关系，大部分来自交互/函数。
+- `::before`：伪元素选择器，也可用单冒号，只是不好区分。可以选择不存在的元素。
+
+**复合选择器 combined**  
+
+- <简单选择器><简单选择器><简单选择器>：多个简单选择器相连，选中的元素必须匹配所有简单选择器。
+- `*` / `div` ，必须写在最前面。
+- 伪类 / 伪元素，必须在写最后面。
+
+**复杂选择器**
+针对元素的结构进行条件选择。
+
+- <复合选择器>`<sp>`<复合选择器>：用空格分割，子孙选择器。左边是元素的祖先（父级以上）
+- <复合选择器>`">"`<复合选择器>：子孙选择器。左边必须是元素的父级。
+- <复合选择器>`"~"`<复合选择器>：邻居选择器。
+- <复合选择器>`"+"`<复合选择器>：邻居选择器。
+- <复合选择器>`"||"`<复合选择器>：表格 table时，可以选中某一个列。
+
+<选择器>`,`<选择器>：逗号之前是“或”的关系，两个选择器并列链接。
+
+
+
+## 2. 选择器的优先级
+
+
+
+
+
+
 
 
 
