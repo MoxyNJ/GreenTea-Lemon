@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */
+/*jshint esversion: 8 */
 
 let standards = [{
     "name": "Requirements for Chinese Text Layout中文排版需求",
@@ -430,7 +430,7 @@ function happen(element, event) {
             element.removeEventListener(event, handler);
         }
         element.addEventListener(event, handler);
-    })
+    });
 }
 
 void async function() {
