@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 let standards = [{
     "name": "Requirements for Chinese Text Layout中文排版需求",
     "url": "https://www.w3.org/TR/2020/WD-clreq-20201101/"
