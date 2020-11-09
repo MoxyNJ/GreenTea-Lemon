@@ -295,13 +295,30 @@ div.a
 - 对已有的元素，选中特定的部分，用一个伪元素括起来：
   - `::first-line`、::first-letter：已经渲染和排版了之后，才进行操作。新建的伪元素把选中的元素（第一行 / 第一个字母）概括起来，进行修改。
 
- 
+frist-line 和 first-letter 可以使用的属性：
+
+![first-line、first-letter](/Users/moxyninja/GreenTea-Lemon/前端课上的案例/Week-9&10/source/first-line、first-letter.png) 
+
+### 5. 作业：编写一个match函数
+
+利用 match 函数，判断DOM树中的某个元素，是否可以匹配 选择器。
+
+```jsx
+function match(selector, element) {
+  return true;
+}
+
+match("div #id.class", document.getElementById("id"));
+
+
+```
 
 
 
+# 尾巴：
 
-
-
+- 完成课上练习，提交至课程页面底下练习。
+- 完成第 9 节思考题作业：为什么 first-letter 可以设置 float 之类的，而 first-line 不行呢？（提交至 GitHub）。
 
 
 
