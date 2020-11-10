@@ -174,8 +174,7 @@ rules
          //  这里假设想要提取属性相关的定义，直接在DOM中找到该定义的位置，然后提取。
        }
    }();
-```
-
+   ```
 - 面对大量信息，运用自动化手段，提取相关文档的信息。
 
 # 二、CSS选择器
@@ -184,7 +183,7 @@ HTML的命名空间：HTML、SVG、MathML。有三个命名空间，在CSS选择
 
 ## 1. 选择器语法
 
-**简单选择器**
+**1.1 简单选择器**
 
 - `*`： 通用选择器，适配任何元素
 - `div`：type selector，类型选择器。根据元素的tagName属性选择。 
@@ -194,13 +193,13 @@ HTML的命名空间：HTML、SVG、MathML。有三个命名空间，在CSS选择
 - `:hover`：伪类选择器，表达元素特殊的状态，与HTML没有关系，大部分来自交互/函数。
 - `::before`：伪元素选择器，也可用单冒号，只是不好区分。可以选择不存在的元素。
 
-**复合选择器 combined**  
+**1.2 复合选择器 combined**  
 
 - <简单选择器><简单选择器><简单选择器>：多个简单选择器相连，选中的元素必须匹配所有简单选择器。
 - `*` / `div` ，必须写在最前面。
 - 伪类 / 伪元素，必须在写最后面。
 
-**复杂选择器**
+**1.3 复杂选择器**
 针对元素的结构进行条件选择。
 
 - <复合选择器>`<sp>`<复合选择器>：用空格分割，子孙选择器。左边是元素的祖先（父级以上）
@@ -248,11 +247,9 @@ div.a
 优先级：[0, 0, 1, 1]
 ```
 
-
-
 ## 3. 伪类
 
-### 1. 链接 / 行为（最初设计的伪类）
+### 3.1 链接 / 行为（最初设计的伪类）
 
 - `:any-link`：匹配所有类型的超链接。（any-link = link + visited）
 - `:link / :visited`：匹配尚未访问的超链接 / 匹配已经访问过的超链接。
@@ -262,7 +259,7 @@ div.a
 - `:focus`：焦点。
 - `:target`：连接到当前目标，给 a标签的锚点使用。
 
-### 2. 树结构
+### 3.2 树结构
 
 - `:empty`：该元素是否有子元素
 - `:nth-child()`：是父元素中的特定child（各种函数、单词）
@@ -270,7 +267,7 @@ div.a
 - `:first-child / :last-child / :only-child`：
   - 倒着来的：nth-last-child, last-child, only-child 尽量少用，破坏了CSS的溯回原则，会影响处理性能。
 
-### 3. 逻辑型
+### 3.3 逻辑型
 
 - `:not`伪类：目前只支持到简单选择器的序列（复合选择器）。
 - `:where / :has`：新的伪类，尚未铺开使用。
@@ -279,7 +276,7 @@ div.a
 
 
 
-### 4. 伪元素
+### 3.4 伪元素
 
 伪元素：通过选择器，向界面上添加了一个不存在的元素。
 
@@ -299,7 +296,7 @@ frist-line 和 first-letter 可以使用的属性：
 
 ![first-line、first-letter](/Users/moxyninja/GreenTea-Lemon/前端课上的案例/Week-9&10/source/first-line、first-letter.png) 
 
-### 5. 作业：编写一个match函数
+### 3.5 作业：编写一个match函数
 
 利用 match 函数，判断DOM树中的某个元素，是否可以匹配 选择器。
 
@@ -313,12 +310,127 @@ match("div #id.class", document.getElementById("id"));
 
 ```
 
-
-
 # 尾巴：
 
 - 完成课上练习，提交至课程页面底下练习。
 - 完成第 9 节思考题作业：为什么 first-letter 可以设置 float 之类的，而 first-line 不行呢？（提交至 GitHub）。
+
+# 三、CSS排版
+
+leyout：布局 / 排版。但称之为“排版”更为贴切。
+
+
+
+## 1. 盒
+
+- 标签 Tag：源代码。在HTML代码中书写的，都是标签。
+- 元素 Element：语义。元素：是通过一对起始标签“表示”出来的，人思维的一个概念。
+- 盒 Box：表现
+
+填空：
+
+	1. HTML代码中可以书写开始__标签__，结束__标签__ ，和自封闭__标签__ 。
+ 	2. 一对起止__标签__ ，表示一个__元素__ 。
+ 	3. DOM树中存储的是__元素__和其它类型的节点（Node）。
+ 	4. CSS选择器选中的是__元素__，或__伪元素__ 。
+ 	5. CSS选择器选中的__元素__ ，在排版时可能产生多个__盒__（有一对多的关系） 。
+ 	6. 排版和渲染的基本单位是__盒__ 。
+
+- 一个元素不一定只产生一个盒，有可能会产生多个盒：
+  - in-line 元素，因为分行会产生多个盒。
+  - 伪元素选择器选中的元素，也会生成多个盒。
+
+### 盒模型
+
+<img src="/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/盒模型.png" alt="image-20201110155904045" style="zoom:50%;" />
+
+- margin, border, padding, box-sizing( content-box, border-box )
+
+## 2. 正常流
+
+历史，三代排版技术：
+
+- 第一代：基于正常流
+- 第二代：基于 flex 技术
+- 第三代：基于 grid 技术
+  - 第 3.5 代：CSS Houdini，可用Js 干预的排版。
+
+ ### 正常流排版：
+
+1. 收集盒和文字，进入“行”中；
+2. 计算盒在行中的排布；
+3. 计算行与行之间的排布。
+
+- **IFC，inline-level-formatting-context 块级格式化上下文**
+  - inline-box：行内级盒
+  - line-box：行级盒
+- **BFC，block-level-formatting-context 行内级格式化上下文**
+  - block-level-box：块级盒
+
+![image-20201110162841669](/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/正常流.png)
+
+## 3. 正常流的行级分布
+
+核心：基线 Baseline。文本 Text。
+
+<img src="/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/text.png" alt="image-20201110163202782" style="zoom:80%;" />
+
+<img src="/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/行模型.png" style="zoom: 50%;" />
+
+```html
+<div class="background">
+    <div class="baseline">
+        <div class="color"></div>
+    </div>
+    <span>Hello Moxy 👋 你好吗</span>
+    <div class="layout"></div>
+</div>
+
+<style>
+    .background {
+        font-size: 50px;
+        line-height: 100px;
+        background-color: pink;
+    }
+    .baseline {
+        width: 1000px;
+        height: 1px;
+        background-color: red;
+    }
+    .layout {
+        vertical-align: text-bottom;
+        line-height: 70px;
+        width: 100px;
+        height: 150px;
+        background-color: aqua;
+        display: inline-block;
+    }
+</style>
+```
+
+
+
+## 4. 正常流的块级分布
+
+
+
+## 5. BFC合并
+
+
+
+## 6. Flex排版
+
+# 四、CSS动画与绘制
+
+## 1. 动画
+
+
+
+## 2. 颜色
+
+
+
+## 3. 绘制
 
 
 
