@@ -393,32 +393,158 @@ leyout：布局 / 排版。但称之为“排版”更为贴切。
         background-color: pink;
     }
     .baseline {
+        vertical-align: middle;
+        overflow: visible;
+        display: inline-block;
+        width: 1px;
+        height: 1px;
+    }
+    .color {
         width: 1000px;
         height: 1px;
         background-color: red;
     }
     .layout {
-        vertical-align: text-bottom;
+        /* vertical-align: text-top; */
         line-height: 70px;
         width: 100px;
         height: 150px;
         background-color: aqua;
         display: inline-block;
     }
+    
 </style>
 ```
+
+以下方式，都会改变行内盒layout 与行高之间的关系。日常推荐使用 vertical-align来规范行内盒的基线对齐问题。
+
+- HTML：在 layout盒 中，不添加字母、添加1个字母、添加2个字母。
+- CSS：在 layout中，添加 vertical-align：text-middle / text-top / text-bottom。
 
 
 
 ## 4. 正常流的块级分布
 
+### 4.1 铺垫：float
+
+float元素的思考方式：
+
+1. 先把float元素当成是正常流中的元素，排在正常流中；
+2. float哪个方向，就让这个元素块朝哪个方向移动，移到边界。假设float:left，移动到最左边；
+3. float盒在最左边，则行盒会相应往右移动，让出一个float盒的空间。
+
+### 4.2 铺垫：clear
+
+float盒，不仅会印象它原本所在的正常流中的那一行，还会影响盒高度都覆盖到的那几行。这就会出现一个问题：如果有多个float盒，会出现重叠现象，行内流会被一直挤压。图中四个蓝色方块为float盒，文字部分中，“float”字样，是HTML代码中，原本定义的float盒在正常流中的位置：
+
+![image-20201110205622818](/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/float重叠.png)
+
+解决办法：在float盒中，CSS 添加使用 clear 属性。下图中，给第3个float盒，添加：`clear:right;`后，如果遇到float盒影响他向右浮动，它会在纵向向下移动寻找一块空地，浮动到最右边。
+
+<img src="/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/clear属性.png" alt="image-20201110205947415" style="zoom: 67%;" />
+
+### 应用：
+
+1. 图中，7个蓝色块都是float：right，则他们的排布很像一个正常流：从左至右依次排布，遇到边界正常返回。
+
+<img src="/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/float1.png" alt="image-20201110210526159" style="zoom:67%;" />
+
+2. 如果想换行，使用：`</br>`，无法达到换行效果。因为 br 是正常流中的换行模式，无法影响到float盒，下图中，在第三个盒子后加`</br>`，只能换正常流的一行无法应用到 float盒中。 
+
+<img src="/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/float2.png" alt="image-20201110210746801" style="zoom:67%;" />
+
+3. 使用 clear属性，在全是 float的盒子中，效果相当于正常流的`</br>`，达到了换行效果。下图第四个盒子，添加了 clear属性。
+
+<img src="/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/float3.png" alt="image-20201110211023663" style="zoom:67%;" />
+
+该方法是古老技术，现在几乎都在使用 Flexbox，已经不用该方法了。
+
+### 4.3 Margin Collapse 边距折叠：
+
+- 就是两个BFC块级盒，如果出现两个盒子都有 margin外边距，那这两个边距会互相折叠，折叠后最终的margin高度，由margin最高的盒子决定。
+  - **注意：IFC、flex、grid都不会发生 Margin Collapse。**因为边距折叠只会发生在一个BFC中，如果创建了新的BFC，就不会发生边距折叠。
+  - 注意：只有正常流中的BFC会发生边距折叠。
+
+<img src="/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/margin collapse.png" alt="image-20201110212053379" style="zoom: 33%;" />
+
 
 
 ## 5. BFC合并
 
+### 5.1 Block
 
+- Block Container：里面能装BFC的盒子，也就是能容纳正常流的盒子，就能容纳 BFC。
+- Block-level Box：能放进BFC里的盒子，也就是这个盒子外面可以有 BFC。
+- Block Box = Block Container + Block-level Box  ，换句话说：  
+  - 里外都有BFC的盒子 = 里面有BFC的盒子 + 外面有BFC的盒子
+
+### 5.2 Block Container
+
+以下都是 Block Container：
+
+一个重要的判断依据：这些盒子的里面是不是可以有正常流。
+
+- block
+- inline-block
+- table-cell
+- flex item：flex盒的子项目。
+- grid cell：grid的子项目。
+- table-caption：表格的标题。
+
+以下都不是 Block Container：
+
+- table-row：不是 Block Container，因为它里面是 table-cell，不是正常流。
+- display: flex：不是 Block Container，它的子项目是。
+- ... 
+
+### 5.3 Block-level Box
+
+display通常有两对值，块级盒行内级两种都有对应关系。
+
+![image-20201110214259360](/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/Block-level Box.png)
+
+### 5.4 设立 / 创建 BFC（4类）
+
+什么情况，什么类型的盒，会创建一个 BFC？
+
+- floats：浮动盒里面的是一个正常流，浮动盒会创建。
+- absolutely positioned elements：绝对定位的元素，也会创建BFC。
+- block containers：能放BFC的盒子都可以。Block-level Box不可以。
+- block boxes with 'overflow' other than 'visible'：overflow属性值是：hidden、scroll、auto、inherit。
+
+换一种记忆方式：
+
+- block box   && `overflow:visible`
+- 翻译：默认可以容纳正常流的盒都可以创建BFC +  Block Box 里外都是BFC，同时 `overflow:visible`。
+
+### 5.5 BFC合并
+
+- BFC合并与float：如果给文字流创建了新的BFC，文字流就不会再发生流动。
+  - 下图中，左图粉色盒`overflow:visible`，右图中粉色盒`overflow:hiddlen`会发生创建BFC，文字流不会流动到float盒。
+- BFC合并与边距折叠  
+  - 如果创建了BFC，不在同一个BFC中，就不会发生边距折叠。在同一个BFC中，就会发生边距折叠。
+
+ ![image-20201110220823884](/Users/moxyninja/Library/Application Support/typora-user-images/image-20201110220823884.png)
 
 ## 6. Flex排版
+
+排版的第二代技术，Flex。
+
+排版逻辑：
+
+- 收集**盒**进行(háng)
+- 计算**盒**在主轴方向的排布
+- 计算**盒**在交叉轴方向的排布
+
+分行：
+
+- 根据主轴的尺寸，把元素从左到右依次放入主轴中，如果超出了边界，就安排到下一行。
+
+- 计算主轴方向
+
+  - 找出所有Flex元素（Flex元素就是Flex盒）
+
+  <img src="/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/flex1.png" alt="image-20201111085407981" style="zoom:67%;" />
 
 # 四、CSS动画与绘制
 
