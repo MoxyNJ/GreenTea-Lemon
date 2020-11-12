@@ -543,6 +543,8 @@ display通常有两对值，块级盒行内级两种都有对应关系。
 - 计算主轴方向
 
   - 找出所有Flex元素（Flex元素就是Flex盒）
+  - 把主轴方向的剩余尺寸按比例分配给这些元素
+  - 若剩余空间为负数，所有flex元素为 0，等比压缩剩余元素。
 
   <img src="/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/flex1.png" alt="image-20201111085407981" style="zoom:67%;" />
 
