@@ -1,36 +1,17 @@
-<div class="background">
-    <div class="baseline">
-        <div class="color"></div>
-    </div>
-    <span>Hello Moxy 👋 你好吗</span>
-    <div class="layout"></div>
-</div>
-
+<!--
+ * @Description: 
+ * @Date: 2020-11-10 16:43:53
+-->
 <style>
-    .background {
-        font-size: 50px;
-        line-height: 100px;
-        background-color: pink;
+    @keyframes mykf {
+        from {background: red;}
+        to {background: yellow;}
+        from {background: yellow;}
+        to { background: red;}
     }
-    .baseline {
-        vertical-align: middle;
-        overflow: visible;
-        display: inline-block;
-        width: 1px;
-        height: 1px;
+    div {
+        animation: mykf 5s infinite;
     }
-    .color {
-        width: 1000px;
-        height: 1px;
-        background-color: red;
-    }
-    .layout {
-        /* vertical-align: text-bottom; */
-        line-height: 70px;
-        width: 100px;
-        height: 150px;
-        background-color: aqua;
-        display: inline-block;
-    }
-    
 </style>
+
+<div style="width: 100px; height: 100px;"></div>
