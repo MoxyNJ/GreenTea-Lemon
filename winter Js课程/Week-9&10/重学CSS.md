@@ -552,7 +552,7 @@ display通常有两对值，块级盒行内级两种都有对应关系。
 
 ## 1. 动画
 
-### Animation
+### 1.1 Animation
 
 -  @keyframes 定义
 - animation：使用
@@ -573,7 +573,7 @@ display通常有两对值，块级盒行内级两种都有对应关系。
 <div style="width: 100px; height: 100px;"></div>
 ```
 
-### 属性（6）
+#### 属性（6）
 
 - animation-name：时间曲线（@keyframes）
 - animation-duration：动画的时长
@@ -582,15 +582,36 @@ display通常有两对值，块级盒行内级两种都有对应关系。
 - animation-iteration-count：动画的播放次数
 - animation-direction：动画的方向（正向/倒向）
 
-@keyframes 的定义
+#### @keyframes 的定义
 
 ```css
+/* 可以使用百分比 */
 @keyframes mykf {
-  
+  0% {top: 0; transition: top ease}
+  50% {top: 30px; transition: top ease-in}
+  75% {top: 10px; transition: top ease-out}
+  100% {top: 0; transition: top linear}
+}
+
+/* 可以使用 from..to */
+@keyframes mykf {
+  from { .. }   /* 相当于 0% */
+  to { .. }     /* 相当于 100% */
 }
 ```
 
+### 1.2 Transition
 
+#### 属性（4）
+
+- transition-property：要变换的属性
+- transition-duration：变换的时长
+- transition-timing-function：时间曲线
+  - 来自于三次贝塞尔曲线。https://cubic-bezier.com/
+    - ease：缓动曲线
+    - ease-in：缓动启动（用于退出动画，某个元素离开屏幕）
+    - ease-out：缓动停止（进入动画，某个元素出现在屏幕中）
+- transition-delay：延迟
 
 ## 2. 颜色
 
