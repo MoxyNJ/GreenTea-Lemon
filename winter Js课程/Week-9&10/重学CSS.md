@@ -552,20 +552,41 @@ display通常有两对值，块级盒行内级两种都有对应关系。
 
 ## 1. 动画
 
-Animation
+### Animation
 
 -  @keyframes 定义
 - animation：使用
 
-```css
-@keyframes mykf
-{
-  from { background: red; }
-  to { background: yellow; }
-}
+下列代码中，会生成一个无限循环的，从黄色变红色的方块。
 
-div {
-  animation: mykf 5s infinite;
+```html
+<style>
+    @keyframes mykf {
+        from {background: red;}
+        to {background: yellow;}
+    }
+    div {
+        animation: mykf 5s infinite;
+    }
+</style>
+
+<div style="width: 100px; height: 100px;"></div>
+```
+
+### 属性（6）
+
+- animation-name：时间曲线（@keyframes）
+- animation-duration：动画的时长
+- animation-timing-function：动画的时间曲线
+- animation-delay：动画开始前的延迟
+- animation-iteration-count：动画的播放次数
+- animation-direction：动画的方向（正向/倒向）
+
+@keyframes 的定义
+
+```css
+@keyframes mykf {
+  
 }
 ```
 
