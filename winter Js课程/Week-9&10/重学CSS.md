@@ -552,6 +552,23 @@ display通常有两对值，块级盒行内级两种都有对应关系。
 
 ## 1. 动画
 
+Animation
+
+-  @keyframes 定义
+- animation：使用
+
+```css
+@keyframes mykf
+{
+  from { background: red; }
+  to { background: yellow; }
+}
+
+div {
+  animation: mykf 5s infinite;
+}
+```
+
 
 
 ## 2. 颜色
