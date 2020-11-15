@@ -1,19 +1,32 @@
 <div class="box"></div>
-<div class="box"></div>
+<div class="box">
+    <div class="minBox"></div>
+</div>
 <div class="box"></div>
 
 
 <style>
 .box {
     float: left;
-    width: 100px;
-    height: 100px;
+    position: static;
+    width: 200px;
+    height: 200px;
     background: red;
     background-color: green;
     
     border: 10px solid black;
     padding: 10px;
-    box-sizing: border-box;
-}   
+    }   
+
+.minBox {
+    position: fixed;
+    top: 25%;
+    left: 25%;
+
+    width: 100px;
+    height: 100px;
+    background: pink;
+}
 </style>
+
 
