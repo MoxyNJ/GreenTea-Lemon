@@ -2,12 +2,16 @@
 <div class="box">
     <div class="minBox"></div>
 </div>
+<div class="box abs">
+    <div class="abs2"></div>
+</div>
 <div class="box"></div>
+
 
 
 <style>
 .box {
-    float: left;
+    /* display: inline-block; */
     position: static;
     width: 200px;
     height: 200px;
@@ -19,10 +23,27 @@
     }   
 
 .minBox {
-    position: fixed;
+    position: relative;
     top: 25%;
     left: 25%;
 
+    width: 100px;
+    height: 100px;
+    background: pink;
+}
+
+.abs {
+    position: absolute;
+    float:left;
+
+    top: 100px;
+    left: 100px;
+}
+
+.abs2 {
+    position: absolute;
+    top: 25%;
+    left: 25%;
     width: 100px;
     height: 100px;
     background: pink;

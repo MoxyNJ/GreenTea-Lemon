@@ -499,7 +499,7 @@ float盒，不仅会印象它原本所在的正常流中的那一行，还会影
 
 ### 5.3 Block-level Box
 
-display通常有两对值，块级盒行内级两种都有对应关系。
+这里顺带一提，display通常有两对值，块级 / 行内级 两种都有对应关系。
 
 ![image-20201110214259360](/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/Block-level Box.png)
 
@@ -507,7 +507,7 @@ display通常有两对值，块级盒行内级两种都有对应关系。
 
 什么情况，什么类型的盒，会创建一个 BFC？
 
-- floats：浮动盒里面的是一个正常流，浮动盒会创建。
+- floats：浮动盒会创建，浮动盒里面的是一个正常流。
 - absolutely positioned elements：绝对定位的元素，也会创建BFC。
 - block containers：能放BFC的盒子都可以。Block-level Box不可以。
 - block boxes with 'overflow' other than 'visible'：overflow属性值是：hidden、scroll、auto、inherit。
