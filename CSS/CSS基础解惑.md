@@ -4,6 +4,60 @@
 
 层叠上下文： `z-index` 调整元素 z轴前后位置关系。
 
+
+
+## 盒模型
+
+### 外部显示类型
+
+盒模型中，外部显示类型，决定了该盒子是块级盒子，还是内联盒子（block box，inline box）
+
+### 内部显示类型
+
+决定盒子内部是如何布局的。
+
+- 默认：正常流。
+- display: flex。稳步显示类型为block，内部显示类型为 flex。该盒子的所有直接子元素都会成为flex元素，会根据 [弹性盒子（Flexbox](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Flexbox) [）](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Flexbox)规则进行布局。
+- display: grid。同上，内部会变成 grid盒子。
+
+### display
+
+display可以改变盒子的外部显示类型是块级还是内联。也可以改变盒子的内部显示类型。
+
+- `display: inline-block`：介于 内联 块级之前的状态：
+  - 拥有部分 block 的性质：
+    - width、height有效，可以设置盒子内容 content的大小；
+    - padding、margin、border 会推开其他盒子。
+  - 拥有部分 inline 的性质：
+    - 盒子不会换行，多个内联盒子会并排排放；
+  - 问题：
+    - 如果设置了 width 内容宽度，则该盒子内的文本内容，会在盒内换行。不会横向溢出盒子，但文本内容过多，中纵向溢出盒子。
+    - 如果没有设置 width 内容宽度，则该盒子的宽度，会随着文本内容的增多而撑开。但是如果盒子边界达到容器宽度，文本内容会在盒子中换行。
+
+
+
+### 块级盒子（block box）
+
+盒子的外部显示类型：`block`
+
+- 盒子会变得和父容器一样宽；
+- 每个盒子都会换行，纵向排列；
+- width、height有效，可以设置盒子内容 content的大小；
+- padding、margin、border 会推开其他盒子。
+
+### 内联盒子（inline box）
+
+盒子的外部显示类型：`inline`
+
+- 盒子不会换行，多个内联盒子会并排排放；
+- width、height无效，无法设置盒子内容 conte的大小；
+- 垂直方向的 padding、margin、border 会被应用，但是不会把其他 inline的盒子推开；
+- 水平方向的 padding、margin、border 会被应用，会把其他 inline的盒子推开。
+
+### 页面流（page flow）
+
+
+
 ## 0. 格式化上下文
 
 格式化上下文（formatting context）
@@ -51,7 +105,19 @@ Box分为：
 
 <img src="/Users/moxyninja/GreenTea-Lemon/winter Js课程/Week-9&10/source/Block-level Box.png" alt="image-20201110214259360" style="zoom: 33%;" />
 
-### 
+line-box 行盒：文字 / inline-box内联盒排出来的一整行盒，就是 line-box。
+
+最终，纵向上看，排版就是一列列的 line-box 和 block-level-box 组成。所以，块级的叫BFC，行内的叫IFC。
+
+ <img src="/Users/moxyninja/GreenTea-Lemon/CSS/排布.png" alt="image-20201115220544855" style="zoom:33%;" />
+
+
+
+inline-level-box 行内级别的盒
+
+
+
+
 
 以下都不是 Block Container：
 
