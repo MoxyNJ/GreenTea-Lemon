@@ -524,6 +524,11 @@ position来确定元素的定位位置，是依照containing block 包含块决�
     - 连续媒体(continuous media)的情况下：参考是适口viewport；
     - 分页媒体(paged media)下的情况下：参考是分页区域(page area)。
   - 固定定位会脱离正常流。
+- sticky（CSS 3）
+  - 粘性定位。
+  - 是相对定位和固定定位的混合。元素在跨越特定阈值（盒偏移量）前为相对定位，之后为固定定位。
+  - 元素根据正常文档流进行定位，然后相对它的*最近滚动祖先（nearest scrolling ancestor）*和 containing block (最近块级祖先 nearest block-level ancestor)，包括table-related元素。
+  - 基于盒偏移量值进行偏移。
 
 如果引入包含块的概念：
 
@@ -538,7 +543,44 @@ position来确定元素的定位位置，是依照containing block 包含块决�
 > 参考：
 >
 > 1. 视觉格式化模型：https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Visual_formatting_model
-> 2. 
+
+
+
+# 6. 格式化上下文
+
+名词：
+
+- Formatting context：格式化上下文
+- Block formatting context：块级格式化上下文，简称 BFC。
+- Inline formatting context：行内级格式化上下文，简称 IFC。
+- Table formatting context：表格格式化上下文，简称 TFC。
+
+Block-level boxes participate in a BFC.   块级盒子参与 BFC。
+
+Inline-level boxes participate in an IFC.  行内级盒参与 IFC。
+
+
+
+
+
+> 参考
+>
+> 1. MDN：https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Block_formatting_context
+> 2. W3C：https://www.w3.org/TR/CSS22/visuren.html#normal-flow
+
+
+
+
+
+
+
+
+
+> 参考
+>
+> 1. MDN
+> 2. W3C：https://www.w3.org/TR/CSS/#css
+> 3. W3C：https://www.w3.org/TR/CSS22/visuren.html#positioning-scheme
 
 
 
