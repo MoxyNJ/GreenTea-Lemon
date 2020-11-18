@@ -65,6 +65,31 @@ display可以改变盒子的外部显示类型是块级还是内联。也可以�
 - 行内格式化上下文 IFC（inline formatting context）：
 - 块级格式化上下文 BFC（block formatting context）：
 
+- [Block-level boxes](https://www.w3.org/TR/CSS22/visuren.html#block-level) participate in a [block formatting](https://www.w3.org/TR/CSS22/visuren.html#block-formatting) context.
+- [Inline-level boxes](https://www.w3.org/TR/CSS22/visuren.html#inline-level) participate in an [inline formatting](https://www.w3.org/TR/CSS22/visuren.html#inline-formatting) context. 
+- 块级格式化上下文中，包含块级盒子。
+- 行内格式化上下文中，包含内联盒子。
+
+- block container box：包含 block-level boxes 、由 inline-level boxes 建立的 IFC组成。
+- Block-level boxes：在 BFC中的盒子，都是 Block-level boxes。
+  - block-level box: a block-level box is also a block container box unless it is a table box or the principal box of a replaced element.
+- Block-level elements：块级的元素。或者 display的值为 'block', 'list-item', 'table'。个人认为 Block-level elements 可以和 Block-level boxes 含义等同，一个是HTML角度，一个是CSS渲染角度。
+
+Block-level boxes 和 block container boxes 的区别：
+
+- 未替换的 inline blicks + table cells 是 block container boxes，但他们不是 Block-level boxes。
+
+- block boxes：block container boxes。或者说部分 Block-level boxes。
+- winter说的 Block Container 就是文中的 block cintainer boxes
+
+
+
+#### Block formatting contexts
+
+
+
+
+
 
 
 ## BFC 块级格式化上下文
