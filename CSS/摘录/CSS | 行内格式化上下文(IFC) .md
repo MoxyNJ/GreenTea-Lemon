@@ -94,6 +94,3 @@
   示例：
   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190212105952436.png)
 
-# line-height 与 vertical-align
-
-行框高度与垂直居中的具体规则，请参考下一章[ line-height 与 vertical-align](https://blog.csdn.net/qq_36145914/article/details/87103801)
