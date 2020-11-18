@@ -323,18 +323,18 @@ leyout：布局 / 排版。但称之为“排版”更为贴切。
 
 ## 1. 盒
 
-- ~~标签 Tag：源代码。在HTML代码中书写的，都是标签。~~
-- ~~元素 Element：语义。元素：是通过一对起始标签“表示”出来的，人思维的一个概念。~~
-- ~~盒 Box：表现~~
+- 标签 Tag：源代码。在HTML代码中书写的，都是标签。
+- 元素 Element：语义。元素：是通过一对起始标签“表示”出来的，人思维的一个概念。
+- 盒 Box：表现
 
 填空：
 
-1. HTML代码中可以书写开始__标签__，结束__标签__ ，和自封闭__标签__ 。
-2. ~~一对起止__标签__ ，表示一个__元素__ 。~~
-3. DOM树中存储的是__元素__和其它类型的节点（Node）。
-   1. CSS选择器选中的是__元素__，或__伪元素__ 。
-   2. CSS选择器选中的__元素__ ，在排版时可能产生多个__盒__（有一对多的关系） 。
-4. ~~排版和渲染的基本单位是__盒__ 。~~
+	1. HTML代码中可以书写开始__标签__，结束__标签__ ，和自封闭__标签__ 。
+ 	2. 一对起止__标签__ ，表示一个__元素__ 。
+ 	3. DOM树中存储的是__元素__和其它类型的节点（Node）。
+   	4. CSS选择器选中的是__元素__，或__伪元素__ 。
+        	5. CSS选择器选中的__元素__ ，在排版时可能产生多个__盒__（有一对多的关系） 。
+ 	6. 排版和渲染的基本单位是__盒__ 。
 
 - 一个元素不一定只产生一个盒，有可能会产生多个盒：
   - in-line 元素，因为分行会产生多个盒。
@@ -486,10 +486,10 @@ float盒，不仅会印象它原本所在的正常流中的那一行，还会影
 
 - block
 - inline-block
-- table-cells
+- table-cell
 - flex item：flex盒的子项目。
 - grid cell：grid的子项目。
-- table-captions：表格的标题。
+- table-caption：表格的标题。
 
 以下都不是 Block Container：
 
@@ -622,81 +622,6 @@ float盒，不仅会印象它原本所在的正常流中的那一行，还会影
 
 
 
-
-# 1. 基本概念：
-
-## 1.1 盒
-
-1. leyout
-   - 排版。有翻译为布局的，但称之为 'CSS排版' 更为合适。
-2. Tag
-   - 标签。相当于源代码，在HTML的代码中，书写的都是 <标签>。
-3. element
-   - 元素。通过一对标签表示出来的，添加了HTML语义。`<html> </html>` 就是一对标签。
-4. box
-   - 盒。在页面中，所有元素都被渲染成一个或多个矩形盒子。是排版和渲染的基本单位。
-5. CSS Flow Layout
-   - CSS 流式排版。就是'正常流'。
-6. Normal Flow
-   - 正常流。元素在页面中的基本排版规则。
-   - 是CSS中对于元素的排版方式。元素渲染成众多盒子，然后通过流式排版，排版到页面中。
-7. The stacking context
-   - 层叠上下文。通过 z-index修改的，位于z轴视角下的上下文。
-
-## 1.2 盒子类型
-
-
-
-1. inline box
-   - 内联盒子
-   - 内联盒子，是由display属性值为inline的不可替换元素生成的。 
-     - A non-replaced element with a 'display' value of 'inline' generates an inline box.
-   - inline box 不是 inline-level box。
-     - 比如：replaced inline-level elements, inline-block elements,  inline-table elements 等，都不是 inline box，但他们属于 Inline-level box。
-     - 可替代的内联级元素，内联块级元素，内联表格元素
-
-
-
-1. outer display types 
-   - 外部显示类型。（涉及到 display属性）
-   - 元素的外部显示类型，决定该元素在流式排版中的表现：是当作 block element, 还是 inline element 处理。
-2. inner display types
-   - 内部显示类型。（涉及到 display属性）
-   - 元素的内部显示类型，可以改变其子元素的排版规则（例如：flow，grid，flex）。
-
-
-
-## 1.3 格式化上下文
-
-1. formatting context
-   - 格式化上下文。当元素在页面上水平或垂直排布时，元素之间互相影响 / 排布需要一套规则。CSS有多种处理规则，其中一套叫 formatting context。
-   - formatting context 包含有：Inline formatting contexts 和 Block formatting contexts
-2. Inline formatting contexts
-   - 行级格式化上下文
-3. Block formatting contexts
-   - 块级格式化上下文
-
-
-
-https://developer.cdn.mozilla.net/zh-CN/docs/Web/Guide/CSS/Understanding_z_index/The_stacking_context
-
-https://developer.mozilla.org/zh-CN/docs/Web/CSS/display
-
-https://developer.mozilla.org/zh-CN/docs/Web/CSS/All_About_The_Containing_Block
-
-https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Block_formatting_context
-
-https://www.w3.org/TR/CSS22/visuren.html#block-boxes
-
-https://www.w3.org/TR/CSS/#css
-
-https://www.jianshu.com/p/66632298e355
-
-https://blog.csdn.net/qq_36145914/article/details/86613007
-
-http://81.69.57.175/CsdnArticle/Show?cdkey=b04f9c3339fa4226a7d9eeccf6749430tb&url=https://blog.csdn.net/qq_36145914/article/details/86613007#_211
-
-http://www.ayqy.net/doc/css2-1/cover.html#minitoc
 
 
 
