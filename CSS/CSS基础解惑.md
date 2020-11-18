@@ -17,7 +17,7 @@
 决定盒子内部是如何布局的。
 
 - 默认：正常流。
-- display: flex。稳步显示类型为block，内部显示类型为 flex。该盒子的所有直接子元素都会成为flex元素，会根据 [弹性盒子（Flexbox](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Flexbox) [）](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Flexbox)规则进行布局。
+- display: flex。稳步显示类型为block，内部显示类型为 flex。该盒子的所有直接子元素都会成为flex元素，会根据 弹性盒子（Flexbox）规则进行布局。
 - display: grid。同上，内部会变成 grid盒子。
 
 ### display
@@ -35,26 +35,6 @@ display可以改变盒子的外部显示类型是块级还是内联。也可以�
     - 如果没有设置 width 内容宽度，则该盒子的宽度，会随着文本内容的增多而撑开。但是如果盒子边界达到容器宽度，文本内容会在盒子中换行。
 
 
-
-### 块级盒子（block box）
-
-盒子的外部显示类型：`block`
-
-- 盒子会变得和父容器一样宽；
-- 每个盒子都会换行，纵向排列；
-- width、height有效，可以设置盒子内容 content的大小；
-- padding、margin、border 会推开其他盒子。
-
-### 内联盒子（inline box）
-
-盒子的外部显示类型：`inline`
-
-- 盒子不会换行，多个内联盒子会并排排放；
-- width、height无效，无法设置盒子内容 conte的大小；
-- 垂直方向的 padding、margin、border 会被应用，但是不会把其他 inline的盒子推开；
-- 水平方向的 padding、margin、border 会被应用，会把其他 inline的盒子推开。
-
-### 页面流（page flow）
 
 
 
@@ -170,29 +150,6 @@ BFC的表现：
 
 
 
-
-## containing block 包含块
-
-大多数情况下，包含块就是这个元素最近的祖先[块级元素](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Block-level_elements)的[Content](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Box_Model/Introduction_to_the_CSS_box_model#content-area)，少数情况下不是这样。
-
-### 如何确定一个元素的 Containing Block 包含块，由position属性确定：
-
-- 
-
-### 包含块的作用
-
-元素的尺寸和位置，受包含块的影响。以下属性，在设置属性值为**百分比**时，该计算值结果，就是通过元素的包含块计算得来：
-
-- 元素的尺寸：width、height、padding、margin
-- 元素的位置：绝对定位（position：absolute、fixed）元素的偏移值属性（top、left、bottom、right）。
-
-### 包含块的确定：
-
-确定一个元素的包含块的过程完全依赖于这个元素的 [`position`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/position) 属性：
-
-- static / relative：父元素的内容框 content。或者有可能建立一个新的格式化上下文。
-- absolute：一层层的父元素中，是非 static 的元素( fixed, absolute, relative, sticky)。
-- fixed：根元素（html / body）
 
 
 

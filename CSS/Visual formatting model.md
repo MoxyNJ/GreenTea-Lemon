@@ -32,13 +32,62 @@
    - 元素。通过一对标签表示出来的，添加了HTML语义。`<html> </html>` 就是一对标签。
 4. box
    - 盒。在页面中，所有元素都被渲染成一个或多个矩形盒子。是排版和渲染的基本单位。
-5. CSS Flow Layout
-   - CSS 流式排版。就是'正常流'。
-6. Normal Flow
-   - 正常流。元素在页面中的基本排版规则。
-   - 是CSS中对于元素的排版方式。元素渲染成众多盒子，然后通过流式排版，排版到页面中。
-7. The stacking context
-   - 层叠上下文。通过 z-index修改的，位于z轴视角下的上下文。
+
+###  1.1.2 flow
+
+flow 流，是页面排版的基本规则。
+
+基本的定位方案有
+
+1. normal flow： 正常流。格式化上下文的方式排版内容（块级、行内级）。
+2. flow：浮动。当一个元素被定位浮动时，它会先按照正常流来摆放，然后向该行的左/右浮动。
+3. absolute：广义的绝对定位（absolute + fixed），当一个元素被绝对定位时，会脱离正常流。
+
+**in flow**：流内。处在当前正常流中的元素，被称之为流内。
+
+**out of flow**：流外。脱离当前正常流中的元素，被称之为流外。
+
+1. 当一个元素的定位方案是浮动、绝对定位、根元素，那它在当前正常流（标准文档流）之外，此时该元素可视为流外元素。
+   1. 根元素（`<HTML>`元素），是一个最大的流外元素。在通常情况下，标准文档流的概念，被定义为`<html>`元素下的正常流。“脱离标准文档流”就是脱离了根元素下的正常流。
+
+2. 注意：这个流外、流内是相对而言的。如果A元素处在正常流区域X中。以区域X为参考环境下，A元素是流内元素；以区域Y为参考环境下，A元素是流外元素。
+
+3. 每一个流外元素都会产生新的流。
+
+4. 如果A元素的正常流中，有流外元素B，则B元素被当成流外元素，B元素正常流下的内容已不属于A元素的流。
+
+
+
+### 1.1.3 定位
+
+**CSS Flow Layout**
+
+- CSS 流式排版。就是'正常流'。
+
+**Normal Flow**
+
+- 正常流。元素在页面中的基本排版规则。
+- 是CSS中对于元素的排版方式。元素渲染成众多盒子，然后通过流式排版，排版到页面中。
+- 当一个盒子，不浮动(float: none)，不是绝对定位(position: static / relative) 时，排版为正常流。
+  - 在正常流的块级格式化上下文中，盒子会垂直依次排列；
+  - 在正常流的行内级格式化上下文中，盒子会水平依次排列。
+
+**float**
+
+- 浮动。在浮动定位中，浮动盒子会浮动到当前行的开始或尾部位置。
+- 当一个盒子，浮动(float: left / right)，不是绝对定位(position: static / relative)时，为浮动定位。此时所在行的行盒(inline box)，会自动伸小，以“让开”浮动盒子的位置。
+
+**absolute**
+
+- 泛指：绝对定位。
+- 在绝对定位中，盒子会完全从当前流中移除，并且不会再与其有任何联系（译注：此处仅指定位和位置计算，而绝对定位的元素在文档树中仍然与其他元素有父子或兄弟等关系），其位置会使用 top、bottom、left 和 right 相对其<u>包含块</u>（后文有解释）进行计算。
+- 绝对定位是一个泛指，其实细分下来，有两个定位方式：
+  - position: absolute，绝对定位。是相对于直系父元素（非 static的元素）来定位，把这个父元素当成包含块。
+  - position: fixed，固定定位。是相对于<u>视口</u>的定位方式，也就是说该元素的包含块是<u>视口</u>大小。
+
+**The stacking context**
+
+- 层叠上下文。通过 z-index修改的，位于z轴视角下的上下文。
 
 **viewport** 
 
@@ -46,7 +95,7 @@
 - 浏览器会通过视口将页面内容呈现给用户。换句话说，视口通常可以理解为浏览器窗口大小（或可视区域）。
 - 视口会涉及到 <u>intial containing block 初始包含块</u> 相关概念。
 
-**convas**
+**jconvas**
 
 - 画布
 - 画布是文档最终呈现的页面（比如，一个word文档的实际页面大小就是 convas，显示屏的大小就是 viewprot）
@@ -54,7 +103,7 @@
 
 **containing block**
 
-- 包含块。
+- 包含块（后文会有一节详解）。
 - 针对 position属性而来的。浏览器通过position属性，来确定应当基于什么参照物（包含块），决定该元素生成盒的位置。
 - 元素的 position 值是 'relative' or 'static'：包含块是最近的 block container box 的边界。
 - 元素的 position 值是 'fixed'：包含块是初始包含块，即适口大小。
@@ -93,8 +142,8 @@
 - principal box  主体盒
 - principal block-level box 主体块级盒
 - principal inline-level box 主体内联级盒
-- replaced element  可替换的元素
-- non-replaced element  不可替换的元素
+- replaced element  替换元素
+- non-replaced element  不可替换元素
 
 ## 2.2 盒的生成
 
@@ -108,7 +157,7 @@
 
 ## 2.3 Block & Inline
 
-盒的生成，从大的范围来讲，有两大类盒子： 块（bloc  k），内联（inline）。
+盒的生成，从大的范围来讲，有两大类盒子： 块（block），内联（inline）。
 
 上文提到过：浏览器根据某元素的'display'属性，生成主体盒（principal box），划分了块和内联的概念，这里就可以进行进一步分析，后面会具体解释：
 
@@ -171,7 +220,7 @@
 
 **判断：什么类型的盒子，是 block container box？**
 
-- 'display' 的值是以下参数时，该元素均是 block container（必须是 non-relpaced element 可替换元素）：
+- 'display' 的值是以下参数时，该元素均是 block container（必须是 non-relpaced element 不可替换元素）：
   - block：块
   - inline-block：内联块
   - list-item：列表
@@ -184,13 +233,13 @@
   - flex：这里面要存放 flex子项，不能放正常流。
   - grid：同上
   - ...
-- 元素类型是 replace element，即可替换元素，均不是 block container box。replaced element 其内容不归 CSS 渲染，最后是要被其他内容物替换的，该元素本身就是一个空元素，没有内容。所以自然不是一个可以放块级盒子的'容器'。 可替换元素不是'容器'。
+- 元素类型是 replace element，即替换元素，均不是 block container box。replaced element 其内容不归 CSS 渲染，最后是要被其他内容物替换的，该元素本身就是一个空元素，没有内容。所以自然不是一个可以放块级盒子的'容器'。 替换元素不是'容器'。
 
 ### 2.3.4 Block box
 
 既满足了（block-level box）的要求，又满足了（block container）的要求的盒子，是块盒（block box）。
 
-<img src="/Users/moxyninja/GreenTea-Lemon/CSS/摘录/Source1/image-20201117221955368.png" alt="image-20201117221955368"  />
+<img src="/Users/moxyninja/GreenTea-Lemon/CSS/摘录/Source1/image-20201118100112004.png" alt="image-20201118100112004" style="zoom:67%;" />
 
 - 块级盒 block-level box：描述了元素与其父元素和兄弟元素之间的行为。
 - 块容器盒 block container box：描述了元素跟其后代之间的行为。
@@ -220,7 +269,7 @@
 
 引申：**Anonymous inline box**
 
-匿名行内盒
+**匿名行内盒**
 
 如果一个块容器盒（block container box）：里面没有块级盒（block-level box），但是里面有行内盒（inline box），那么这个快容器盒中的其他元素（只剩text文本元素了），就会都被强制渲染为行内级盒子（  text 生成了一个匿名行内盒）。
 
@@ -228,7 +277,7 @@
 <p>Some <em>emphasized</em> text.</p>
 ```
 
-总结：
+**总结**
 
 匿名盒子（Anonymous box）分为：Anonymous block box 和 Anonymous inline box。
 
@@ -239,12 +288,25 @@
 ### 2.3.6 Q & A
 
 1. 关于 block-level box 和 block container box：
-   - 这两个盒子不是不是互斥的，即这两个盒子是有交集的。这个交集就是 block box。
-
+   
+- 这两个盒子不是不是互斥的，即这两个盒子是有交集的。这个交集就是 block box。
+   
 2. 什么情况下，一个 block-level box，不是 block container box：
    - 这个问题换句话说：一个块级盒子，在什么情况下，它不能包含其他块级。
-   - 答：如果这个盒子是可替换元素时，不能作为 block container box，不能作为'容器'。
-   - 原因：replaced element 其内容不归 CSS 渲染，最后是要被其他内容物替换的。所以自然不是一个可以放块级盒子的'容器'。 可替换元素不是'容器'。
+   - 答：如果这个盒子是替换元素时，不能作为 block container box，不能作为'容器'。
+   - 原因：replaced element 其内容不归 CSS 渲染，最后是要被其他内容物替换的。所以自然不是一个可以放块级盒子的'容器'。 替换元素不是'容器'。
+   
+3. 举例：阐明 block box、block-level box 和 anonymous block-level box 的关系（MDN）
+
+   - 'div' 和 'p' 元素，都是默认的 display = 'block'。
+
+   ```html
+   <div>Some inline text <p>followed by a paragraph</p> followed by more inline text.</div>
+   ```
+
+   ![=anonymous_block-level_boxes](/Users/moxyninja/GreenTea-Lemon/CSS/摘录/Source1/=anonymous_block-level_boxes.png)
+
+   - CSS无法获取两个匿名块级盒所在的元素，所以这两个的样式，是通过继承 'div'而来。如果没有为他们指定 'background-color'，他们就具有默认的**透明背景**。
 
 ## 2.4 Inline 系列
 
@@ -263,51 +325,224 @@
 - 从来源上：行内级盒是由行内级元素生成而来的盒子；
 - 从结果上：行内级是参与行内级格式化上下文（inline formatting context）的盒子。
 
-**atomic inline-level box**
-
-原子行内级盒：是行内级盒子的子集。它不参与行内级格式化上下文。因为原子行内级盒的内容不会被拆分成多行显示。
-
 ### 2.4.3 Inline box
 
 行内盒
 
-行内盒是行内级盒子中，那些不可替换元素(non-replaced element) 生成的。这一点和
+行内盒是行内级盒子中，由不可替换元素(non-replaced element) 生成的，且 dislpay 值是 'inline'的盒子。它参与行内格式化上下文。是 Inline-level box 的一个子集。
 
+以下生成的盒子，是 Inline-level box，但不是 Inline box，他们都是 atomic inline-level box：
 
+- 替换的内联级元素（replaced inline-level elements）
+- 内联块元素（inline-block element）
+- 内联表格元素（inline-table element）
 
+所以，Inline box 和 atomic inline-level box 是互斥的。
 
+**atomic inline-level box**
 
+原子行内级盒：是行内级盒子的子集。它不参与行内级格式化上下文。因为原子行内级盒的内容不会被拆分成多行显示。原子行内级盒是Inline-level box中，替换元素组成的。也就是说，行内级盒是原子行内级盒的超集，行内盒和原子行内级盒互斥。
 
+在 Inline box 中提到的三点，都是 atomic inline-level box。
 
+**问题：**既然 inline-level box 和 inline box 都表示 参与行内级格式化上下文的行内级盒子，为什么要区分出两个概念？
 
+- 两者区别：
+  - inline-level box 是站在这个盒子自身的角度，判断这个盒子是不是可以参与行内级格式化上下文。
+  - inline box 是站在盒子后代的角度，判断这个盒子的后代可否参与行内级格式化上下文，类似 'block container box' 是 '容器' 的这个思路，inline box也是一个行内级的'容器'，它可以把一个 IFC 放在其中（inline-level box 和 text）。
+  - 从这个角度来讲： inline-block element 属性创建的盒子，就属于 inline-level box 因为他可以参与行内格式化上下文；而它不属于 inline box 因为它的后代不可以是行内级的。
 
+- 参与格式化上下文的 inline-level element 是 inline-level box。
+- 不参与格式化上下文的 inline-level element 是 atomic inline-level box。
 
+<img src="/Users/moxyninja/GreenTea-Lemon/CSS/摘录/Source1/image-20201118145932903.png" alt="image-20201118145932903" style="zoom:67%;" />
 
-### non-replaced element
+> ### 9.2.2 Inline-level elements and inline boxes
+>
+> **Inline-level elements** are those elements of the source document that do not form new blocks of content; the content is distributed in lines (e.g., emphasized pieces of text within a paragraph, inline images, etc.). The following values of the ['display'](https://www.w3.org/TR/CSS22/visuren.html#propdef-display) property make an element inline-level: 'inline', 'inline-table', and 'inline-block'. Inline-level elements generate **inline-level boxes**, which are boxes that participate in an inline formatting context.
+>
+> An **inline box** is one that is both inline-level and whose contents participate in its containing inline formatting context. A non-replaced element with a 'display' value of 'inline' generates an inline box. Inline-level boxes that are not inline boxes (such as replaced inline-level elements, inline-block elements, and inline-table elements) are called atomic inline-level boxes because they participate in their inline formatting context as a single opaque box.
+>
+> https://www.w3.org/TR/CSS22/visuren.html#box-gen
+
+<img src="/Users/moxyninja/GreenTea-Lemon/CSS/摘录/Source1/image-20201118152123045.png" alt="image-20201118152123045" style="zoom:67%;" />
+
+# 3. 元素的替换性
+
+## 3.1 non-replaced element
 
 不可替换元素。
 
 可以理解为正常的元素。绝大多数元素都是不可替换的：元素的内容通过CSS渲染，然后在网页中展示，而不是被替换成其他内容。
 
-### replaced element
+## 3.2 replaced element
 
-可替换元素。
+替换元素。
 
 在CSS中，有些元素的展现效果不是由 CSS 来控制，它们是外部对象。通过浏览器识别元素类型，来替换该元素内容，而不是通过 CSS 来渲染。换句话说，该元素原本是一个空元素，没有内容。浏览器根据标签含义，替换成一个相应内容。
 
-进一步解释，CSS 只可以调整可替换元素的位置，而不能修改元素内容的样式。
+进一步解释，CSS 只可以调整替换元素的位置，而不能修改元素内容的样式。
 
-- 典型的可替换元素有：
+- 典型的替换元素有：
   - `<iframe>`
   - `<video>`
   - `<embed>`
   - `<img>`
-- 特定情况下，是可替换元素的有：
+- 特定情况下，是替换元素的有：
   - `<option>`
   - `<audio>`
   - `<canvas>`
-  - `<object>`
+  - `<object> `
   - `<applet>`
+
+## 3.3 Intrinsic dimensions
+
+固有尺寸。所有替换元素，都是具有固定尺寸的，即该元素的宽高由其自身标签类型定义，不受周围元素影响。
+
+通常情况下，行内元素（Inline-level element）是无法设置width height 属性的，但是替换行内级元素（replaced inline-level element)，是可以修改 width height 属性。如果不做修改，其默认值是元素的固有尺寸。
+
+- 比如：display属性值为 'inline'的 `<img>` 可以设置宽高，但是`<span>`不可以设置宽高。
+
+# 4. containing block
+
+包含块。
+
+## 4.1 定义
+
+定义一个'包含块'概念的目的：确定一个元素的尺寸和位置，有时候会需要一个参照物，而这个参照物是就是它的包含块。
+
+## 4.2 确定包含块
+
+确定一个元素的包含块的过程完全依赖于这个元素自身的`position`属性（与position知识重合）：
+
+- 'static', 'relative', 'sticky'(CSS 3)：包含块是该元素的直系祖先块元素的内容区的边缘组成。
+  - 直系祖先块元素（inline-block, block, list-item elements）
+  - 内容区（盒的 content）
+- 'absolute'：包含块是由它的直系的、非`static`的祖先元素的内边距区的边缘组成。
+  - 非'static'的祖先元素（position: fixed, absolute, relative, sticky）
+  - 内边距区（padding）
+- 'fixed'：通常情况直接理解为是视口，下面是详细情况。
+  - 连续媒体(continuous media)的情况下：包含块是适口viewport；
+  - 分页媒体(paged media)下的情况下：包含块是分页区域(page area)。
+- （太细了先不管）'absolute', 'fixed'：如果满足以下条件，会是直系父元素的内边距区的边缘组成。
+  -  `transform` 或 `perspective` 的值不是 `none`
+  -  `will-change`的值是 `transform` 或 `perspective`
+  -  `filter`的值不是 `none` 或 `will-change` 的值是 `filter`(只在 Firefox 下生效).
+  -  `contain` 的值是 `paint` (例如: `contain: paint;`)
+
+ ## 4.3 包含块参与计算
+
+宽度：如果某元素的 width, left, right, padding, margin 属性，赋值为百分比值，那么这个数值是通过它的包含块的 width 属性值来计算。
+
+高度：如果某元素的 height, top, bottom 属性，赋值为百分比值，那么这个数值是通过：
+
+- 当它的包含块 height 值确定，则通过它的包含块的 height 属性值计算。
+- 当它的包含块的 height 值会根据自身内容变化，而且包含块的 `position` 属性的值被赋予 `relative` 或 `static`。那么这个数值是 'auto'。
+
+> 参考：https://developer.mozilla.org/zh-CN/docs/Web/CSS/All_About_The_Containing_Block
+
+# 4. display 属性 ｜ CSS 2.2
+
+## 4.1 作用
+
+`display` 属性可以设置元素的内部和外部显示类型 **display types**。
+
+### 4.1.1 outer display types
+
+外部显示类型，决定了该元素处在正常流中的表现：是块级元素，还是内联级元素。
+
+### 4.1.2 inner display types
+
+内部显示类型，决定该元素的后代元素排版 / 布局方式：flow layout、grid、flex。
+
+- display: static。默认：正常流 flow layout。
+- display: flex。外部显示类型为block，内部显示类型为 flex。
+  - 该盒子的所有直接子元素都会成为flex元素，会根据 弹性盒子（Flexbox）规则进行布局。
+- display: grid。同上，内部会变成 grid盒子。
+
+## 4.2 取值
+
+display属性，可以改变该元素的显示类型，可取值如下（只列出较为通用的取值）
+
+- block
+
+  - 元素变成：块级元素 block-level element
+
+- inline
+
+  - 元素变成：行内级元素 inline-level element
+
+- inline-block
+
+  - 元素变成：行内块级元素 inline-block element
+  - 性质：内部显示类型为块级元素 block-level element，外部显示类型为行内级元素 inline-level element。
+  - 元素创建为盒子后：原子行内级盒 atomic inline-level box
+
+- list-item
+
+  - 元素变成：特殊的块级元素 block-level element
+
+  - 元素创建为盒子后：一个主块盒 + 一个标记盒。
+
+- none
+
+  - 会将元素从 可访问性树 *accessibility tree* 中移除，导致该元素及其所有子代元素不再被屏幕阅读技术 *screen reading technology* 访问。换句话说，它不仅仅是视觉隐藏，连屏幕阅读也无法读取了。
+  - 该元素不在格式化结构（formatting structure）中出现，即在视觉媒体中，元素和它的后代，均不会生成盒也不会影响排版。
+
+- flex 相关， grid相关，是 CSS3以后的属性值，在此不列出。
+
+> 参考：https://developer.mozilla.org/zh-CN/docs/Web/CSS/display
+
+
+
+# 5. position 属性 ｜ CSS 2.2
+
+## 5.1 定义
+
+CSS **`position`**属性用于指定一个元素在文档中的定位方式。通过 position确定定位方式，通过 top, right, bottom, left 属性确定偏移量。
+
+偏移量的计算，是依照包含块，或自身原本位置为原始参考位置，然后盒偏移量（top, right, bottom, left 属性）参与计算得出。
+
+position来确定元素的定位位置，是依照containing block 包含块决定的。
+
+## 5.2 取值
+
+- static
+  - 默认定位。
+  - 元素按照正常流的方式排版，此时盒偏移量（top, right, bottom, left 属性）无效。
+- relative
+  - 相对定位。
+  - 元素的位置会先按照正常流方式排版，然后相对其在常规流中的位置进行偏移。
+  - 相对定位的盒子并不脱离正常流，它仍在常规流中保持占位。
+- absolute
+  - 绝对定位。
+  - 按照相对于直系非static定位的父元素为参考，通过盒偏移量来确定位置。
+  - 绝对定位会脱离正常流。
+- fixed
+  - 固定定位。
+  - 通常情况直接理解为相对于适口参考，通过盒偏移量来确定位置，下面是详细情况。
+    - 连续媒体(continuous media)的情况下：参考是适口viewport；
+    - 分页媒体(paged media)下的情况下：参考是分页区域(page area)。
+  - 固定定位会脱离正常流。
+
+如果引入包含块的概念：
+
+- static：默认，按照正常流方式排版。
+- relative：相对定位，先按照正常流方式排版，然后按照 包含块为基、盒偏移量为距离进行定位。
+- absolute：绝对定位，先脱离正常流， 然后按照 包含块为基、盒偏移量为距离进行定位。
+- fixed：固定定位，先脱离正常流，然后按照 包含块为基、盒偏移量为距离进行定位。
+  - 绝大多数情况下， fixed的包含块是视口。
+
+
+
+> 参考：
+>
+> 1. 视觉格式化模型：https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Visual_formatting_model
+> 2. 
+
+
+
+
 
 
 
