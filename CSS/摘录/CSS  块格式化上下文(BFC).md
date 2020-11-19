@@ -90,4 +90,4 @@ BFC即Block Formatting Content “块级格式化上下文”
 2. 不过，若last盒建立了一个新BFC，则last盒的布局会考虑浮动前盒。
    如下图所示：
    我们通过修改overflow属性使得后盒建立了新的BFC，因为考虑浮动的前盒，其并没有覆盖在浮动盒上，其宽度因浮动盒占据空间而变窄。
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190211170323210.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM2MTQ1OTE0,size_16,color_FFFFFF,t_70)
+   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190211170323210.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM2MTQ1OTE0,size_16,color_FFFFFF,t_70) 
