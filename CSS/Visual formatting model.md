@@ -290,7 +290,7 @@ flow 流，是页面排版的基本规则。
 1. 关于 block-level box 和 block container box：
    
 - 这两个盒子不是不是互斥的，即这两个盒子是有交集的。这个交集就是 block box。
-   
+  
 2. 什么情况下，一个 block-level box，不是 block container box：
    - 这个问题换句话说：一个块级盒子，在什么情况下，它不能包含其他块级。
    - 答：如果这个盒子是替换元素时，不能作为 block container box，不能作为'容器'。
@@ -587,4 +587,6 @@ Inline-level boxes participate in an IFC.  行内级盒参与 IFC。
 
 
 
+
+ 
 
