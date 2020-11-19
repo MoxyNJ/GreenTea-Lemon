@@ -74,8 +74,18 @@ flow 流，是页面排版的基本规则。
 
 **float**
 
-- 浮动。在浮动定位中，浮动盒子会浮动到当前行的开始或尾部位置。
+- 浮动。在浮动定位中，浮动盒子会浮动到**当前行**的开始或尾部位置。
 - 当一个盒子，浮动(float: left / right)，不是绝对定位(position: static / relative)时，为浮动定位。此时所在行的行盒(inline box)，会自动伸小，以“让开”浮动盒子的位置。
+
+**clear**
+
+- 指定一个元素是否必须移动(清除浮动后)到在它之前的浮动元素下面。适用于浮动和非浮动元素。
+  - 针对 float 元素：可以让该 float元素不是按照**平移**的方式排到其他浮动元素后，而是另起一行，拍到第一个。
+  - 针对 非float 元素：可以让该元素的文本 / 内联元素，不是环绕 float元素。而是将该元素的边框边界，全部移到 float元素的下方。同时会发生外边距折叠。
+
+- none：不清除浮动
+- left：清除左浮动，向下移动。
+- both：左右浮动全部清除，向下移动。 
 
 **absolute**
 
@@ -443,6 +453,10 @@ flow 流，是页面排版的基本规则。
 
 # 4. display 属性 ｜ CSS 2.2
 
+display 属性，通常有两对值，块级 / 行内级 两种都有对应关系。
+
+<img src="/Users/moxyninja/GreenTea-Lemon/CSS/摘录/Source1/Block-level Box.png" alt="image-20201110214259360" style="zoom: 33%;" />
+
 ## 4.1 作用
 
 `display` 属性可以设置元素的内部和外部显示类型 **display types**。
@@ -559,9 +573,48 @@ Block-level boxes participate in a BFC.   块级盒子参与 BFC。
 
 Inline-level boxes participate in an IFC.  行内级盒参与 IFC。
 
+## 6.1 Block formatting context
+
+块级格式化上下文，简称 BFC。
+
+BF的概念，包括了它的元素内部的所有内容。BFC简单来讲，就是一套排版 / 渲染规则，它规定了块级元素的渲染方式：即所有块级元素，应当按照垂直方向依次排版。
 
 
 
+BFC 对 float 的影响：
+
+- 浮动定位和清除浮动时只会应用于同一个BFC内的元素。浮动不会影响其它BFC中元素的布局，而清除浮动只能清除同一BFC中在它前面的元素的浮动。
+
+BFC 对 外边距折叠的影响：
+
+- 外边距折叠（[Margin collapsing](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing)）只会发生在属于同一BFC的块级元素之间。
+
+### 6.1.1 BFC的生成条件：
+
+- floats：float元素，因为浮动元素是内部，是一个正常流。
+- absolutely positioned elements。绝对定位、固定定位的元素，position：fixed、absolute。
+- block cintainers box：能放BFC的盒子。
+  - 
+- overflow属性不是visible的元素（hidden，scroll，auto，inherit）。
+  - overflow属性，是当内容移除元素边框时的处理方式。
+
+具体有
+
+
+
+参考文献：
+
+https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Block_formatting_context
+
+CSS | 块格式化上下文(BFC)
+
+重学CSS
+
+CSS | 行内格式化上下文(IFC)
+
+
+
+正点原子：https://www.bilibili.com/video/BV1Rx411R75t?p=6
 
 > 参考
 >
