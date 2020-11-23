@@ -1,0 +1,37 @@
+<html>
+
+<head>
+    <style>
+        .blue,
+        .red-inner {
+            height: 100px;
+            width: 100px;
+            margin: 20px 0;
+        }
+        .red-inner {
+            border: 1px solid black;
+        }
+        .blue {
+            background: blue;
+        }
+
+        .red-outer {
+            /* overflow: hidden; */
+            background: red;
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="blue"></div>
+    <div class="blue"></div>
+    <div class="red-outer">
+        <div class="red-inner">red inner</div>
+    </div>
+    <div class="blue"></div>
+    <div class="blue"></div>
+    <div class="blue"></div>
+</body>
+
+</html>
