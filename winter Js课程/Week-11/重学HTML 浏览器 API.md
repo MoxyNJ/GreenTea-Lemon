@@ -459,7 +459,14 @@ doucment.styleSheet[0].removeRule(0)
 
 
 
+举例：改变伪元素的颜色。
 
+- 伪元素是无法通过 DOM API访问的，最开始的举例中，红色的 Hello就是一个伪元素，必须通过 CSSOM来改变：
+
+```jsx
+document.styleSheets[0].cssRules[0].style.color = "lightgreen";
+// 颜色就会改为亮绿色。
+```
 
 
 
