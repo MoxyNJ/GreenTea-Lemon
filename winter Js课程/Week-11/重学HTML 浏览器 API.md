@@ -431,7 +431,7 @@ document.styleSheet[0].insertRule("p {color:pink;}", 0)
 doucment.styleSheet[0].removeRule(0)    
 ```
 
-#### 4.2.1 回顾：Rule的分类
+#### 4.2.1 回顾：Rule 的分类
 
 - CSSStyleRule（普通 rule）
 
@@ -459,7 +459,7 @@ doucment.styleSheet[0].removeRule(0)
 
 
 
-举例：改变伪元素的颜色。
+**举例**：改变元素的颜色。
 
 - 伪元素是无法通过 DOM API访问的，最开始的举例中，红色的 Hello就是一个伪元素，必须通过 CSSOM来改变：
 
@@ -467,6 +467,103 @@ doucment.styleSheet[0].removeRule(0)
 document.styleSheets[0].cssRules[0].style.color = "lightgreen";
 // 颜色就会改为亮绿色。
 ```
+
+
+
+### 4.3 getComputedStyle
+
+ComputedStyle是无法通过 DOM API 获取的。这是在 浏览器对CSS做了计算之后，最终显示的样式。通过  getComputedStyle就可以获取。也可以获取伪元素。
+
+- window.getComputedStyle(elt, pseudoElt);
+  - elt 想要获取的元素
+  - pseudoElt 可选，伪元素
+
+```jsx
+// 键入：
+getComputedStyle(document.querySelector("a"))
+// 获取了所有对 a 元素应用的属性(计算出来的属性)
+CSSStyleDeclaration { ... ... }
+
+// 键入：
+getComputedStyle(document.querySelector("a"),"::before")
+// 获取了所有对 a 元素的伪类应用的属性(计算出来的属性)
+CSSStyleDeclaration { ... ... }
+
+// 键入：
+getComputedStyle(document.querySelector("a"),"::before").color
+// 返回之前设置的 a::before 的颜色，是lightgreen。
+"rgb(144, 238, 144)"
+```
+
+
+
+# 5. CSSOM View ｜ 浏览器 API
+
+CSSOM View 与浏览器最终画在页面到视图相关。
+
+浏览器在完成了 layout排版、Range修改之后，渲染出来的CSS图形，也会加入一些其他属性。利用 CSSOM View 可以获取到最终的视图信息。
+
+### 5.1 window API
+
+- window.innerHeight, window.innerWidth
+  - ViewPort。HTML 内容，实际上渲染所用的区域。宽度和高度。
+- window.outerWidth, window.outerHeight
+  - 是浏览器窗口总共所占的尺寸。包含了浏览器自带的工具栏、inspector占的空间，用处不大。
+- window.devicePixelRatio
+  - DPR。屏幕上的物理像素，和CSS代码中的逻辑像素px之间比值。正常是 1:1，Retina屏上是1:2，有些安卓机是1:3。
+- window.screen 不常用。
+  - window.screen.width
+  - window.screen.height
+    - 实际上屏幕的宽和高，包括了刘海屏的内容。
+  - window.screen.availWidth
+  - window.screen.availHeight
+    - 程序可以使用的宽和高，不是浏览器可以使用的。有些刘海平安卓机，顶端的屏幕是不允许程序使用的。
+
+
+
+总结：常用的API
+
+```jsx
+window.innerHeight
+window.innerWidth
+window.devicePixelRatio
+```
+
+
+
+### 5.2 window API
+
+当需要开一个新的浏览器窗口时，使用的API。
+
+- window.open("about:blank", "_blank","width=100,height=100.left=100,right=100" )
+- moveTo(x, y)
+- moveBy(x, y)
+- resizeTo(x, y)
+- resizeBy(x, y)
+  - move 改变位置
+  - resize 改变尺寸
+
+**举例：**定义三个按钮🔘
+
+- open window：打开一个100x100px的窗口
+- resize：增加窗口尺寸
+- move：移动窗口位置
+
+```html
+<button id="open" onclick="window.w = window.open('about:blank', '_blank' ,'width=100,height=100,left=100,right=100')">open window</button>
+<button onclick="w.resizeBy(30, 30)">resize</button>
+<button onclick="w.moveBy(30, 30)">move</button>
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
