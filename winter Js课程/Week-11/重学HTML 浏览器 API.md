@@ -557,6 +557,210 @@ window.devicePixelRatio
 
 
 
+### 5.3 scroll API
+
+在有滚动条的时候，这些API会生效。
+
+- scrollTop
+- scrollLeft
+  - top、left：获取当前滚动到的位置。
+- scrollWidth
+- scrollHeight
+  - width、height：获取可滚动内容的最大宽度和高度。
+- scroll(x, y)            
+  - 令画面滚动到特定的位置，别名“scrollTo”
+- scrollBy(x, y)
+  - 滚动一个差值？
+- scrollIntoView()
+  - 强制滚动到屏幕的可见区域
+
+
+
+Window：由于历史原因，相同类型的功能：scrollX 和 scrollY 明明不同，不是 top、left注意区分。
+
+- scrollX
+- scrollY
+- scroll(x, y)
+- scrollBy(x, y)
+
+
+
+### 5.4 layout API
+
+- getClientRects()
+  - 在 element 上，可以用该方法，获取它所生成的 boxes 的具体尺寸和位置。
+- getBoundingClientRect()
+  - 如果不想获得多个盒，只是想要一个整体，包含了该 element 生成的全部内容，可以用此方法在 element上，用该方法，获取它所生成的 boxes 包含的区域，是一个整体。
+
+```html
+<style>
+    .x::before {
+        content:"额外 额外 额外 额外 额外 额外 额外 额外";
+        background-color: pink;
+    }
+</style>
+<div style="width: 100px;height: 400px;overflow: scroll;">
+    文字 <span class="x" style="background-color: lightblue;">文字 文字 文字 文字 文字 文字 文字</span>
+</div>
+<script>
+    var x = document.getElementsByClassName("x")[0];
+</script>
+```
+
+下图中，左侧是代码显示的HTML效果。可以看到，有颜色的部分，每一行都会生成一个盒子：粉色背景的“额外”，是span元素的伪元素区域，是 x::before 伪元素；蓝色背景是 span 元素的content区域。
+
+- 键入：`x.getClientRects()`，可以获得这个 span 元素生成的所有盒。一共有 8 个盒子，因为是 inline-level elements，所以遵循 IFS 每一行是一个 line box，一共 8 行，8 个 line box。
+
+- 伪元素也参与到盒生成的计算中，因为伪元素虽然在页面中无法被选中，但是肯定是被 CSS 渲染出来的。
+- 键入：`x.getBoundingClientRect()`，显示的区域就是生成盒子的全部区域。
+
+![image-20201130175054859](source/image-20201130175054859.png)
+
+
+
+## 6 其他 API ｜ 浏览器 
+
+浏览器 API 的来历，主要是 W3C 和 ECMA 两个组织。但是还有其他方向也有，四大标准化组织：
+
+- khronos
+  - WebGL
+- ECMA
+  - ECMAScript
+- WHATWG
+  - HTML
+- W3C
+  - webaudio
+  - Community Group 社区组 / Working Group 工作组
+
+### 6.1 🧪：全部的 API 的分类和整理
+
+见：myapis.html
+
+```html
+<script>
+    // 获取 window 上所有的属性名。
+    // names一共有981个属性，其中有很多JavaScript中的对象，需要过滤掉。
+    let names = Object.getOwnPropertyNames(window);
+    
+    function filterOut(names, props) {
+        let set = new Set();
+        props.forEach(o => set.add(o));
+        return names.filter(e => !set.has(e));
+    }
+    
+    // ECMA 262
+    // 首先过滤掉Javascript中的对象，剩余876个属性。
+    {
+        let js = new Set();
+        let objects = ["globalThis", "console", "BigInt", "BigInt64Array", "BigUint64Array", "Infinity", "NaN", "undefined", "eval", "isFinite", "isNaN", "parseFloat", "parseInt", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", "Array", "Date", "RegExp", "Promise", "Proxy", "Map", "WeakMap", "Set", "WeakSet", "Function", "Boolean", "String", "Number", "Symbol", "Object", "Error", "EvalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError", "ArrayBuffer", "SharedArrayBuffer", "DataView", "Float32Array", "Float64Array", "Int8Array", "Int16Array", "Int32Array", "Uint8Array", "Uint16Array", "Uint32Array", "Uint8ClampedArray", "Atomics", "JSON", "Math", "Reflect", "escape", "unescape"];
+        objects.forEach(o => js.add(o));
+        // 过滤掉js集合中包含的成员。
+        names = names.filter(e => !js.has(e));
+    }
+    
+    
+    // 过滤出DOM API中，Node 相关 API，这些都是已知的。
+    names = names.filter( e => {
+        try { 
+            return !(window[e].prototype instanceof Node)
+        } catch(err) {
+            return true;
+        }
+    }).filter( e => e != "Node");
+    
+    // events 事件都是以 on 开头的，全部过滤掉。
+    names = names.filter( e => !e.match(/^on/))
+    
+    // webkit private，webkit的都是私有属性，以开头方式过滤掉。
+    names = names.filter( e => !e.match(/^webkit/))
+    
+    // HTML window，来自 whatwg 的相关属性。在HTML规范中已经有的，按照关键字直接过滤掉。
+    //https://html.spec.whatwg.org/#window
+    {
+        let names = Object.getOwnPropertyNames(window)
+        let js = new Set();
+        let objects = ["BigInt", "BigInt64Array", "BigUint64Array", "Infinity", "NaN", "undefined", "eval", "isFinite", "isNaN", "parseFloat", "parseInt", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", "Array", "Date", "RegExp", "Promise", "Proxy", "Map", "WeakMap", "Set", "WeakSet", "Function", "Boolean", "String", "Number", "Symbol", "Object", "Error", "EvalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError", "ArrayBuffer", "SharedArrayBuffer", "DataView", "Float32Array", "Float64Array", "Int8Array", "Int16Array", "Int32Array", "Uint8Array", "Uint16Array", "Uint32Array", "Uint8ClampedArray", "Atomics", "JSON", "Math", "Reflect", "escape", "unescape"];
+        objects.forEach(o => js.add(o));
+        names = names.filter(e => !js.has(e));
+    
+        names = names.filter( e => {
+            try { 
+                return !(window[e].prototype instanceof Node)
+            } catch(err) {
+                return true;
+            }
+        }).filter( e => e != "Node")
+    
+        let windowprops = new Set();
+        objects = ["window", "self", "document", "name", "location", "history", "customElements", "locationbar", "menubar", " personalbar", "scrollbars", "statusbar", "toolbar", "status", "close", "closed", "stop", "focus", " blur", "frames", "length", "top", "opener", "parent", "frameElement", "open", "navigator", "applicationCache", "alert", "confirm", "prompt", "print", "postMessage", "console"];
+        objects.forEach(o => windowprops.add(o));
+        names = names.filter(e => !windowprops.has(e));
+    }
+    
+    //https://html.spec.whatwg.org/
+    {
+        let interfaces = new Set();
+        objects = ["ApplicationCache", "AudioTrack", "AudioTrackList", "BarProp", "BeforeUnloadEvent", "BroadcastChannel", "CanvasGradient", "CanvasPattern", "CanvasRenderingContext2D", "CloseEvent", "CustomElementRegistry", "DOMStringList", "DOMStringMap", "DataTransfer", "DataTransferItem", "DataTransferItemList", "DedicatedWorkerGlobalScope", "Document", "DragEvent", "ErrorEvent", "EventSource", "External", "FormDataEvent", "HTMLAllCollection", "HashChangeEvent", "History", "ImageBitmap", "ImageBitmapRenderingContext", "ImageData", "Location", "MediaError", "MessageChannel", "MessageEvent", "MessagePort", "MimeType", "MimeTypeArray", "Navigator", "OffscreenCanvas", "OffscreenCanvasRenderingContext2D", "PageTransitionEvent", "Path2D", "Plugin", "PluginArray", "PopStateEvent", "PromiseRejectionEvent", "RadioNodeList", "SharedWorker", "SharedWorkerGlobalScope", "Storage", "StorageEvent", "TextMetrics", "TextTrack", "TextTrackCue", "TextTrackCueList", "TextTrackList", "TimeRanges", "TrackEvent", "ValidityState", "VideoTrack", "VideoTrackList", "WebSocket", "Window", "Worker", "WorkerGlobalScope", "WorkerLocation", "WorkerNavigator"];
+        objects.forEach(o => interfaces.add(o));
+    
+        names = names.filter(e => !interfaces.has(e));
+    }
+    
+    /////////////////此时，剩余542个属性。////////////////////
+    
+    // ECMA 402，International API相关标准。Intl过滤掉。
+    //http://www.ecma-international.org/ecma-402/5.0/index.html#Title
+    names = names.filter(e => e != "Intl")
+    
+    // khronos组织的 WebGL API 标准。从文档中查阅出关键字，全部过滤掉。
+    //https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15
+    names = filterOut(names, ["WebGLVertexArrayObject","WebGLTransformFeedback","WebGLSync","WebGLSampler","WebGLQuery","WebGL2RenderingContext","WebGLContextEvent","WebGLObject", "WebGLBuffer", "WebGLFramebuffer", "WebGLProgram", "WebGLRenderbuffer", "WebGLShader", "WebGLTexture", "WebGLUniformLocation", "WebGLActiveInfo", "WebGLShaderPrecisionFormat", "WebGLRenderingContext"]);
+    
+    // 此时检索，发现剩余524个属性，看其中开头的几个属性，发现有声音相关，经过查阅，发现是：
+    // W3C的 webaudio标准，按照标准文档中的属性，过滤掉。
+    //https://www.w3.org/TR/webaudio/
+    names = filterOut(names, ["AudioContext", "AudioNode", "AnalyserNode", "AudioBuffer", "AudioBufferSourceNode", "AudioDestinationNode", "AudioParam", "AudioListener", "AudioWorklet", "AudioWorkletGlobalScope", "AudioWorkletNode", "AudioWorkletProcessor", "BiquadFilterNode", "ChannelMergerNode", "ChannelSplitterNode", "ConstantSourceNode", "ConvolverNode", "DelayNode", "DynamicsCompressorNode", "GainNode", "IIRFilterNode", "MediaElementAudioSourceNode", "MediaStreamAudioSourceNode", "MediaStreamTrackAudioSourceNode", "MediaStreamAudioDestinationNode", "PannerNode", "PeriodicWave", "OscillatorNode", "StereoPannerNode", "WaveShaperNode", "ScriptProcessorNode", "AudioProcessingEvent"]);
+    
+    // 此时检索，发现剩余495个属性，看其中开头的几个属性，发现有“textEncoderStream”，经过查阅，发现是：
+    // whatwg 的标准，按照标准文档过滤掉。
+    //https://encoding.spec.whatwg.org/#dom-textencoder
+    names = filterOut(names, ["TextDecoder", "TextEncoder", "TextDecoderStream", "TextEncoderStream"]);
+    
+    // whatwg streams
+    //https://streams.spec.whatwg.org/#blqs-class
+    names = filterOut(names, ["ReadableStream", "ReadableStreamDefaultReader", "ReadableStreamBYOBReader", "ReadableStreamDefaultController", "ReadableByteStreamController", "ReadableStreamBYOBRequest", "WritableStream", "WritableStreamDefaultWriter", "WritableStreamDefaultController", "TransformStream", "TransformStreamDefaultController", "ByteLengthQueuingStrategy", "CountQueuingStrategy"]);
+    
+    
+    // W3C Community Group 的标准 sync manager API
+    //https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
+    names = filterOut(names, ["SyncManager", "Request", "Response"]);
+    
+    // whatwg Fetch
+    // https://fetch.spec.whatwg.org/#headers-class    
+    names = filterOut(names, ["Headers"]);
+
+    // whatwg storage
+    // https://storage.spec.whatwg.org/#api
+    names = filterOut(names, ["StorageManager"]);
+
+    // whatwg XMLHttpRequest
+    // https://xhr.spec.whatwg.org/
+    names = filterOut(names, ["XMLHttpRequest", "FormData", "ProgressEvent", ""]);
+
+
+    console.log(names.length);
+    console.log(names);
+    </script>
+```
+
+
+
+
+
+
+
+
+
 
 
 
