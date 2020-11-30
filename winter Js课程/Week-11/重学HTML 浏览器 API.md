@@ -381,9 +381,11 @@ DOM API，可以理解为一个 HTML 语言的对象化，和 HTML 中元素经�
 
 CSSOM，就是一个对 CSS 文档的一个抽象。
 
-### 4.1 document.styleSHeets
+### 4.1 document.styleSheets
 
-严格来说，CSSOM也是需要 DOM API 去进行访问的。CSS 代码是嵌在 HTML 代码中的。document.styleSHeets，就是 CSSOM一切的起点。
+严格来说，CSSOM也是需要 DOM API 去进行访问的。CSS 代码是嵌在 HTML 代码中的。document.styleSheets，就是 CSSOM一切的起点。
+
+styleSheets 就代表一个样式表，它对应着一个 CSS 的 link 标签，或者一个 style 标签。
 
 #### 举例
 
@@ -401,19 +403,59 @@ CSSOM，就是一个对 CSS 文档的一个抽象。
 
 <link rel="stylesheet" title="x" href="data:text/css,p%7Bcolor:blue%7D">
 <a> world</a>
+
+<!-- 键入：document.styleSheets -->
+StyleSheetList {0: CSSStyleSheet, 1: CSSStyleSheet, length: 2}
+0: CSSStyleSheet {ownerRule: null, cssRules: CSSRuleList, rules: CSSRuleList, type: "text/css", href: null, …}
+1: CSSStyleSheet {ownerRule: null, cssRules: CSSRuleList, rules: CSSRuleList, type: "text/css", href: "data:text/css,p%7Bcolor:blue .......
 ```
 
+### 4.2 Rules
 
+Rules 是 styleSheets 的一个子类。styleSheets里面有 CSSRules 是一个类数组的 collection，取出所有 CSS 相关代码。
 
+- styleSheets ：代表一个样式表，它对应着一个 CSS 的 link 标签，或者一个 style 标签。
+- Rule ：一个样式表有若干条 rule，每个 rule 就是一个 CSS 规则。
+  - insertRule、removeRule 可以控制样式表中的规则。
 
+```jsx
+// 显示所有 rule
+document.styleSheet[0].cssRules
 
+// 插入一段CSS代码
+// 参数1:string，代码。参数2:位置
+document.styleSheet[0].insertRule("p {color:pink;}", 0) 
 
+// 删除一段CSS代码
+// 参数：位置
+doucment.styleSheet[0].removeRule(0)    
+```
 
+#### 4.2.1 回顾：Rule的分类
 
+- CSSStyleRule（普通 rule）
 
+- at-rule
 
+通常可以这样记忆：CSS里的语法有什么，CSSCOM就有什么，基本是一一对应的。
 
+- CSSStyleRule：重点。
+- CSSCharsetRule
+- CSSImportRule
+- CSSMediaRule
+- CSSFontFaceRule
+- CSSPageRule
+- CSSNamespaceRule
+- CSSKeyframesRule
+- CSSKeyframeRule
+- CSSSupportsRule
+- ...
 
+#### 4.2.2 回顾：Rule 的结构 
+
+- CSSStyleRule
+  - selectorText String
+  - style K-V 结构
 
 
 
