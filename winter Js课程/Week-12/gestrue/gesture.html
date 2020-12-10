@@ -1,2 +1,16 @@
 <script src="./gesture.js"></script>
 <body oncontextmenu="event.preventDefault()"></body>
+<script>
+    document.documentElement.addEventListener("tap", ()=> {
+        console.log("tap event trigger!");
+    });
+    document.documentElement.addEventListener("pan", (event)=> {
+        console.log("pan event trigger!", event.clientX, event.clientY);
+    });
+    document.documentElement.addEventListener("press", (event)=> {
+        console.log("press event trigger!", event.clientX, event.clientY);
+    });
+    document.documentElement.addEventListener("flick", (event)=> {
+        console.log("flick event trigger!", event.clientX, event.clientY);
+    });
+</script>
