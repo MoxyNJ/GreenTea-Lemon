@@ -14,7 +14,15 @@ element.addEventListener("mousedown", event => {
 
         while(button <= event.buttons) {
             if(button & event.buttons) {
-                let context = contexts.get("mouse" + button);
+                // order of buttons & button property is not same
+                let key;
+                if (button === 2) 
+                    key = 4;
+                else if (button === 4) 
+                    key = 2;
+                else
+                    key = button;
+                let context = contexts.get("mouse" + key);
                 move(event, context);
             }
             button = button << 1;
@@ -73,7 +81,7 @@ let start = (point, context) => {
     context.isPress = false;
 
     // 监控：0.5s事件
-    handler = setTimeout(() => {
+    context.handler = setTimeout(() => {
         context.isTap = false;
         context.isPan = false;
         context.isPress = true;
@@ -111,10 +119,11 @@ let end = (point, context) => {
     if(context.isPress) {
         console.log("pressend");
     }
-     console.log("end", point.context.clientX, point.context.clientY);
+    console.log("end", point.clientX, point.clientY);
+    console.log(point);
 }
 
 let cancel = (point, context) => {
     clearTimeout(context.handler);
-    console.log("cancel", point.context.clientX, point.context.clientY);
+    console.log("cancel", point.clientX, point.clientY);
 }
