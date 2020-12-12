@@ -1,77 +1,143 @@
-import {Component} from "./framework.js"
+import {
+    Component
+} from "./framework.js"
+import {
+    enableGesture
+} from "./gesture.js"
+import {
+    Timeline,
+    Animation
+} from "./animation.js"
+import {
+    ease
+} from "./ease.js"
 
 export class Carousel extends Component {
-    constructor(){
+    constructor() {
         super();
         this.attributes = Object.create(null);
     }
     setAttribute(name, value) {
         this.attributes[name] = value;
     }
-    render(){
-        // console.log(this.attributes.src);    //  打印一下，看看地址有没有被成功的传递进来
+    render() {
         this.root = document.createElement("div");
-        this.root.classList.add("carousel")         // 为这个div添加一个class属性：carousel，为了方便添加CSS属性。
-        for(let record of this.attributes.src) {    // 利用let of把照片地址添加到div子元素上 
+        this.root.classList.add("carousel") 
+        for (let record of this.attributes.src) {
             let child = document.createElement("div");
-            child.style.backgroundImage = `url('${record}')`;    //添加地址到backgroundImage，字符串要转义。
-            
+            child.style.backgroundImage = `url('${record}')`; 
+
             this.root.appendChild(child);
         }
+        enableGesture(this.root);
+        let timeline = new Timeline;
+        timeline.start();
+
+        let children = this.root.children;
 
         // 鼠标按下拖动时的相对位置。[0, 1, 2, 3] 是有效位置，没有设置截断值。
         let position = 0;
-        // 鼠标拖动功能
-        this.root.addEventListener("mousedown", event => {
+        this.root.addEventListener("start", event => {
+            timeline.pause();
+        })
+
+        this.root.addEventListener("pan", event => {
+            let x = event.clientX - event.startX;
+            let current = position - ((x - x % 500) / 500);
+            for (let offset of [-1, 0, 1]) {
+                let pos = current + offset;
+                pos = (pos % children.length + children.length) % children.length;
+                children[pos].style.transition = "none";
+                children[pos].style.transform = `translate(${- pos * 500 + offset * 500 + x % 500}px)`;
+            }
+        });
+        this.root.addEventListener("panEnd", event => {
+            let x = event.clientX - event.startX;
+            position = position - Math.round(x / 500);
+            for (let offset of [0, -Math.sign(Math.round(x / 500) - x + 250 * Math.sign(x))]) {
+                let pos = position + offset;
+                pos = (pos + children.length) % children.length;
+                if (offset === 0) {
+                    position = pos;
+                }
+                children[pos].style.transition = "";
+                children[pos].style.transform = `translate(${- pos * 500 + offset * 500}px)`;
+            }
+        });
+        //自动播放功能
+        setInterval(() => {
             let children = this.root.children;
-            // 鼠标的初始位置。只看x即可，y不用考虑。
-            let startX = event.clientX;
+            let nextIndex = (position + 1) % children.length; 
 
-            let move = event => {
-                // 鼠标移动的距离。
-                let x = event.clientX - startX;
+            let current = children[position];
+            let next = children[nextIndex];
 
-                // 找出当前位置的图片
-                let current = position;
-                // let current = position - ((x - x % 500) / 500); // 好像 current 和 position 作用相同。                // 把当前位置的图片，前一个和后一个图片，都放到正确的位置。
-                for(let offset of [-1,0,1]) {
-                    let pos = current + offset;
-                    pos = (pos + children.length) % children.length;
-                    children[pos].style.transition = "none";
-                    children[pos].style.transform = `translate(${- pos * 500 + offset * 500 + x % 500}px)`;
-                }
-            }
+            next.style.transition = "none";    
+            next.style.transform = `translateX(${100 - nextIndex * 100}%)`;
 
-            let up = event => {
-                let x = event.clientX - startX;
+            timeline.add(new Animation(current.style, "transform", 
+                - position * 500, - 500 - position * 500, 
+                500, 0, ease, v => `translateX(${v}px)`
+            ));
+            timeline.add(new Animation(next.style, "transform", 
+                500 - nextIndex * 500, - nextIndex * 500,
+                500, 0, ease, v => `translateX(${v}px)`
+            ));
+            position = nextIndex;
+        }, 3000);
 
-                // 如果拖够了一半的位置，就判断为拖到下一张图片；否则就是上一张图片。
-                // round取近似值。
-                position = position - Math.round( x / 500);
-                // console.log(`position=${position}, round=${Math.round(x / 500)}`);
-                for(let offset of [0, - Math.sign(Math.round(x / 500) - x + 250 * Math.sign(x))]) {
-                    let pos = position + offset;
-                    pos = (pos + children.length) % children.length;
-                    if (offset === 0) {
-                        position = pos;
-                        }
-                    children[pos].style.transition = "";
-                    children[pos].style.transform = `translate(${- pos * 500 + offset * 500}px)`;
-                }
-                document.removeEventListener("mousemove", move);
-                document.removeEventListener("mouseup", up);
-            }
 
-            document.addEventListener("mousemove", move); 
-            document.addEventListener("mouseup", up); 
-        }); 
+        // 鼠标拖动功能
+        // this.root.addEventListener("mousedown", event => {
+        //     let children = this.root.children;
+        //     // 鼠标的初始位置。只看x即可，y不用考虑。
+        //     let startX = event.clientX;
+
+        //     let move = event => {
+        //         // 鼠标移动的距离。
+        //         let x = event.clientX - startX;
+
+        //         // 找出当前位置的图片
+        //         let current = position;
+        //         // let current = position - ((x - x % 500) / 500); // 好像 current 和 position 作用相同。                // 把当前位置的图片，前一个和后一个图片，都放到正确的位置。
+        //         for(let offset of [-1,0,1]) {
+        //             let pos = current + offset;
+        //             pos = (pos + children.length) % children.length;
+        //             children[pos].style.transition = "none";
+        //             children[pos].style.transform = `translate(${- pos * 500 + offset * 500 + x % 500}px)`;
+        //         }
+        //     }
+
+        //     let up = event => {
+        //         let x = event.clientX - startX;
+
+        //         // 如果拖够了一半的位置，就判断为拖到下一张图片；否则就是上一张图片。
+        //         // round取近似值。
+        //         position = position - Math.round( x / 500);
+        //         // console.log(`position=${position}, round=${Math.round(x / 500)}`);
+        //         for(let offset of [0, - Math.sign(Math.round(x / 500) - x + 250 * Math.sign(x))]) {
+        //             let pos = position + offset;
+        //             pos = (pos + children.length) % children.length;
+        //             if (offset === 0) {
+        //                 position = pos;
+        //                 }
+        //             children[pos].style.transition = "";
+        //             children[pos].style.transform = `translate(${- pos * 500 + offset * 500}px)`;
+        //         }
+        //         document.removeEventListener("mousemove", move);
+        //         document.removeEventListener("mouseup", up);
+        //     }
+
+        //     document.addEventListener("mousemove", move); 
+        //     document.addEventListener("mouseup", up); 
+        // }); 
 
         // 自动播放功能
         // let currentIndex = 0;
         // setInterval(() => {
         //     let children = this.root.children;
         //     let nextIndex = (currentIndex + 1) % children.length; 
-            
+
         //     let current = children[currentIndex];
         //     let next = children[nextIndex];
 
@@ -90,7 +156,7 @@ export class Carousel extends Component {
 
         return this.root;
     }
-    mountTo(parent){
+    mountTo(parent) {
         parent.appendChild(this.render());
     }
 }
