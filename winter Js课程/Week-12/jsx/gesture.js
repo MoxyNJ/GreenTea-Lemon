@@ -211,8 +211,18 @@ export class Recognizer {
                 clientY: point.clientY,
                 isVertical: context.isVertical,
                 isFlick: context.isFlick,
+                velocity: v,
             }); 
         }
+        this.dispatcher.dispatch("end", {
+            startX: context.startX,
+            startY: context.startY,
+            clientX: point.clientX,
+            clientY: point.clientY,
+            isVertical: context.isVertical,
+            velocity: v,
+        }); 
+
     }
 
     cancel(point, context) {

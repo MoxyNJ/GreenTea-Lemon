@@ -1,16 +1,7 @@
-import {
-    Component
-} from "./framework.js"
-import {
-    enableGesture
-} from "./gesture.js"
-import {
-    Timeline,
-    Animation
-} from "./animation.js"
-import {
-    ease
-} from "./ease.js"
+import {Component} from "./framework.js"
+import {enableGesture} from "./gesture.js"
+import {Timeline, Animation} from "./animation.js"
+import {ease} from "./ease.js"
 
 export class Carousel extends Component {
     constructor() {
@@ -33,16 +24,24 @@ export class Carousel extends Component {
         let timeline = new Timeline;
         timeline.start();
 
+        let handler = null;
+        
         let children = this.root.children;
-
-        // 鼠标按下拖动时的相对位置。[0, 1, 2, 3] 是有效位置，没有设置截断值。
+     
         let position = 0;
+
+        let t = 0;
+        let ax = 0;
+
         this.root.addEventListener("start", event => {
             timeline.pause();
+            clearInterval(handler);
+            let progress = (Date.now() - t) / 500;
+            ax = ease(progress) * 500 - 500;
         })
 
         this.root.addEventListener("pan", event => {
-            let x = event.clientX - event.startX;
+            let x = event.clientX - event.startX - ax;
             let current = position - ((x - x % 500) / 500);
             for (let offset of [-1, 0, 1]) {
                 let pos = current + offset;
@@ -51,29 +50,54 @@ export class Carousel extends Component {
                 children[pos].style.transform = `translate(${- pos * 500 + offset * 500 + x % 500}px)`;
             }
         });
-        this.root.addEventListener("panEnd", event => {
-            let x = event.clientX - event.startX;
-            position = position - Math.round(x / 500);
-            for (let offset of [0, -Math.sign(Math.round(x / 500) - x + 250 * Math.sign(x))]) {
-                let pos = position + offset;
-                pos = (pos + children.length) % children.length;
-                if (offset === 0) {
-                    position = pos;
+        this.root.addEventListener("end", event => {
+            
+            timeline.reset();
+            timeline.start();
+            // 3秒钟后，重启自动播放
+            handler = setInterval(nextPicture, 3000);
+
+            if(event.isFlick) {
+                if(event.velocity < 0) {
+                    direction = Math.ceil((x % 500) / 500);
+                } else {
+                    direction = Math.floor((x % 500) / 500);
                 }
-                children[pos].style.transition = "";
-                children[pos].style.transform = `translate(${- pos * 500 + offset * 500}px)`;
             }
+
+            let x = event.clientX - event.startX - ax;
+            let current = position - ((x - x % 500) / 500);
+
+            // [-1. 0. 1] 代表是哪个方向的图片
+            let direction = Math.round((x % 500) / 500);
+
+            for (let offset of [-1, 0, 1]) {
+                let pos = current + offset;
+                // 负数变正数
+                pos = (pos % children.length + children.length) % children.length;
+
+                children[pos].style.transition = "none";
+                timeline.add(new Animation(children[pos].style, "transform", 
+                    - pos * 500 + offset * 500 + x % 500, 
+                    - pos * 500 + offset * 500 + direction * 500, 
+                    500, 0, ease, v => `translateX(${v}px)`));
+            }
+
+            position = position - ((x - x % 500) / 500) - direction;
+            // 负数变正数
+            position = (position % children.length + children.length) % children.length;
         });
+        
         //自动播放功能
-        setInterval(() => {
+        let nextPicture = () => {
             let children = this.root.children;
             let nextIndex = (position + 1) % children.length; 
 
             let current = children[position];
             let next = children[nextIndex];
 
-            next.style.transition = "none";    
-            next.style.transform = `translateX(${100 - nextIndex * 100}%)`;
+            // 图片切换的动画，添加到timeline中。
+            t = Date.now();
 
             timeline.add(new Animation(current.style, "transform", 
                 - position * 500, - 500 - position * 500, 
@@ -84,7 +108,9 @@ export class Carousel extends Component {
                 500, 0, ease, v => `translateX(${v}px)`
             ));
             position = nextIndex;
-        }, 3000);
+        }
+        
+        handler = setInterval(nextPicture, 3000);
 
 
         // 鼠标拖动功能
