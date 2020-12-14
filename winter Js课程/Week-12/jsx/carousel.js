@@ -15,8 +15,7 @@ export class Carousel extends Component {
         this.root.classList.add("carousel") 
         for (let record of this[ATTRIBUTE].src) {
             let child = document.createElement("div");
-            child.style.backgroundImage = `url('${record}')`; 
-
+            child.style.backgroundImage = `url('${record.src}')`; 
             this.root.appendChild(child);
         }
         enableGesture(this.root);
@@ -37,6 +36,13 @@ export class Carousel extends Component {
             clearInterval(handler);
             let progress = (Date.now() - t) / 500;
             ax = ease(progress) * 500 - 500;
+        })
+
+        this.root.addEventListener("tap", event => {
+            this.triggerEvent("click", {
+                data: this[ATTRIBUTE].src[this[STATE].position],
+                position: this[STATE].position
+            });
         })
 
         this.root.addEventListener("pan", event => {
@@ -110,7 +116,7 @@ export class Carousel extends Component {
             ));
 
             this[STATE].position = nextIndex;
-            this.triggerEvent("Change", {position: this[STATE].position});
+            this.triggerEvent("change", {position: this[STATE].position});
         }
         
         handler = setInterval(nextPicture, 3000);
