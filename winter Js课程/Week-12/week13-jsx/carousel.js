@@ -66,28 +66,6 @@ export class Carousel extends Component {
             document.addEventListener("mouseup", up); 
         }); 
 
-        // 自动播放功能
-        // let currentIndex = 0;
-        // setInterval(() => {
-        //     let children = this.root.children;
-        //     let nextIndex = (currentIndex + 1) % children.length; 
-            
-        //     let current = children[currentIndex];
-        //     let next = children[nextIndex];
-
-        //     next.style.transition = "none";    // 做这个移动的时候，不希望有动画，要立刻执行。
-        //     next.style.transform = `translateX(${100 - nextIndex * 100}%)`;
-
-        //     // why use setTimeout? 
-        //     setTimeout(() => {
-        //         next.style.transition = "";        // 取消“none”的限制，恢复css原本的控制权。
-        //         current.style.transform = `translateX(${-100 - currentIndex * 100}%)`;
-        //         next.style.transform = `translateX(${- nextIndex * 100}%)`;
-
-        //         currentIndex = nextIndex;
-        //     }, 16);
-        // }, 3000);
-
         return this.root;
     }
     mountTo(parent){

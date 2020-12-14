@@ -24,6 +24,6 @@ let d = [
 // document.body.appendChild(a);
 let a = <Carousel src={d} 
     onChange={event => {console.log(event.detail.position) }}
-    onClick={event => {window.location.href = event.detail.data }}
+    onClick={event => {window.location.href = event.detail.data.url}}
 />;
 a.mountTo(document.body);
