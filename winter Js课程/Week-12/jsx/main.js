@@ -10,5 +10,7 @@ let d = [
 ];
 
 // document.body.appendChild(a);
-let a = <Carousel src={d}/>;
+let a = <Carousel src={d} onChange={event => {
+    console.log(event.detail.position)
+}}/>;
 a.mountTo(document.body);
