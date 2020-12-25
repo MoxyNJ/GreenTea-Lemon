@@ -12,6 +12,15 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/1/client.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "启动 client-back",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/1/client-back.js"
         }
     ]
 }
