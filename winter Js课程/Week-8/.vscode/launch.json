@@ -11,16 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/now/client.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "启动 client-back",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/now/client-back.js"
+            "program": "${workspaceFolder}/class-render/client.js"
         }
     ]
 }
