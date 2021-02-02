@@ -122,17 +122,84 @@ reddit网站
 
 
 
+# 2. 环境准备 & 复杂度分析
+
+## 2.1 环境准备
+
+- 据说，Win平台的Mircosoft New Terminal 很不错。https://github.com/microsoft/terminal
+
+- leetcode的中文站和英文站，题库内容是相同的。每个题目的地址，在两个站中，后缀是相同的。可以以中文站为主，然后如果想看更多讨论，把中文站的地址:leetcode-cn.com，删除cn，修改为:leetcode.com即可进入英文站-“Most votes”。
+  - 在做题第三遍、第四遍的一定要看 Most votes中，与我语言相关的最高票的回答，和最高票的前三个回答，一定有很多知识可以学习。
+- 修改键盘响应速度，提高码字效率。
+
+<img src="source/image-20210202183345161.png" alt="image-20210202183345161" style="zoom:50%;" />
 
 
 
+- Google Code Style
+
+```javascript
+// if和左括号，必须要有空格。
+// 几乎所有的括号和关键字前后，都要有空格（空格尽量多）。
+class InnerClass {
+  constructor() {}
+
+  /** @param {number} foo */
+  method(foo) {
+    if (condition(foo)) {
+      try {
+        // Note: this might fail.
+        something();
+      } catch (err) {
+        recover();
+      }
+    }
+  }
+}
+
+// for 循环
+for (let i = 0; i < foo.length; i++) bar(foo[i]);
+
+// 数组的定义
+const a = [
+  0,
+  1,
+  2,
+];
+
+const b =
+    [0, 1, 2];
+
+// 箭头函数
+export function setMutateFoo(newMutateFoo) {
+  // Exported classes and functions can be mutated!
+  mutateFoo = () => {
+    foo = newMutateFoo(foo);
+  };
+}
+
+```
 
 
 
+- Top tips
+  - 遇到一个新的IDE，先搜搜看它的top tips
+  - opt + delete 删除单个单词
+  - cmd + delete 删除整行单词 
+  - 自动补全：opt+enter，在一个尚未定义的函数上使用，会自动补全。
 
 
 
+- 代码要自顶向下的方式来写，类似写新闻稿一样。
+  - 重要的函数，关键的逻辑，要先写在最上方。
+  - 次要的函数，细节函数，要放在后面。
 
 
+
+- IDE
+  - VSCode
+  - Java：IntelliJ
+  - Python：Pycharm
 
 
 
