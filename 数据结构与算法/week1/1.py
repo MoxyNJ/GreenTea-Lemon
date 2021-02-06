@@ -1,10 +1,11 @@
-def f1(a, b, c=0, *args, **kw):
-    print('a=', a, 'b=', b, 'c=', c, 'args=', args, 'kw=', kw)
+from collections.abc import Iterator
+g = (x * x for x in range(10))  # 小括号创建了一个 generator
+isTrue = isinstance(g, Iterator)# 判断是否为一个Iterator
+print(isTrue)										# True
+print(next(g))  		# 1
+print(next(g))			# 4
 
-
-f1(1, 2, 3, 'a', 'b')  			# a= 1 b= 2 c= 3 args= ('a', 'b') kw= {}
-f1(1, 2, 3, 'a', 'b', x=99) # a= 1 b= 2 c= 3 args= ('a', 'b') kw= {'x': 99}
-# 通过一个 tuple 和 dict 巧妙调用：
-t = (1, 2, 3, 4)
-d = {'name': "moxy"}
-f1(*t, **d)
+l = list(range(5))
+print(isinstance(l, Iterator))
+l2 = iter(l)
+print(isinstance(l2, Iterator))

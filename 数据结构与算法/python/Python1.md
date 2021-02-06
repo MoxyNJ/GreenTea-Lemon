@@ -363,9 +363,170 @@ f1(*t, **d)                 # a= 1 b= 2 c= 3 args= (4,) kw= {'name': 'moxy'}
 
 
 
-### 尾递归？？？
+### 切片
+
+从一个list中，取出一小段。还可以两个分号，实现类似每间隔两个数，取一个数这样的效果。
+
+```python
+L = list(range(100))
+
+print(L)            # 【0, 1, 2, ...  99]
+
+# 0开始取，到3前截止
+print(L[0:3])       # 0, 1, 2
+print(L[5:8])       # 1, 2
+print(L[3:2])       # [], 第二个数不能小于第一个
+
+# 支持负数
+print(L[-3:-1])     # [97, 98]
+print(L[-3:])       # [97, 98, 99] 取后三个数
+print(L[:3])        # [0, 1, 2]    取前三个数
+
+```
 
 
 
+### 迭代
+
+```python
+L = list(range(10))     # list 可更改的有序列表     [ ]
+T = tuple(range(10))    # tuple 不可更改的有序列表   ( )
+D = {'a': 1, 'b': 2, 'c': 3}     # dict == map K/V对       { }
+S = set(range(10))      # set K                  ([ ])
+
+# 迭代
+for l in L:
+    print('L:', l)
+
+for t in T:
+    print('T:', t)
+
+for key in D:   # 通常是遍历 key
+    print('D:', key)
+
+for value in D.values():
+    print('D.value:', value)
+
+for key, value in D.items():
+    print('D.key:', key, 'D.value:', value)
+
+for s in S:
+    print('S:', s)
+    
+# 判断可迭代对象
+from collections import Iterable
+isinstance(obj, Iterable)
+
+# 下标循环
+for key, value in enumerate(list(range(10, 20))):
+    print(key, value)
+# 0 10
+# 1 11
+# 2 12
+# 3 13
+# 4 14
+# 5 15
+# 6 16
+# 7 17
+# 8 18
+# 9 19
+```
 
 
+
+### 列表生成式
+
+```python
+# 输出1到11
+list(range(1, 11))
+# [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+# 最终要保留的元素，写在最前面
+# 每个元素都平方一下，输出。
+[x * x for x in range(1, 11)]
+# [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+# 只输出偶数的平方，添加if条件
+[x * x for x in range(1, 11) if x % 2 == 0]
+# [4, 16, 36, 64, 100]
+
+# 两层 for in 循环
+[m + n for m in 'ABC' for n in 'XYZ']
+# ['AX', 'AY', 'AZ', 'BX', 'BY', 'BZ', 'CX', 'CY', 'CZ']
+```
+
+
+
+### generator
+
+```python
+# 创建 list 用[方括号]
+L = [x * x for x in range(10)]
+print(L)		# [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+# 创建 generator 用(小括号)
+g = (x * x for x in range(10))
+print(g)		# <generator object <genexpr> at 0x7fbd8018e150>
+
+print(next(g))		# 0
+print(next(g))		# 1
+print(next(g))		# 4
+
+for n in g:
+  print(n)				# 0  1  4  ..
+  
+# yield 类 似 JavaScript中的yield
+# 定义一个generator对象，名为 odd
+def odd():
+    print('step 1')
+    yield 1
+    print('step 2')
+    yield 3
+    print('step 3')
+    yield 5
+# 对象实例化 + 调用
+o = odd()
+a = next(o)
+b = next(o)
+c = next(o)
+print("return next:", a, b, c)
+# step 1
+# step 2
+# step 3
+# return next: 1 3 5
+# 在执行过程中，遇到yield就中断，下次从中断位置继续执行
+```
+
+
+
+### Iterator
+
+可以被`next()`函数调用并不断返回下一个值的对象称为迭代器：`Iterator`。
+
+- `Generator` 是 `Iterator` 的一个子集。
+- `list`、`dict`、`str`是`Iterable`，不是`Iterator`。
+
+```python
+# generator
+from collections.abc import Iterator
+g = (x * x for x in range(10))  # 小括号创建了一个 generator
+isTrue = isinstance(g, Iterator)# 判断是否为一个Iterator
+print(isTrue)										# True
+print(next(g))  		# 0
+print(next(g))			# 1
+
+# Iterable 转化为 Iterator
+# iter()
+l = list(range(5))
+print(isinstance(l, Iterator))		# False
+l2 = iter(l)
+print(isinstance(l2, Iterator))		# True
+
+
+```
+
+- 凡是可作用于`for`循环的对象都是`Iterable`类型；
+
+- 凡是可作用于`next()`函数的对象都是`Iterator`类型，它们表示一个惰性计算的序列；
+  - 惰性序列：只有在调用 `next()`时，才会计算下一个元素是什么，这样节约运行开销。
+  - `for`：Python的`for`循环本质上就是通过不断调用`next()`函数实现的
