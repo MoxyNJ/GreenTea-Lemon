@@ -128,6 +128,8 @@ t = (123, )    # 定义一个元素时，为了消除歧义必须加一个逗号
 
 dict和map类似，是一个 K/V 键/值对。
 
+- Key 不可重复。
+
 ```python
 d = {'Michael': 95, 'Bob': 75, 'Tracy': 85}
 
@@ -534,4 +536,121 @@ print(isinstance(l2, Iterator))		# True
 
 
 # 3 函数式编程
+
+### map()
+
+`map(func, Iterable)`
+
+- 原理：map() 函数会遍历一次Iterable序列。每遍历到一个元素，就会把这个元素传递给 func，执行一次func。最后，返回一个新的map序列。
+- Func：传入每个元素后，进行处理，最后 return 这个元素。
+- 返回：map最终返回一个map序列
+
+```python
+# map() 实现对list的每个元素都平方。
+l1 = list(range(10))
+def f(x):
+    return x * x
+
+l2 = map(f, l1)
+print(l1)
+print(l2)
+print(list(l2))
+
+# [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+# <map object at 0x7fea901d5090>
+# [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+# 技巧：
+# 把一个list中，所有数字转换为字符串：
+a = str(1)  # '1',转换方式时str(number）
+
+l1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+l2 = list(map(str, l1))
+# ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+```
+
+
+
+### reduce()
+
+`reduce(func, Iterable)`
+
+- 需要引入：`from functools import reduce`
+
+- 原理：reduce()函数会遍历一次Iterable序列。每遍历到一个元素，就会把这个元素传递给func，执行一次func，然后执行结果会传递给下一个func。最后返回这个值。
+- func：传递两个参数：上一个func的处理结果，当前遍历到的元素。返回新的处理结果。
+- 返回：一个值。
+
+```python
+# 对 1～9进行累加。
+from functools import reduce
+l1 = list(range(10))
+def f(x, y):
+    return x + y
+
+result = reduce(f, l1)
+print(l1)
+print(result)
+# [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+# 45
+
+# 技巧：
+# 把一个str转换为一个int
+from functools import reduce
+
+def f(x, y):
+	return x * 10 + y
+
+# 转换方式：利用dict不可重复的key，参数s只要匹配到相同的key，就返回这个value。
+def toInt(s):
+    d = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9}
+    return d[s]
+
+str1 = '13579'
+number = reduce(f, map(toInt, '13579'))
+print(number)		# 13579
+
+# 技巧2: 上面的函数合二为一
+
+```
+
+
+
+### filter()
+
+`filter(f, Iterable)`
+
+- 原理：用于过滤。`filter()`函数依次作用于每个元素，根据返回值是`True`还是`False`决定保留还是丢弃该元素。
+
+```python
+# 在一个list中，删掉偶数，只保留奇数
+def is_odd(n):
+    return n % 2 == 1
+
+list(filter(is_odd, [1, 2, 4, 5, 6, 9, 10, 15]))
+# 结果: [1, 5, 9, 15]
+```
+
+
+
+### sorted
+
+`sorted(Iterable [, func])`
+
+- 如果不加 func，默认升序。从小到大。
+- 如果加 func：
+  - 对每个元素都进行一次func。
+  - key用法叫为多变，遇到再说。
+
+
+
+### lambda
+
+匿名函数，相当于箭头函数。
+
+```python
+# 使用 Iambda
+list(map(lambda x: x * x, [1, 2, 3, 4, 5, 6, 7, 8, 9]))
+[1, 4, 9, 16, 25, 36, 49, 64, 81]
+```
 

@@ -1,11 +1,10 @@
-from collections.abc import Iterator
-g = (x * x for x in range(10))  # 小括号创建了一个 generator
-isTrue = isinstance(g, Iterator)# 判断是否为一个Iterator
-print(isTrue)										# True
-print(next(g))  		# 1
-print(next(g))			# 4
+from functools import reduce
 
-l = list(range(5))
-print(isinstance(l, Iterator))
-l2 = iter(l)
-print(isinstance(l2, Iterator))
+def f(x, y):
+    d = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9}
+    return x * 10 + d[y]
+
+str1 = '13579'
+number = reduce(f, '13579'))
+print(number) # 123456789
+# 13579
