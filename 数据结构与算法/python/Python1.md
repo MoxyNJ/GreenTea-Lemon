@@ -654,3 +654,300 @@ list(map(lambda x: x * x, [1, 2, 3, 4, 5, 6, 7, 8, 9]))
 [1, 4, 9, 16, 25, 36, 49, 64, 81]
 ```
 
+
+
+# 4 面向对象编程
+
+定义：
+
+```python
+class Student(object):
+    # 构造函数
+    def __init__(self, name, score):
+        self.name = name
+        self.score = score
+
+    # 方法
+    def printScore(self):
+        print('%s: %s' % (self.name, self.score))
+
+# 实例化
+Moxy = Student('Moxy', 99)
+
+# 地址
+print(Student)  # <class '__main__.Student'>
+print(Moxy)     # <__main__.Student object at 0x7f98e81d5550>
+
+# 调用
+print(Moxy.name, Moxy.score) # Moxy 99
+Moxy.printScore() # Moxy: 99
+```
+
+
+
+### 私有变量 
+
+"封装"
+
+在需要设置 private 的变量前，添加两个下划线即可。 `__`
+
+```python
+class Student(object):
+    # 构造函数
+    def __init__(self, name, score):
+        self.__name = name
+        self.__score = score
+   	
+
+    # 方法
+    def printScore(self):
+        print('%s: %s' % (self.__name, self.__score))
+
+# 实例化
+Moxy = Student('Moxy', 99)
+
+# 调用
+print(Moxy.name, Moxy.score)     
+# 错误：AttributeError: 'Student' object has no attribute 'name'
+
+print(Moxy.__name, Moxy.__score) 
+# 错误：AttributeError: 'Student' object has no attribute '__name'
+
+Moxy.printScore() # Moxy: 99
+
+# 不建议强制访问：
+print(Moxy._Student__name)  # Moxy
+print(Moxy._Student__score) # 99
+```
+
+
+
+对比：
+
+- `__name`：private 私有变量
+- `__name__`：特殊变量，但是可以直接访问。
+- `_name`：“虽然我可以被访问，但是，请把我视为私有变量，不要随意访问”。
+
+
+
+set get：
+
+```python
+class Student(object):
+    # 构造函数
+    def __init__(self, name, score):
+        self.__name = name
+        self.__score = score
+
+    # private: get set
+    def get_score(self):
+        return self.__score
+
+    def set_score(self, score):
+        if 0 <= score <= 100:
+        	self.__score = score
+        	return True
+    	else:
+        	return False
+
+    # 方法
+
+    def printScore(self):
+        print('%s: %s' % (self.__name, self.__score))
+
+Moxy = Student('Moxy', 99)
+
+print(Moxy.set_score(-1)) 	# False
+print(Moxy.set_score(100)) 	# True
+print(Moxy.get_score()) 		# 100
+```
+
+
+
+### 继承
+
+- 一个子类如果想继承一个父类：
+  - 不是 Java 中的：`class 子类 extends 父类 {...}`
+  - 而是传入参数：`class 子类(父类)`
+
+这是一个不同的风格，注意区分。
+
+#### 定义：
+
+```python
+# 父类
+class Animal(object):
+    def run(self):
+        print("I'm a Animal method")
+
+# 子类 新方法
+class Dog(Animal):
+    def dogRun(self):
+        print("I'm a dog method")
+
+# 子类 多态：覆盖父类方法
+class Cat(Animal):
+    def run(self):
+        print("I'm a cat method")
+
+# 实例化
+animal = Animal()
+dog = Dog()
+cat = Cat()
+
+# run() 地址不相同
+print(animal.run)	# <bound method Animal.run of <__main__.Animal object at 0x7fcbd019b490>>
+print(dog.run)		# <bound method Animal.run of <__main__.Dog object at 0x7fcbd019b510>>
+
+# 继承
+dog.dogRun()	# I'm a dog method
+
+# 多态
+animal.run()	# I'm a Animal method
+dog.run()			# I'm a Animal method
+cat.run()			# I'm a cat method
+
+# 判断：数据类型
+print(isinstance(Animal, object))	# True 所有对象都是 object
+
+print(isinstance(animal,Animal))	# True 实例化是 Animal数据类型
+print(isinstance(cat,Cat))				# True
+print(isinstance(cat,Animal))			# True
+```
+
+
+
+#### 多态：数据类型相同的特点
+
+```python
+# 传入一个 Animal数据类型的实例时，调用各自的方法。
+def runDifferent(Animal):
+	Animal.run()
+  
+runDifferent(Animal())				# I'm a Animal method
+runDifferent(Cat())						# I'm a Cat method
+```
+
+
+
+#### 动态语言的多态：
+
+对于静态语言（例如Java）来说
+
+- 如果需要传入`Animal`类型，传入对象必须是`Animal`类型或者它的子类。否则，将无法调用`run()`方法。
+
+对于Python这样的动态语言来说
+
+- 则不一定需要传入`Animal`类型。只需要保证传入的对象有一个`run()`方法就可以了：
+
+
+
+### 对象信息
+
+#### type() & isinstance()
+
+```python
+# 基本数据类型
+print(type(123))        # <class 'int'>
+print(type('123å'))     # <class 'str'>
+
+# 自定义的类
+print(type(Animal()))   # <class '__main__.Animal'>
+print(type(Animal))     # <class 'type'>
+
+# 方法
+print(type(abs))        # <class 'builtin_function_or_method'>
+
+# 用instance也能判断：
+print(isinstance(123,int))      # True
+print(isinstance('123',str))    # True
+
+# instance 还能判断是否是一下多个类型中的一个：
+print(isinstance('123', (str, int)))    # True
+print(isinstance(123, (str, int)))      # True
+```
+
+
+
+#### dir()
+
+- 获取这个**对象**的所有属性和方法，不是用来获取**类**的。
+- 返回一个包含字符串的list
+
+```python
+print(dir(123))
+print(dir('123'))	
+# ['__add__', '__class__',..., '__subclasshook__', 'capitalize',..., 'zfill']
+
+print(dir(Animal))
+print(dir(Animal()))
+# 内容相同：['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'run']
+
+# __xxx__ 是特殊保存方式：以下调用方式相同。 len()方法在python中，是用 __len__()保存的
+len('ABC')			# 返回 3
+'ABC'.__len__()	# 返回 3
+```
+
+
+
+#### getattr()	setattr()	hasattr()
+
+获取、设置、判断某个**对象**的某个属性。
+
+```python
+class Person(object):
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+
+moxy = Person('Moxy', 25)
+
+# 判断：
+print(hasattr(Person, 'name'))  # False，不能用来判断类
+print(hasattr(moxy, 'name'))    # True
+print(hasattr(moxy, 'class'))   # False
+
+# 设置：
+print(setattr(moxy, 'class', 1))# None 没有返回值
+
+# 获取：
+print(getattr(moxy, 'name'))    # Moxy
+print(getattr(moxy, 'class'))   # 1
+
+print(getattr(moxy, 'sex'))       # 报错：AttributeError: 'Person' object has no attribute 'sex'
+print(getattr(moxy, 'sex', False))  # False 设置default，没有该属性就返回default
+```
+
+
+
+### 实例属性
+
+- python的实例属性，"类似" java 中的静态属性。
+
+```python
+class Person(object):
+    Pname = 'Person'
+    
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+moxy = Person('moxy', 25)
+
+# 实例属性
+print(moxy.name, moxy.age)  # moxy 25
+
+# 类属性,子类都可访问
+print(moxy.Pname)   # Person 子类没该属性就会找父类的属性
+print(Person.Pname) # Person
+
+# 可以给子类绑定父属性
+moxy.Pname = 'Stuedent' 
+print(moxy.Pname)   # Stuedent
+
+# 删除子类的父属性定义
+del moxy.Pname
+print(moxy.Pname)   # Person
+```
+
