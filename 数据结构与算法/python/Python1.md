@@ -768,7 +768,8 @@ print(Moxy.get_score()) 		# 100
 
 - 一个子类如果想继承一个父类：
   - 不是 Java 中的：`class 子类 extends 父类 {...}`
-  - 而是传入参数：`class 子类(父类)`
+  - 而是传入参数：`class 子类(父类1, 父类2, 父类3)`
+  - Python 支持多重继承
 
 这是一个不同的风格，注意区分。
 
@@ -869,6 +870,27 @@ print(isinstance(123, (str, int)))      # True
 
 
 
+#### type() 创建对象
+
+- 从上面可以看到，一个class的类型，就是type；而一个实例化Student类的对象，他的类型是Student。所以，可以用type来创建对象。
+
+```python
+# 先定义这个类中的方法
+def func(self, name='NJ'):
+  	print('Student, %s.' % name)
+
+# 用 type() 创建类，三个参数：类名、父类、类的方法
+Student = type('Student', (object, ), dict(name = func))
+
+h = Student()
+h.name('Moxy')
+h.name()
+# Student, Moxy.
+# Student, NJ.
+```
+
+
+
 #### dir()
 
 - 获取这个**对象**的所有属性和方法，不是用来获取**类**的。
@@ -950,4 +972,94 @@ print(moxy.Pname)   # Stuedent
 del moxy.Pname
 print(moxy.Pname)   # Person
 ```
+
+
+
+# 5 面向对象高级编程
+
+### `__slots__`
+
+- 限制 class 实例，使其只能添加的限定的属性，不能给这个class添加其他属性。
+
+```python
+# 如果没有添加限制，在实例化一个Student类后，可以添加其他属性上去：
+class Student(object):
+		pass
+  
+s = Studnet()
+s.name = 'Moxy'
+s.age = 'age'
+s.class = 1
+
+# 添加了 __slots__ 限制，给实例添加 name 和 age 这两个属性，其他属性报错
+class Student(object):
+  	__slots__ = ('name', 'age')
+
+s = Studnet()
+s.name = 'Moxy'
+s.age = 'age'
+s.class = 1 	# AttributeError: 'Student' object has no attribute 'class'
+
+# 如果有子类继承了Student类，这个限制不作用在子类的实例上
+class Man(Student):
+  pass
+
+m = Man()
+m.class = 1 # 允许添加该属性
+```
+
+
+
+### @property
+
+装饰器，把事情变简单，可以替换 get 和 set 函数。
+
+
+
+### metaclass
+
+元类。类似type()创建对象一样，提供一种创建对象的方法。
+
+- 可以先定义metaclass，就可以创建类，最后创建实例。
+
+```python
+# 辨认：从 type继承而来的，通常就是一个 metaclass
+class ListMetaclass(type):
+    def __new__(cls, name, bases, attrs):
+        attrs['add'] = lambda self, value: self.append(value)
+        return type.__new__(cls, name, bases, attrs)
+```
+
+
+
+# 6 错误和调试
+
+### try 捕获
+
+```python
+try:
+  	pass
+except someError as e:
+  	print('except:', e)
+finally:
+  	print('finally...')s
+```
+
+
+
+### raise 抛出
+
+```python
+def func(s):
+  	# some codes
+    raise FuncError('error:....')
+```
+
+
+
+### assert 断言
+
+
+
+
 
