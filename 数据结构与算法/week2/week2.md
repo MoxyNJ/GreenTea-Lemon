@@ -139,17 +139,38 @@ LRU Cache - Linked List 。缓存机制 —— 力扣
 
 Redis - Skip List。
 
-
-
-
-
-
-
-
-
 ## 302 实战：移动零
 
+#### 练习步骤：
 
+1. 5 - 10分钟：读题和思考
+   - 然后马上看题解。默写背诵、熟练。
+2. 在IDE里，开始自己写（闭卷）
+
+#### Array List
+
+1. https://leetcode-cn.com/problems/container-with-most-water/ 
+2. https://leetcode-cn.com/problems/move-zeroes/
+3. https://leetcode-cn.com/problems/climbing-stairs/
+4. https://leetcode-cn.com/problems/3sum/ (高频老题） 
+
+#### Linked List
+
+1. https://leetcode-cn.com/problems/reverse-linked-list/ 
+2. https://leetcode-cn.com/problems/swap-nodes-in-pairs 
+3. https://leetcode-cn.com/problems/linked-list-cycle 
+4. https://leetcode-cn.com/problems/linked-list-cycle-ii 
+5. https://leetcode-cn.com/problems/reverse-nodes-in-k-group/
+
+#### Homework
+
+1. https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/ 
+2. https://leetcode-cn.com/problems/rotate-array/ 
+3. https://leetcode-cn.com/problems/merge-two-sorted-lists/ 
+4. https://leetcode-cn.com/problems/merge-sorted-array/ 
+5. https://leetcode-cn.com/problems/two-sum/ 
+6. https://leetcode-cn.com/problems/move-zeroes/ 
+7. https://leetcode-cn.com/problems/plus-one/ 
 
 
 
