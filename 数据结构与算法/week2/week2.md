@@ -139,13 +139,9 @@ LRU Cache - Linked List 。缓存机制 —— 力扣
 
 Redis - Skip List。
 
-## 302 实战：移动零
 
-#### 练习步骤：
 
-1. 5 - 10分钟：读题和思考
-   - 然后马上看题解。默写背诵、熟练。
-2. 在IDE里，开始自己写（闭卷）
+### 题目
 
 #### Array List
 
@@ -174,19 +170,198 @@ Redis - Skip List。
 
 
 
+### 实战1：移动零
+
+#### 练习步骤：
+
+1. 5 - 10分钟：读题和思考
+   - 然后马上看题解。默写背诵、熟练。
+2. 在IDE里，开始自己写（闭卷）
+
+https://leetcode-cn.com/problems/move-zeroes/submissions/
+
+![36d1ac5d689101cbf9947465e94753c626eab7fcb736ae2175f5d87ebc85fdf0-283_2](source/36d1ac5d689101cbf9947465e94753c626eab7fcb736ae2175f5d87ebc85fdf0-283_2.gif)
+
+```javascript
+// 替换后，填0法 88ms
+var moveZeroes = function(nums) {
+    j = 0;
+    for(i = 0; i < nums.length ; i ++) {
+        if (nums[i] != 0) {
+            nums[j] = nums[i]
+            if (i !=j )
+                nums[i] = 0
+            j++
+        }
+    }
+};
+
+// 交换法 92ms
+var moveZeroes = function(nums) {
+    j = 0;
+    for(i = 0; i < nums.length ; i ++) {
+        if (nums[i] != 0) {
+            temp = nums[i]
+            nums[i] = nums[j]
+            nums[j] = temp
+            j ++
+        }
+    }
+};
+```
+
+```java
+// 替换后，填0法 0ms
+class Solution {
+    public void moveZeroes(int[] nums) {
+        int j = 0;
+        for(int i = 0; i < nums.length; i++) {
+            if(nums[i] != 0) {
+                nums[j] = nums[i];
+                if(i != j)
+                    nums[i] = 0;
+                j++;
+            }
+        }
+    }
+}
+```
+
+```python
+# 交换法 16ms
+class Solution(object):
+    def moveZeroes(self, nums):
+        j = 0
+        for i in xrange(len(nums)):
+            if nums[i] != 0:
+                nums[j], nums[i] = nums[i], nums[j]
+                j += 1
+                
+# 替换后，填0法 20ms
+class Solution(object):
+    def moveZeroes(self, nums):
+        j = 0
+        for i in xrange(len(nums)):
+            if nums[i] != 0:
+                nums[j] = nums[i]
+                if i != j:
+                    nums[i] = 0
+                j += 1
+```
+
+ `xrange(len(nums))`：
+
+- `xrange()`：为一个length创建一个可以遍历的生成器。
+- `len([dist])`：获取一个dist的length。
 
 
-## 303 实战：盛水最多的容器、爬楼梯
 
 
 
+### 实战2：盛水最多的容器
+
+[11. 盛最多水的容器](https://leetcode-cn.com/problems/container-with-most-water/)
+
+遇到两层遍历 `i, j`，且 `i, j` 不能重复的时候，需要非常熟练写下如下for循环：
+
+```java
+// i从左边界开始，j截止到右边界
+for (int i = 0; i < str.length - 1; ++i) {
+  	for (int j = i + 1; j < str.length; ++j) {
+      // codes
+    }
+}
+```
+
+一层循环，`i, j`一个从左边界往内遍历，一个从右边界往内遍历。也要形成肌肉记忆
+
+```java
+for (int i = 0, j = str.length - 1; i < j; ) {
+  // codes
+  // i的递增和j的递减，在循环里设置。
+}
+```
 
 
 
+解法一：两次for循环
 
-## 304 实战：3树之和、环形链表
+- **O(n^2)**
+
+```java
+// java
+class Solution {
+    public int maxArea(int[] height) {
+        int max = 0;
+        for (int i = 0; i < height.length - 1; ++i) {
+            for (int j = i + 1; j < height.length; ++j) {
+                int area = (j - i) * Math.min(height[i], height[j]);
+                max = Math.max(area, max);
+            }
+        }
+        return max;
+    }
+}
+```
+
+```python
+# python
+# 超出时间限制，但是可用
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        maxA = 0;
+        for i in range(0, len(height) - 1):
+            for j in range(i + 1, len(height)):
+                area = (j - i) * min(height[i], height[j])
+                maxA = max(maxA, area)
+        return maxA
+```
 
 
+
+解法二：左右夹逼（收敛）
+
+- **O(n)**
+
+- 一层循环，`i, j`一个从左边界往内遍历，一个从右边界往内遍历。也要形成肌肉记忆
+- 思想：i 和 j分别从左右往内遍历，先确保了容积的最宽，但是容积的高度不是最优。
+  - 这个时候，当i和j往里遍历的时候，任何一组新的 i, j 都不如之前的宽，那它必须要比之前那组 i, j 高，才会有可比性。
+  - 所以，在 i, j 向内遍历时，不断判的新的一组 i, j 高度是否更高，然后比较 max。
+    - 这里的‘高度’，指的是 i 和 j 中，更高的一个棒子。
+
+```java
+// 老师的方法
+// 为什么在计算area的时候，是(j - i + 1)，要加1；
+// 原因：老师的三目运算起到了一举两得的作用：
+//		1. 令 i 和 j 的边界向内收缩一次。也就是下一次计算面积时，i和j的坐标位置；
+//		2. 求出了当前i和j的最小高度，方便了本次面积计算。
+// 所以，因为i和j在三目运算中，肯定改变了其中之一的数值，不论是i还是j，一定是向内收缩了，
+// 			这个时候，在计算 area的时候只需要(j - i + 1），多加一个1，就是当前i和j的差了。
+//			如果不加1，只计算(j - i）是下一次面积计算的值，不是当前遍历的值。	
+class Solution {
+    public int maxArea(int[] height) {
+        int max = 0;
+        for (int i = 0, j = height.length - 1; i < j;  ) {
+            int minHeight = height[i] > height[j] ? height[j--] : height[i++];
+            int area = (j - i + 1) * minHeight;
+            max = Math.max(area, max);
+        }
+        return max;
+    }
+}
+```
+
+
+
+### 实战3：爬楼梯
+
+
+
+### 实战4：3树之和
+
+
+
+### 实战5：环形链表
 
 
 
