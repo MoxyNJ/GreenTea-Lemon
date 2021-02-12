@@ -1,288 +1,406 @@
-# 1. 数据结构与算法总览
+# 3 数组、链表、跳表
 
-## 1.1 职业训练 —— 三步法快速掌握新知识
-
-### 1. Chunk it up
-
-reddit网站
-
-切碎知识点、庖丁解牛。
-
-每个知识体系都是一棵树，树状结构。有根、延伸出主干、然后延伸出分支、枝叶。要把新知识和就知识挂靠在一起，形成关系。最后变成一个树形结构。人脑不适合孤立的记忆，要形成一个记忆脑图。
-
-### 2. 刻意练习
-
-基本功练习：对基础知识反复练习。练题，只练习一遍是远远不够的，不能够形成条件反射。
-
-- 五遍刷题法
-
-  - 练习自己的弱项、弱点的地方。
-  - 不舒服、枯燥、无聊的地方，就是要突破的薄弱环节。
-
-  - 反复练习，形成肌肉记忆。
-
-### 3. Feedback
-
-- 即时反馈
-- 主动型反馈（自己去找）
-  - 高手代码 (GitHub, LeetCode, etc.) 
-  - 第一视角直播
-- 被动式反馈（高手指点）
-  - 我没有（哭
+|                | Array List | Linked List | Skip List |
+| -------------- | ---------- | ----------- | --------- |
+| Prepend 头增删 | O(1)       | O(1)        |           |
+| Append 尾增删  | O(1)       | O(1)        |           |
+| Lookup 查找    | O(1)       | O(n)        | O(log(n)) |
+| Insert 插入    | O(n)       | O(1)        |           |
+| Delete 删除    | O(n)       | O(1)        |           |
+| 空间复杂度     | O(n)       | O(n)        | O(n)      |
 
 
 
-## 1.2 数据结构与算法大纲
+## 301 基本实现和特性
 
-### 1. 数据结构的分类（3）
+### Array List 数组
 
-- 一维：
-  - 基础：数组 array（string）、链表 linked list
-  - 高级：栈 stack、队列 queue、双端队列 deque、集合 set、映射 map（hash or map）、etc
-- 二维：
-  - 基础：树 tree、图 graph
-  - 高级：二叉搜索树 binary search tree（red-black tree、AVL）、堆（leap）、并查集（disjoint set）、字典树（Trie、etc）
-- 特殊：
-  - 位运算 BitWise，布隆过滤器 Bloom Filter
-  - LRU Cache
+Java,  C++:  `int a [100];`
 
-### 2. 算法的分类（8）
+Python:  `list = []`
 
-基础：
+JavaScript: `let x = [1, 2, 3]`
 
-- If-else、switch  --> branch 跳转
-- for、while loop --> Iteration 遍历
-- Recursion（Divide & Conquer、Backtrace）递归
+- 每当申请一个数组，内存管理器会开辟一个连续的地址
+- 优点：访问任何地址的时间复杂度（常数级 O(1)）是一样的，随机访问很快
+- 缺点：插入、删除操作需要拖动较多元素，时间复杂度较高（O(n)）。
+  - 扩容：如果数组空间不足，就会扩容new 一个新数组。扩容后的大小：`Math.max(current * 2, minCapacity)`，是当前空间的二倍，或者是当前操作（插入元素后）所需要的内存空间中的更大值。
 
-高级（基于基础泛化而来）：
+#### Array 插入元素
 
-- 搜索 Search：深度优先搜索 Depth first search、广度优先搜索 Breadth first search、A*、etc
-- 动态规划 Dynamic Programming
-- 二分查找 Binary Search
-- 贪心 Greedy
-- 数学 Math、几何 Geometry
+O(n) 的时间复杂度，在中间位置插入一个元素，需要把后面的元素全部位移，访问到了后面每一个元素。
 
-## 1.3 学习二法宝
+#### Array 删除元素
 
-### 1. 切题四件套
-
-#### 1. Clarification
-
-向面试官问清具体的问题是什么
-
-#### 2. Possible solutions
-
-构思自己所有可能的想法都过一遍，比较不同方法的时间和空间复杂度。
-
-- compare（time/space）时空复杂度
-
-#### 3. Coding
-
-写下代码
-
-#### 4. Test cases
-
-提供测试用例，让面试官感觉更清晰、完整。
+O(n)的时间复杂度，在中间位置插入一个元素，需要把这个元素删除，把后面的元素全部位移，访问到了后面每一个元素。
 
 
 
-### 2. 五步刷题法（无毒神掌）
+### Linked List 链表
 
-#### 第一遍：
+`class node` 自定义一个node链表类。
 
-- 5分钟：读题 + 思考
-  - 如果陌生，最多10-15分钟思考时间。
-- 直接看解法：如果没思路，直接看解法。
-  - 注意对比多种解法之间的优劣。
-- 背诵、默写好的解法（几乎是肌肉记忆）。
+- 单链表：后继节点、直接后继
+- 双链表：前驱结点和后继结点、直接后继和直接前驱
+- 循环链表：末尾的最后一个 Tail指针，指向 Head 开头。
 
-#### 第二遍：
+<img src="source/image-20210211162901667.png" alt="image-20210211162901667" style="zoom:50%;" />
 
-- 马上自己默写出来
-  - 写出来后，在LeetCode提交自己的代码，修改Bug。
+- 优点：频繁的插入、删除操作比数组更优，时间复杂度更低O(1)。
 
-- 多种解法都写，进行比较。
-  - 优化：根据执行时间优化自己的解法（领先80%以上）。
+- 缺点：不支持随机访问，访问任意位置需要从头节点一步一步查找，时间复杂度O(n)。
 
-#### 第三遍：
+Linked List的最简单实现：
 
-- 一天之后，第二天再重复做题。
-- 不同解法的熟练程度，如果有自己没有掌握牢固的，进行专项训练
+```c++
+class LinkedList {
+  	Node head;  // head of list
+  
+  // Linked list Nost
+  	class Node {
+    		int data;
+      	Node next;
+      
+      	Node(int d) { data = d;}
+  	}
+}
+```
 
-#### 第四遍：
+#### Linked List 插入节点
 
-- 一周之后，反复回来练习相同的题目。
-- 四遍过后，基本达到不会忘记了。
+只需要修改插入位置的前驱节点、后继节点即可。时间复杂度是 O(1)。
 
-#### 第五遍：
+#### Linked List 删除节点
 
-- 面试前一两周，进行恢复性训练。
+<img src="source/image-20210211165112672.png" alt="image-20210211165112672" style="zoom:50%;" />
 
-### **⚠️注意：做题不能只做一遍！！**
-
-
-
-# 2. 环境准备 & 复杂度分析
-
-## 2.1 环境准备
-
-- 据说，Win平台的Mircosoft New Terminal 很不错。https://github.com/microsoft/terminal
-
-- leetcode的中文站和英文站，题库内容是相同的。每个题目的地址，在两个站中，后缀是相同的。可以以中文站为主，然后如果想看更多讨论，把中文站的地址:leetcode-cn.com，删除cn，修改为:leetcode.com即可进入英文站-“Most votes”。
-  - 在做题第三遍、第四遍的一定要看 Most votes中，与我语言相关的最高票的回答，和最高票的前三个回答，一定有很多知识可以学习。
-- 修改键盘响应速度，提高码字效率。
-
-<img src="source/image-20210202183345161.png" alt="image-20210202183345161" style="zoom:50%;" />
+目标节点的前一个节点中，后继节点替换为下一个节点即可。时间复杂度O(1)。
 
 
 
-- Google Code Style
+## Skip List 跳表
+
+Redis中常用。理解工作原理为主，不需要会编写。
+
+跳表的出现，是为了解决链表的 lookup随机访问是 O(n)而诞生的 。
+
+**算法的中心思想：升维。用空间换时间。**
+
+优点：优化了链表查找速度，时间复杂度O(log(n))
+
+缺点：进行插入、删除操作后，需要频繁更新维护跳表。
+
+
+
+### 跳表的改进原理：
+
+#### 添加第一级索引
+
+增加一级索引，可以让速度提高一倍，及速度x2
+
+![image-20210211165902169](source/image-20210211165902169.png)
+
+#### 添加第二级索引
+
+增加二级索引，可以让查找速度 x4
+
+![image-20210211170002070](source/image-20210211170002070.png)
+
+#### 以此类推
+
+<img src="source/image-20210211170057404.png" alt="image-20210211170057404" style="zoom:50%;" />
+
+#### 分析：跳表的时间复杂度
+
+- 原始链表节数树为 n、一级索引节点数为 n/2、二级 n/4、三级 n/8 = n/(2^3)
+  -  第 k 级索引的节点数是： n/(2^k)
+- 假设索引有 k 级，最高级索引的节点数为 2。 => 2 =  n/(2^k) ，则求得：k = log2(n) - 1
+- 建立了以 索引高度 k 和 原始链表节点数 n 的关系。
+
+<img src="source/image-20210211170911726.png" alt="image-20210211170911726" style="zoom:50%;" />
+
+- 查询时，可以看到在每层索引遍历的节点的个数，一定不会超过2。则时间复杂度的数量级等于索引的数量级，时间复杂度：O(log(n))
+
+#### 现实中的跳表形态
+
+![image-20210211171411424](source/image-20210211171411424.png)
+
+由于有插入、删除节点的问题，所以现实中的跳表形态可能是这样不规则的。所以，跳表在现实中，存在维护不方便的问题。每当对跳表进行插入、删除节点，就需要对跳表进行更新。时间复杂度：O(log(n))
+
+#### 空间复杂度分析
+
+![image-20210211171645517](source/image-20210211171645517.png)
+
+因为这个数列最终收敛，占用空间连 2n 也没超过。空间复杂度的数量级也是 n。
+
+#### 应用
+
+LRU Cache - Linked List 。缓存机制 —— 力扣
+
+Redis - Skip List。
+
+
+
+### 题目
+
+#### Array List
+
+1. https://leetcode-cn.com/problems/container-with-most-water/ 
+2. https://leetcode-cn.com/problems/move-zeroes/
+3. https://leetcode-cn.com/problems/climbing-stairs/
+4. https://leetcode-cn.com/problems/3sum/ (高频老题） 
+
+#### Linked List
+
+1. https://leetcode-cn.com/problems/reverse-linked-list/ 
+2. https://leetcode-cn.com/problems/swap-nodes-in-pairs 
+3. https://leetcode-cn.com/problems/linked-list-cycle 
+4. https://leetcode-cn.com/problems/linked-list-cycle-ii 
+5. https://leetcode-cn.com/problems/reverse-nodes-in-k-group/
+
+#### Homework
+
+1. https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/ 
+2. https://leetcode-cn.com/problems/rotate-array/ 
+3. https://leetcode-cn.com/problems/merge-two-sorted-lists/ 
+4. https://leetcode-cn.com/problems/merge-sorted-array/ 
+5. https://leetcode-cn.com/problems/two-sum/ 
+6. https://leetcode-cn.com/problems/move-zeroes/ 
+7. https://leetcode-cn.com/problems/plus-one/ 
+
+
+
+### 实战1：移动零
+
+#### 练习步骤：
+
+1. 5 - 10分钟：读题和思考
+   - 然后马上看题解。默写背诵、熟练。
+2. 在IDE里，开始自己写（闭卷）
+
+https://leetcode-cn.com/problems/move-zeroes/submissions/
+
+![36d1ac5d689101cbf9947465e94753c626eab7fcb736ae2175f5d87ebc85fdf0-283_2](source/36d1ac5d689101cbf9947465e94753c626eab7fcb736ae2175f5d87ebc85fdf0-283_2.gif)
 
 ```javascript
-// if和左括号，必须要有空格。
-// 几乎所有的括号和关键字前后，都要有空格（空格尽量多）。
-class InnerClass {
-  constructor() {}
-
-  /** @param {number} foo */
-  method(foo) {
-    if (condition(foo)) {
-      try {
-        // Note: this might fail.
-        something();
-      } catch (err) {
-        recover();
-      }
+// 替换后，填0法 88ms
+var moveZeroes = function(nums) {
+    j = 0;
+    for(i = 0; i < nums.length ; i ++) {
+        if (nums[i] != 0) {
+            nums[j] = nums[i]
+            if (i !=j )
+                nums[i] = 0
+            j++
+        }
     }
-  }
+};
+
+// 交换法 92ms
+var moveZeroes = function(nums) {
+    j = 0;
+    for(i = 0; i < nums.length ; i ++) {
+        if (nums[i] != 0) {
+            temp = nums[i]
+            nums[i] = nums[j]
+            nums[j] = temp
+            j ++
+        }
+    }
+};
+```
+
+```java
+// 替换后，填0法 0ms
+class Solution {
+    public void moveZeroes(int[] nums) {
+        int j = 0;
+        for(int i = 0; i < nums.length; i++) {
+            if(nums[i] != 0) {
+                nums[j] = nums[i];
+                if(i != j)
+                    nums[i] = 0;
+                j++;
+            }
+        }
+    }
 }
+```
 
-// for 循环
-for (let i = 0; i < foo.length; i++) bar(foo[i]);
+```python
+# 交换法 16ms
+class Solution(object):
+    def moveZeroes(self, nums):
+        j = 0
+        for i in xrange(len(nums)):
+            if nums[i] != 0:
+                nums[j], nums[i] = nums[i], nums[j]
+                j += 1
+                
+# 替换后，填0法 20ms
+class Solution(object):
+    def moveZeroes(self, nums):
+        j = 0
+        for i in xrange(len(nums)):
+            if nums[i] != 0:
+                nums[j] = nums[i]
+                if i != j:
+                    nums[i] = 0
+                j += 1
+```
 
-// 数组的定义
-const a = [
-  0,
-  1,
-  2,
-];
+ `xrange(len(nums))`：
 
-const b =
-    [0, 1, 2];
+- `xrange()`：为一个length创建一个可以遍历的生成器。
+- `len([dist])`：获取一个dist的length。
 
-// 箭头函数
-export function setMutateFoo(newMutateFoo) {
-  // Exported classes and functions can be mutated!
-  mutateFoo = () => {
-    foo = newMutateFoo(foo);
-  };
+
+
+
+
+### 实战2：盛水最多的容器
+
+[11. 盛最多水的容器](https://leetcode-cn.com/problems/container-with-most-water/)
+
+遇到两层遍历 `i, j`，且 `i, j` 不能重复的时候，需要非常熟练写下如下for循环：
+
+```java
+// i从左边界开始，j截止到右边界
+for (int i = 0; i < str.length - 1; ++i) {
+  	for (int j = i + 1; j < str.length; ++j) {
+      // codes
+    }
 }
+```
 
+一层循环，`i, j`一个从左边界往内遍历，一个从右边界往内遍历。也要形成肌肉记忆
+
+```java
+for (int i = 0, j = str.length - 1; i < j; ) {
+  // codes
+  // i的递增和j的递减，在循环里设置。
+}
 ```
 
 
 
-- Top tips
-  - 遇到一个新的IDE，先搜搜看它的top tips
-  - opt + delete 删除单个单词
-  - cmd + delete 删除整行单词 
-  - 自动补全：opt+enter，在一个尚未定义的函数上使用，会自动补全。
+解法一：两次for循环
+
+- **O(n^2)**
+
+```java
+// java
+class Solution {
+    public int maxArea(int[] height) {
+        int max = 0;
+        for (int i = 0; i < height.length - 1; ++i) {
+            for (int j = i + 1; j < height.length; ++j) {
+                int area = (j - i) * Math.min(height[i], height[j]);
+                max = Math.max(area, max);
+            }
+        }
+        return max;
+    }
+}
+```
+
+```python
+# python
+# 超出时间限制，但是可用
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        maxA = 0;
+        for i in range(0, len(height) - 1):
+            for j in range(i + 1, len(height)):
+                area = (j - i) * min(height[i], height[j])
+                maxA = max(maxA, area)
+        return maxA
+```
 
 
 
-- 代码要自顶向下的方式来写，类似写新闻稿一样。
-  - 重要的函数，关键的逻辑，要先写在最上方。
-  - 次要的函数，细节函数，要放在后面。
+解法二：左右夹逼（收敛）
+
+- **O(n)**
+
+- 一层循环，`i, j`一个从左边界往内遍历，一个从右边界往内遍历。也要形成肌肉记忆
+- 思想：i 和 j分别从左右往内遍历，先确保了容积的最宽，但是容积的高度不是最优。
+  - 这个时候，当i和j往里遍历的时候，任何一组新的 i, j 都不如之前的宽，那它必须要比之前那组 i, j 高，才会有可比性。
+  - 所以，在 i, j 向内遍历时，不断判的新的一组 i, j 高度是否更高，然后比较 max。
+    - 这里的‘高度’，指的是 i 和 j 中，更高的一个棒子。
+
+```java
+// 老师的方法
+// 为什么在计算area的时候，是(j - i + 1)，要加1；
+// 原因：老师的三目运算起到了一举两得的作用：
+//		1. 令 i 和 j 的边界向内收缩一次。也就是下一次计算面积时，i和j的坐标位置；
+//		2. 求出了当前i和j的最小高度，方便了本次面积计算。
+// 所以，因为i和j在三目运算中，肯定改变了其中之一的数值，不论是i还是j，一定是向内收缩了，
+// 			这个时候，在计算 area的时候只需要(j - i + 1），多加一个1，就是当前i和j的差了。
+//			如果不加1，只计算(j - i）是下一次面积计算的值，不是当前遍历的值。	
+class Solution {
+    public int maxArea(int[] height) {
+        int max = 0;
+        for (int i = 0, j = height.length - 1; i < j;  ) {
+            int minHeight = height[i] > height[j] ? height[j--] : height[i++];
+            int area = (j - i + 1) * minHeight;
+            max = Math.max(area, max);
+        }
+        return max;
+    }
+}
+```
 
 
 
-- IDE
-  - VSCode
-  - Java：IntelliJ
-  - Python：Pycharm
+```python
+# 不会用for + 三目运算，用的是普通的while
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        maxA, i, j = 0, 0, len(height) - 1
+        while i < j:
+            maxA = max(maxA, min(height[i],height[j]) * (j - i))
+            if height[i] < height[j]:
+                i += 1
+            else:
+                j -= 1
+        return maxA
+      
+      
+# 如果不用自带的 max和min 方法，速度可以快许多：
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        maxA = 0
+        i, j = 0, len(height) - 1
+        while i < j:
+            if height[i] < height[j]:
+                area = (j - i) * height[i]
+                if maxA < area:
+                    maxA = area
+                i += 1
+            else:
+                area = (j - i) * height[j]
+                if maxA < area:
+                    maxA = area
+                j -= 1
+        return maxA
+```
 
 
 
-## 3 时间 & 空间复杂度
-
-## 3.1 时间复杂度
-
-### 3.1.1 Big O notation
-
-- 7种常见的时间复杂度
-
- <img src="source/image-20210210201308015.png" alt="image-20210210201308015" style="zoom: 33%;" />
-
-- logn是指：以2为底的log对数。
+### 实战3：爬楼梯
 
 
 
-**案例分析：**
-
-<img src="source/image-20210210201431850.png" alt="image-20210210201431850" style="zoom:50%;" />
-
-<img src="source/image-20210210201607472.png" alt="image-20210210201607472" style="zoom:50%;" />
-
-- O(log(n))
-  - 分析：
-    - 若 n == 4，i == 1，2，4(跳出循环)，执行2次循环。
-    - 若 n == 10，i == 1，2，4，8，16(跳出循环)，执行5次循环。
-    - 若 n == 20，i == 1，2，4，8，16，32（跳），执行6次循环。
-  - 判断：
-    - i == 1，2，4，8，16，32，64，128 ==> 满足条件： 2^x < n，x就是循环次数；
-    - 则：x = log2(n)  ==> O(log(n))
-- O(k^n)
-  - 后面再判断
-
-![image-20210210212725226](source/image-20210210212725226.png)
-
-**常数 < 对数 < 幂函数 < 指数 < 阶乘**
-
-**n < n·log2(n) < n^2 < 2^n < n!**
+### 实战4：3树之和
 
 
 
-举例：对一个计算进行优化，可以大大提升执行的效率。
-
-![image-20210210213243009](source/image-20210210213243009.png)
-
-
-
-举例：斐波那契数列
-
-- F(n) = F(n - 1) + F(n - 2)
-
-<img src="source/image-20210210221517669.png" alt="image-20210210221517669" style="zoom:50%;" />
-
-分析的时候，用树状结构来分析。可以看到，没一层展开都会变成两个分支节点，同时会有大量的重复计算。
-
-![image-20210210221417448](source/image-20210210221417448.png)
-
-
-
-### Master theorem 主定理
-
-- [主定理](https://zh.wikipedia.org/wiki/%E4%B8%BB%E5%AE%9A%E7%90%86)
-
-![image-20210211153153962](source/image-20210211153153962.png)
-
-- 一维层面的二分法：O(logn)
-- 二叉树：O(n)
-- 在排好序的二维矩阵进行二分法：O(n)
-
-- 归并排序：O(nlogn)
-
-
-
-思考：
-
-- 二叉树遍历：前序、中序、后序：时间复杂度：O(n) 
-- 图的遍历 ：时间复杂度：O(n)
-  - 二叉树、图的遍历，每一个节点都会访问且只访问一次，所以时间复杂度是 O(n)。
-- 搜索算法：DFS（深度搜索优先）、BFS（广度搜索优先）：时间复杂度：O(n)
-- 二分查找的时间复杂度：O(nlogn)
+### 实战5：环形链表
 
 
 
 
+
+# 4 栈、队列、优先队列、双端队列
 
