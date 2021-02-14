@@ -154,7 +154,7 @@ Redis - Skip List。
 
 1. https://leetcode-cn.com/problems/reverse-linked-list/ 
 2. https://leetcode-cn.com/problems/swap-nodes-in-pairs 
-3. https://leetcode-cn.com/problems/linked-list-cycle 
+3. **https://leetcode-cn.com/problems/linked-list-cycle** (巧妙)
 4. https://leetcode-cn.com/problems/linked-list-cycle-ii 
 5. https://leetcode-cn.com/problems/reverse-nodes-in-k-group/
 
@@ -432,13 +432,128 @@ class Solution(object):
             f1 = f2
             f2 = f3
         return f3
+      
+# 还可以进一步优化，将f3变量定义的作用域更小
+class Solution(object):
+    def climbStairs(self, n):
+        if n < 3: return n
+        f1, f2 = 1, 2
+        for _ in range(3, n + 1):
+            f3 = f1 + f2
+            f1 = f2
+            f2 = f3
+        return f2
 ```
 
+### 复习时发现问题：
+
+- Line 5: `for _ in range(3, n + 1):`，这里我总忘记是从 3 开始遍历。1 和 2 的情况已经在前面返回了。
 
 
-### 实战4：3树之和
 
+### 实战4：3数之和
 
+[3数之和](https://leetcode-cn.com/problems/3sum/)
+
+- 引子：[2数之和](https://leetcode-cn.com/problems/two-sum/)
+
+- 解题：a + b = -c
+
+- 解法：
+
+  1. 暴力求解：三重循环，相当于在 2数之和外面再套一层 target循环。O(n^3)
+
+  2. hash 表来记录（高级数据结构方法）
+  3. 双指针、夹逼，左右下标推进（套路方法，自己想不到的，直接看题解就行）。
+     1. 排序		`nums.sort()`
+     2. 夹逼
+
+- 总结：双指针法，可以代替一些双层for循环的遍历。前提条件是寻求的结果是不可重复的。
+
+```python
+# 1 暴力求解
+# 注意1: 如何写三重循环的 for in
+# 注意2: 先定义 length 变量，可以少计算两次 len(nums)
+# 注意3: 题目要求返回的list中，没有重复的项，但是这里有重复的项，是个错误。
+
+class Solution(object):
+    def threeSum(self, nums):
+        res = []
+        length = len(nums)
+        for i in range(0, length - 2):
+            for j in range(i + 1, length - 1):
+                for k in range(j + 1, length):
+                    if nums[i] + nums[j] + nums[k] == 0:
+                        res.append([nums[i], nums[j], nums[k]])
+        return res
+```
+
+![2124b524439bcf0eb159ba43be4420c76f60ff2b3b51f87de269c001a323ea1a-Video_2019-06-19_192352](source/2124b524439bcf0eb159ba43be4420c76f60ff2b3b51f87de269c001a323ea1a-Video_2019-06-19_192352.gif)
+
+双指针法： -c = a + b
+
+- 如果 nums不存在，或长度小于3，直接返回空；
+- 排序 sort()，nums按照从小到大排序。
+- for循环，遍历 c
+  - 判断：如果 nums[c] 大于0，跳出循环，返回结果。因为 nums[a] 和 nums[b] 一定大于nums[c]。此时nums[a] ， nums[b] 这两个数字也大于零，三个数相加不可能等于 0。
+  - 判断：如果有两个连续相同的 nums[c]，则跳过相同的部分。
+    - 这里要添加一个 c > 0 。如果不添加这个条件，当 c 等于 0 时，nums[c - 1]超出下标范围。
+  - a 和 b 是两个双指针，分别代表除 c 以及 c 左边的数组外，其余的区域最左端和最右端。
+  - 循环 ： a < b 时
+    - 如果 nums[c] + nums[b] + nums[a] 相等，则把结果 append 到 res 中。同时左指针右移动，右指针左移动。注意要左右指针，要跳过重复的数字。
+    - 如果 nums[c] + nums[b] + nums[a] < 0，表明此时结果太小，应该适当增大，则调整左指针右移，使结果增大
+    - 如果 nums[c] + nums[b] + nums[a] > 0，表明此时结果太大，应该适当减小，则调整右指针左移，使结果减小
+  - 最终返回 res
+
+```python
+# 2 双指针法
+class Solution(object):
+    def threeSum(self, nums):
+        n = len(nums)
+        res = []
+        if (not nums or n < 3): return res
+        nums.sort()
+        for c in range(n):
+            if nums[c] > 0: return res
+            if c > 0 and nums[c] == nums[c - 1]: continue
+            a = c + 1
+            b = n - 1
+            while a < b:
+                s = nums[c] + nums[b] + nums[a]
+                if s M0:
+                    res.append([nums[c], nums[a], nums[b]])
+                    a += 1
+                    while a < b and nums[a] == nums[a - 1]: a += 1
+                    b -= 1
+                    while a < b and nums[b] == nums[b + 1]: b -= 1
+                elif s > 0:
+                    b -= 1
+                else:
+                    a += 1
+        return res
+
+def threeSum(self, nums):
+    res = []
+    nums.sort()
+    for i in xrange(len(nums)-2):
+        if i > 0 and nums[i] == nums[i-1]:
+            continue
+        l, r = i+1, len(nums)-1
+        while l < r:
+            s = nums[i] + nums[l] + nums[r]
+            if s < 0:
+                l +=1 
+            elif s > 0:
+                r -= 1
+            else:
+                res.append((nums[i], nums[l], nums[r]))
+                while l < r and nums[l] == nums[l+1]:
+                    l += 1
+                while l < r and nums[r] == nums[r-1]:
+                    r -= 1
+                l += 1; r -= 1
+    return res
+```
 
 ### 实战5：环形链表
 
