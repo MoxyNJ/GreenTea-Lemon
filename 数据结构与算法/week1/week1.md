@@ -256,8 +256,6 @@ class Solution(object):
 
 
 
-
-
 ### 实战2：盛水最多的容器
 
 [11. 盛最多水的容器](https://leetcode-cn.com/problems/container-with-most-water/)
@@ -557,9 +555,214 @@ def threeSum(self, nums):
 
 ### 实战5：环形链表
 
+![image-20210215134214452](source/d1ac82780e5189d7d58406504c3b7b56c35165997bfbb4c325677af92ee2d483.gif)
 
+
+
+#### 方法一：快慢指针
+
+- 固定套路：快慢指针，快指针一次走两步，慢指针一次走一步。
+  - 是否有环形链表：
+    - 如果快慢指针相等，则证明快指针“套圈”了慢指针，此时有环形链表；
+    - 如果 fast 或 fast.next 为 none，证明快指针此时已经走到了链表尽头，没有环形链表；
+  - 如果有环形链表，链表长度是多少？
+    - 在形成环形后，让快慢指针继续往前走，直到出现第二次“套圈”。这两次套圈之间，两个指针的移动路程之差：fastStep - slowStep 即是环形的节点数。
+
+```python
+class Solution(object):
+    def hasCycle(self, head):
+        if not head or not head.next:
+            return False
+        slow = head
+        fast = head.next
+        while slow != fast:
+            if not fast or not fast.next:
+                return False
+            slow = slow.next
+            fast = fast.next.next
+        return True
+      
+# 在最后的return前，添加记步 slowS 和fastS，再次循环一圈，最终的差值即是环形的节点数。
+      	slowS = 0
+        fast = fast.next
+        fastS = 1
+        while slow != fast:
+            fast = fast.next.next
+            slow = slow.next
+            fastS += 2
+            slowS += 1
+        print(fastS - slowS)
+        return True
+```
+
+#### 方法二：逐个删除
+
+- 如果没有环形，最后一个指针指向 null。
+- 如果存在环形，最后一个指针指向了链表中的一个节点。
+
+操作思路是：把当前链表从头节点开始，一步步删除（删除，就是令当前节点自己指向自己）。
+
+具体流程：
+
+1. head 指针指向链表最开头的指针，head指针指向的节点方便的称之为Node，head.next 就是下一个节点；
+2. 判断：Node 和 head.next 是否存在，如果不存在，证明没有环形，返回 False；
+3. 判断：Node 和 head.next 是否相等，如果相等，证明该节点自己指向了自己，链表有环形，返回 True；
+4. 令 Node的属性：nextNode 指向他自己，相当于把他删除。
+   - 这一步的操作是让 head 指针指向的这个节点，即当前节点的 指针，指向自身。
+     而 noxtNode属性，就是记录 "下一个节点的地址" 的，所以令 nextNode = head.next。
+5. 让 head 指针后移，抛弃删除的指针，去判断下一个指针： head = head.next
+6. 递归，return 这个函数。
+
+**问题：为什么 head.next ==  head，就表明有环形呢？**
+
+- 因为最开始讲过：
+  - 如果没有环形，最后一个节点的 nextNode的值为 null 的。如果一步步删除链表中的节点，最后 head 指向了最后一个节点。这时候head.next 的值为 null。也就是说 head.next 不等于 head。
+  - 如果存在环形，最后一个节点的 nextNode 的值为一个“地址信息”，也就是说这个节点不是“尽头”，它依然指向了下一个节点，是链表中的某一个节点。
+    - 这种情况下，一步步删除链表中的节点，最终 head 也会指向最后一个节点。
+    - 此时 head.next 的值是一个地址，于是会继续递归调用该函数：
+      - 删除最后一个节点（把最后一个节点指向自身）。
+      - 然后 head = head.next，让 head 指针指向“下一个节点”（最后一个节点指向的那个节点，在链表中的某个节点）。
+      - 而”下一个节点“，在链表中曾经已经被删除过了，也就是说，现在他自己已经指向自己了。此时head也指向了它。那么就会出现：head == head.next 的情况。证明存在环形。
+
+[解法链接](https://leetcode-cn.com/problems/linked-list-cycle/solution/3chong-jie-jue-fang-shi-liang-chong-ji-bai-liao-10/)
+
+![1602042284-WdrKhg-image](source/1602042284-WdrKhg-image.png)
+
+```java
+public boolean hasCycle(ListNode head) {
+    //如果head为空，或者他的next指向为空，直接返回false
+    if (head == null || head.next == null)
+        return false;
+    //如果出现head.next = head表示有环
+    if (head.next == head)
+        return true;
+    ListNode nextNode = head.next;
+    //当前节点的next指向他自己，相当于把它删除了
+    head.next = head;
+    //然后递归，查看下一个节点
+    return hasCycle(nextNode);
+}
+```
 
 
 
 # 4 栈、队列、优先队列、双端队列
+
+|      | Stack<br />栈                      | Queue<br />队列                    | Deque: <br />Double-End Queue<br />双端队列 | Priority Queue<br />优先队列 |
+| ---- | ---------------------------------- | ---------------------------------- | ------------------------------------------- | ---------------------------- |
+| 特点 | Last in - Frist out <br />先入后出 | First in - Fist out <br />先入先出 | 头和尾都可以进行出和入                      | 按照元素的优先级取出         |
+| 添加 | O(1)                               | O(1)                               | O(1)                                        | O(1)                         |
+| 删除 | O(1)                               | O(1)                               | O(1)                                        | O(logN)                      |
+| 查询 | O(n)                               | O(n)                               | O(n)                                        |                              |
+
+<img src="source/image-20210215145425068.png" alt="image-20210215145425068" style="zoom:30%;" />
+
+
+
+#### 用 Java 的文档 对比 Stack、Queue、Deque 的区别和联系：
+
+- Stack java 10
+
+<img src="source/image-20210215151204062.png" alt="image-20210215151204062" style="zoom:50%;" />
+
+
+
+- Queue java 10
+
+![image-20210215151238284](source/image-20210215151238284.png)
+
+
+
+- Deque java 10
+
+<img src="source/image-20210215151518642.png" alt="image-20210215151518642" style="zoom:50%;" />
+
+总结：
+
+- offer & add
+  - `offer()`： 查询队列中是否有空位，可以添加新的元素，返回 True/False，不抛异常
+  - `add()`：向队列中加入新元素，如果队列没有空位为，抛出异常。
+- poll & remove
+  - `poll()`：从队列中取出第一个元素，如果集合为空就会抛出异常。
+  - `remove()`：从队列中取出第一个元素，如果集合为空，返回 null，不抛异常。
+
+- peek & element
+  - `peek()`：看一下，查询队列头部的元素，队列为空时， 返回 null。
+  - `element()`：看一下，查询队列头部的元素，队列为空时，抛出异常。
+
+- pop & push （Deque现在不用 pop和push了）
+  - `pop()`：集合中摘取顶端的一个元素，返回这个元素 --> `add()`
+  - `push()`：集合中插入一个元素，返回 Boolean。      --> `remove()`
+- Deque 比 Queue 多了一套API（First - Last），因为Deque可以从头和尾两端进行队列操作。
+
+
+
+#### Priority Queue 优先级队列
+
+底层具体的数据结构较为复杂：heap、hst、treap，后文会讲。
+
+[Java 10 实现](https://docs.oracle.com/javase/10/docs/api/java/util/PriorityQueue.html)
+
+- `add()`：添加元素
+- `clear()`：清空队列
+- `poll()`：摘取元素
+
+<img src="source/image-20210215155136792.png" alt="image-20210215155136792" style="zoom:67%;" />
+
+#### 小结：
+
+- 遇到不会的 API 和技术问题，要学会 google，举例：
+  - stack java 12   --> API
+  - java stack source code --> 查源代码，更好的方法是在 github上找到别人分享的，可以直接下载后，在自己的 IntelliJ 里面查看，更方便。 
+
+
+
+## 题目
+
+预习：
+
+1. https://leetcode-cn.com/problems/valid-parentheses/ - 最近相关性 —> 栈
+2. https://leetcode-cn.com/problems/min-stack/ 
+
+实战：
+
+1. https://leetcode-cn.com/problems/largest-rectangle-in-histogram 
+2. https://leetcode-cn.com/problems/sliding-window-maximum 
+
+Homework
+
+1. https://leetcode.com/problems/design-circular-deque
+2. https://leetcode.com/problems/trapping-rain-water/ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
