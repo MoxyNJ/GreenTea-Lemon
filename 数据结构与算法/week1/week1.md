@@ -845,9 +845,47 @@ class MinStack(object):
 
 
 
+#### 实战1: 柱状图中最大的矩形
+
+- 反思：
+  - 暴力求解法老师给讲述了一下，大概知道思路就可以了，自己没有必要去研究怎么做。我琢磨了好长时间去研究怎么做，最后虽然基本实现了，但是在提交代码的时候，有一个判例太长了，暴力求解根本不可能计算得出，所以其实暴力求解就无法运用在这个题目。
+  - 最好的办法还是先学习正确的解法，然后自己动手实现。这样解决时间，也不容易出现这种问题。
 
 
 
+- 解法一：暴力求解1
+  - 两层for循环，i和j。来遍历出所有矩
+    - 然后寻找每个矩形中，高度最低的数，算出面积。
+  - 在两层for循环的同时，找出所有数字中，最大的数字，令最终面积和数字最大的数进行比较。这是有可能存在某个数特别大，的情况：[2, 3, 1, 5]。这个例子可说明这个问题。
+- 解法二：暴力求解2
+  - 一层 for 循环，遍历每一个柱子的高度，
+    - 遍历到某个柱子，就求出这个柱子的左右边界：
+      - 就是以这个柱子为原点，向左和向右遍历，各自找到第一个比柱子更小的柱子，这个柱子就是边界。算出矩形面积。
+- 解法三：分治
+  - 后面再讲
+- 解法四：Stack
+
+看官方题解 + [这篇教程的最后一个解](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/solution/zhao-liang-bian-di-yi-ge-xiao-yu-ta-de-zhi-by-powc/)
+
+```python
+class Solution:
+    def largestRectangleArea(self, heights: List[int]) -> int:
+        stack = [-1]
+        heights = heights + [0]
+        res = 0
+        for i in range(len(heights)):
+            # stack 从小到大排序
+            # 如果小， 就出栈，然后做判断：
+            while heights[stack[-1]] > heights[i]:
+                temp = stack.pop()
+                # 遇到高度相等的情况，一并处理
+                area = (i - stack[-1] - 1) * heights[temp]
+                if area > res:
+                    res = area
+            # 如果大/等于 入栈
+            stack.append(i)
+        return res
+```
 
 
 
