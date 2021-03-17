@@ -1,0 +1,16 @@
+<script>
+
+function foo(obj) {
+    with(obj) {
+        a = 2;
+        let b = 2;
+        this.c = 3;
+    }
+}
+
+var o1 = {
+    a: 3,
+}
+
+foo.call(o1,o1);
+</script>
