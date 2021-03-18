@@ -4,38 +4,7 @@ var obj = {
     b: 3,
     c: 4,
 };
-Object.defineProperty( obj, "a", {
-    enumerable: false,
-});
 
-
-var arr = [1, 2, 3, 4, 5];
-Object.defineProperty(arr, "a", {
-    value: "a",
-    enumerable: true,
-});
-
-Object.defineProperty(arr, "b", {
-    value: "b",
-    enumerable: true,
-});
-
-Object.defineProperty(arr, "c", {
-    value: "c",
-    enumerable: false,
-});
-
-
-
-console.log("forin");
-for (const key in arr) {
-    console.log(key);
-}
-
-console.log("forof");
-for (const key of arr) {
-    console.log(key);
-}
 
 
 </script>
