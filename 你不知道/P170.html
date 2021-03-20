@@ -16,18 +16,18 @@ Bar.prototype.speak = function(){
     console.log("hello, " + this.identify() + ".");
 }
 
+var f1 = new Foo("f1");
+var f2 = new Foo("f2");
+
 var b1 = new Bar("b1");
 var b2 = new Bar("b2");
 
-// 原型链可以搞清
-// 问题是下面这两个代码，输出 Foo{ ... } 具体是什么东西，意思是“Foo的原型”吗？
-// 那为什么输入：Foo.prototype 输出的不是同样的内容呢？肯定不同，Foo.prototype在Bar.prototype的原型链
-// 为什么 Bar.prototype的值变成 Foo{ ... }了呢？ 问题的根本应该是要详细知道：
-//      Bar.prototype = Object.create(Foo.prototype); 到底发生了什么，明天早上查一查：黄书、红宝书、百度。
-Bar.prototype  // Bar的原型
-b1.__proto__   // b1 的原型链，指向Bar。
+Bar.prototype  // Foo {speak: ƒ}
+b1.__proto__  // Foo {speak: ƒ}
+f1.__proto__  // {identify: ƒ, constructor: ƒ}
 
-
+// 键入：Bar.prototype，返回 Foo {speak: ƒ},
+// 是因为 Bar.prtotype 在创建时，本身并没有任何内容。所以引擎通过委托找到了原型链上的Bar.prototype.__proto__，返回。
 
 
 
