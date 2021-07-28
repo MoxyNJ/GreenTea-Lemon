@@ -385,11 +385,11 @@ name 为 viewport 的 mate，其 content 中也包括了一系列的键值对，
 
 
 
-## 3 HTML 标签列表
+# 3 HTML 标签列表
 
-## 基础
+## 1 基础
 
-| 标签  | 基本使用 |常用属性|其他|
+| 标签  | 基本使用 |常用属性|语义化|
 | ---- | ---- | ---- | ---- |
 |`<!DOCTYPE>`| 文档类型 |lang="zh-CN"||
 |`<html>`| HTML 文档 |||
@@ -404,9 +404,9 @@ name 为 viewport 的 mate，其 content 中也包括了一系列的键值对，
 
 
 
-## 格式化
+## 2 格式化
 
-| 标签  | 基本使用 |常用属性|其他|
+| 标签  | 基本使用 |常用属性|语义化|
 | ---- | ---- | ---- | ---- |
 |`<abbr>`| 缩写、简称 |title：缩写原本的正式形式|✅|
 |`<address>`| 文档作者或拥有者的联系信息 |/|✅|
@@ -422,7 +422,7 @@ name 为 viewport 的 mate，其 content 中也包括了一系列的键值对，
 | `<samp>`             | 程序示例输出                                                 |||
 |`<var>`| 变量，配合 code 标签使用。 ||✅|
 |`<pre>`| 预格式化文本，常放置源代码。 ||✅|
-| `<cite>`             | 引用作品名，书籍或杂志的标题。                               |                                                              | ✅    |
+| `<cite>`             | 引用作品名，书籍或杂志的标题。                               |                                                              | ✅      |
 | `<blockquote>`       | 长引用，一个引用段落                                         |cite：引用来源|✅|
 | `<q>`                | 短引用，一个行内引用，通常浏览器会添加引号。                 |cite：引用来源|✅|
 |`<meter>`| 一个有范围的度量条，一个尺度 |可以指定：受控表单、范围的大小、值的大小、度量粒度、当前值。|✅|
@@ -454,49 +454,53 @@ ruby 相关：
 
 
 
-## 样式和语义
+## 3 样式和语义
 
-| 标签        | 基本使用                                                     | 常用属性                   | 其他 |
-| ----------- | ------------------------------------------------------------ | -------------------------- | ---- |
-| `<style>`   | 文档的 CSS 样式信息。                                        | type="text/css" 唯一且必须 |      |
-| `<div>`     | 块级元素                                                     |                            |      |
-| `<span>`    | 行内元素                                                     |                            |      |
-| `<main>`    | 唯一。文档的主要内容，里面放置各种 article 文章。<br />不可以是：`<article>`、`<aside>`、`<footer>`、`<header>` 或 `<nav>` 的后代。 |                            | ✅    |
-| `<section>` | 文章中的节                                                   |                            | ✅    |
-| `<article>` | 一篇文章                                                     |                            | ✅    |
-| `<aside>`   | 文章的侧栏                                                   |                            | ✅    |
-| `<header>`  | section 或 page 的页眉。<br />主要是介绍类信息               |                            | ✅    |
-| `<footer>`  | section 或 page 的页脚。<br />文档的作者、版权信息、使用条款链接、联系信息等 |                            | ✅    |
-| `<nav>`     | 一个导航条，包裹了多个 a 标签                                |                            | ✅    |
-| `<details>` | 某节的细节，会折叠起来，用户点击后展开。<br />折叠后，只显示 summary 标题；展开后，才显示其余内容。 |                            | ✅    |
-| `<summary>` | 为 `<details>` 元素可见的标题。                              |                            | ✅    |
-| `<dialog>`  | 对话框或窗口。浏览器支持度低。                               |                            | ✅    |
-| `<data>`    | 添加给定内容的机器可读翻译。浏览器支持度低。                 | value 值为机器可读的翻译。 | ✅    |
+| 标签        | 基本使用                                                     | 常用属性                   | 语义化 |
+| ----------- | ------------------------------------------------------------ | -------------------------- | ------ |
+| `<style>`   | 文档的 CSS 样式信息。                                        | type="text/css" 唯一且必须 |        |
+| `<div>`     | 块级元素                                                     |                            |        |
+| `<span>`    | 行内元素                                                     |                            |        |
+| `<main>`    | 唯一。文档的主要内容，里面放置各种 article 文章。<br />不可以是：`<article>`、`<aside>`、`<footer>`、`<header>` 或 `<nav>` 的后代。 |                            | ✅      |
+| `<section>` | 文章中的节                                                   |                            | ✅      |
+| `<article>` | 一篇文章                                                     |                            | ✅      |
+| `<aside>`   | 文章的侧栏                                                   |                            | ✅      |
+| `<header>`  | section 或 page 的页眉。<br />主要是介绍类信息               |                            | ✅      |
+| `<footer>`  | section 或 page 的页脚。<br />文档的作者、版权信息、使用条款链接、联系信息等 |                            | ✅      |
+| `<nav>`     | 一个导航条，包裹了多个 a 标签                                |                            | ✅      |
+| `<details>` | 某节的细节，会折叠起来，用户点击后展开。<br />折叠后，只显示 summary 标题；展开后，才显示其余内容。 |                            | ✅      |
+| `<summary>` | 为 `<details>` 元素可见的标题。                              |                            | ✅      |
+| `<dialog>`  | 对话框或窗口。浏览器支持度低。                               |                            | ✅      |
+| `<data>`    | 添加给定内容的机器可读翻译。浏览器支持度低。                 | value 值为机器可读的翻译。 | ✅      |
+
+结构化的目的：
+
+1.   突出文章内容主次。提升用户阅读体验；
+2.   为搜索引擎展示页面基本信息提供方便，标题、基本概述等等。
+3.   为视力障碍者提供方便的屏幕阅读器。可以展示文档的基本内容。
 
 
 
-## 表单和输入
+## 4 表单和输入
 
-| 标签  | 基本使用 |常用属性|其他|
-| ---- | ---- | ---- | ---- |
-|`<form>`| 供用户输入的 HTML 表单，向服务器传输数据。<br />表单可以包含 input 、menus、textarea、fieldset、legend、label等元素。 |name：表单名<br />action 发送表单数据的地址；<br />method：get/post 下文详细讲述。<br /><br />rel：资源和文档之间的关系<br />target：打开URL的框架，下文有。<br />autocomplete：自动发送 novalidate：表单提交时不验证；||
-|`<input>`| 输入控件 |type、name、value、readonly、disabled、size、maxlength、max、min、placeholder、autocomplete、autofocus、checked、required、height、width||
-|`<textarea>`| 多行的文本输入控件 |name、placeholder、readonly、autofocus、cols / rows、disabled、maxlength||
-|`<button>`| 按钮 |type：button 按钮、reset 重置（清除表单数据）、submit 提交<br />name、value、autofocus、disabled||
-|`<select>`| 选择列表（下拉列表） |name、required、disabled、autofocus、<br />size：下拉列表的可见数目；<br />multiple：可选择多个选项。||
-|`<datalist>`| 带输入框的下拉列表。<br />与 input 元素配合提交。 |||
-|`<option>`| 选择列表中的选项，被 select 包裹 |disabled、selected 默认选中的选项、value 传递给服务器的值。||
-|`<optgroup>`| 下拉列表中分类、进行分组 |label：分组的标题<br />disabled：禁止选择该组||
-|`<label>`| 输入元素的标注，当点击 label 元素时，也会触发 该元素。 |for：绑定的 from 元素（input、button等）||
-|`<fieldset>`| 将表单内的相关元素分组。<br />当一组表单元素放到 `<fieldset>` 标签内时，浏览器会以特殊方式来显示(特殊的边界、3D 效果等）。 |disabled、value：fieldset的名称||
-|`<legend>`| fieldset 元素的标题 |||
-|`<output>`| 浏览器的输出 |for：输出域的 n 个元素，空格隔开。<br />from：该元素所属的 n 个表单。<br />name：唯一，提交时的 key。||
+| 标签  | 基本使用 |常用属性|
+| ---- | ---- | ---- |
+|`<form>`| 供用户输入的 HTML 表单，向服务器传输数据。<br />表单可以包含 input 、menus、textarea、fieldset、legend、label等元素。 |name：表单名<br />action 发送表单数据的地址；<br />method：get/post 下文详细讲述。<br /><br />rel：资源和文档之间的关系<br />target：打开URL的框架，下文有。<br />autocomplete：自动发送 novalidate：表单提交时不验证；|
+|`<input>`| 输入控件 |type、name、value、readonly、disabled、size、maxlength、max、min、placeholder、autocomplete、autofocus、checked、required、height、width|
+|`<textarea>`| 多行的文本输入控件 |name、placeholder、readonly、autofocus、cols / rows、disabled、maxlength|
+|`<button>`| 按钮 |type：button 按钮、reset 重置（清除表单数据）、submit 提交<br />name、value、autofocus、disabled|
+|`<select>`| 选择列表（下拉列表） |name、required、disabled、autofocus、<br />size：下拉列表的可见数目；<br />multiple：可选择多个选项。|
+|`<datalist>`| 带输入框的下拉列表。<br />与 input 元素配合提交。 ||
+|`<option>`| 选择列表中的选项，被 select 包裹 |disabled、selected 默认选中的选项、value 传递给服务器的值。|
+|`<optgroup>`| 下拉列表中分类、进行分组 |label：分组的标题<br />disabled：禁止选择该组|
+|`<label>`| 输入元素的标注，当点击 label 元素时，也会触发 该元素。 |for：绑定的 from 元素（input、button等）|
+|`<fieldset>`| 将表单内的相关元素分组。<br />当一组表单元素放到 `<fieldset>` 标签内时，浏览器会以特殊方式来显示(特殊的边界、3D 效果等）。 |disabled、value：fieldset的名称|
+|`<legend>`| fieldset 元素的标题 ||
+|`<output>`| 浏览器的输出 |for：输出域的 n 个元素，空格隔开。<br />from：该元素所属的 n 个表单。<br />name：唯一，提交时的 key。|
 
 
 
 #### from 标签
-
-
 
 method 属性：规定如何发送表单数据。有两种值：get / post
 
@@ -517,7 +521,7 @@ target 属性：规定如何打开指定的 URL 地址。
 
 
 
- 表单中的控件有两个属性是非常重要的：name 和 value 属性。
+表单中的控件有两个属性是非常重要的：name 和 value 属性。
 
 作为一个键值对，这两个属性的数值最终会提交到 action 所定义的 URL 进行处理。
 
@@ -561,15 +565,11 @@ src：提交按钮显示的图像的 URL。（适用于 type="image"）
 
 
 
-# input 的 type 属性：还没解决 123
+## 5 框架
 
-
-
-## 框架
-
-| 标签  | 基本使用 |常用属性|其他|
-| ---- | ---- | ---- | ---- |
-|`<iframe>`| 创建一个内联框架 |||
+| 标签  | 基本使用 |常用属性|
+| ---- | ---- | ---- |
+|`<iframe>`| 创建一个内联框架 ||
 
 HTML 5 中已 **不支持** / **非常不赞成** 的标签：`<frame>`、`<frameset>`、`<noframes>`
 
@@ -592,36 +592,36 @@ HTML 5 中已 **不支持** / **非常不赞成** 的标签：`<frame>`、`<fram
 
 
 
-## 图像/音频/视频
+## 6 图像/音频/视频
 
-| 标签  | 基本使用 |常用属性|其他|
-| ---- | ---- | ---- | ---- |
-|`<img>`| 插入图像 |alt：图像的替代文本；<br />src：显示图像的URL；<br />height/width：图像尺寸；<br />srcset、sizes 多个图像源和尺寸匹配||
-|`<picture>`| 容器，放入 source + img 可以提供不同的图片源 |srcset、media 图片的源 、尺寸||
-|`<canvas>`| 矢量图形。<br />引申：区分 cavas、SVG |height/width：图像尺寸；||
-|`<svg>`| SVG 图形的容器 |||
-|`<figure>`| 一个包裹容器。把媒体（图片、图表）和它的解释内容（标题、注释）放在一块儿。 |||
-| `<figcaption>` | figure 独立流中的标题                                        |||
-| `<audio>`      | 插入声音内容                                                 |autoplay 加载后自动播放；<br />controls 显示控件；<br />loop：自动循环；<br />muted：静音播放；<br />preload：页面加载时加载音频，不播放。autoplay设置后忽略该属性。<br />src：播放的音频 URL。||
-| `<video>`      | 视频                                                         |与 audio 相比，多了：<br />height /width：播放器的尺寸；||
-| `<source>`     | 媒介源，同一个资源的不同格式，可以排放在 source 中，以提高兼容性。 |media 资源类型；<br />src 资源的 URL；<br />type：资源的 MIME 类型。||
+| 标签  | 基本使用 |常用属性|
+| ---- | ---- | ---- |
+|`<img>`| 插入图像 |alt：图像的替代文本；<br />src：显示图像的URL；<br />height/width：图像尺寸；<br />srcset、sizes 多个图像源和尺寸匹配|
+|`<picture>`| 容器，放入 source + img 可以提供不同的图片源 |srcset、media 图片的源 、尺寸|
+|`<canvas>`| 矢量图形。<br />引申：区分 cavas、SVG |height/width：图像尺寸；|
+|`<svg>`| SVG 图形的容器 ||
+|`<figure>`| 一个包裹容器。把媒体（图片、图表）和它的解释内容（标题、注释）放在一块儿。 ||
+| `<figcaption>` | figure 独立流中的标题                                        ||
+| `<audio>`      | 插入声音内容                                                 |autoplay 加载后自动播放；<br />controls 显示控件；<br />loop：自动循环；<br />muted：静音播放；<br />preload：页面加载时加载音频，不播放。autoplay设置后忽略该属性。<br />src：播放的音频 URL。|
+| `<video>`      | 视频                                                         |与 audio 相比，多了：<br />height /width：播放器的尺寸；|
+| `<source>`     | 媒介源，同一个资源的不同格式，可以排放在 source 中，以提高兼容性。 |media 资源类型；<br />src 资源的 URL；<br />type：资源的 MIME 类型。|
 
 -   浏览器兼容性差：`<track>` ，video 中的文本轨道。
 
-## 链接
+## 7 链接
 
-| 标签  | 基本使用 |常用属性|其他|
-| ---- | ---- | ---- | ---- |
-|`<a>`| 锚。<br />可以是超链接，也可以是本页锚点 |type：文档的MIME类型；<br />target：何处打开链接文档（`_blank`, ` _parent`, `_self`, `_top`, `framename`）；<br />href：指向的 URL；<br />rel：链接文档与当前文档的关系；<br />download：URL，为一个下载链接；||
-|`<link>`| 常用于链接外部 CSS 样式表、icon等，功能非常多。<br />只存在于 head 标签。 |rel="stylesheet" 关系：CSS 样式表<br />type="text/css"  类型：CSS 样式表<br />href：URL|      |
-|`<map>`| 带有可点击区域的图像映射，配合 area 标签一起使用。 |注：area + map 用在一张图片中部分区域需要做跳转时的情况。|      |
-|*`<area>`*| 定义图像映射中的区域。多个 area 嵌套在一个父 map 标签中。 |必须和 map + img 一起使用。|      |
+| 标签  | 基本使用 |常用属性|
+| ---- | ---- | ---- |
+|`<a>`| 锚。<br />可以是超链接，也可以是本页锚点 |type：文档的MIME类型；<br />target：何处打开链接文档（`_blank`, ` _parent`, `_self`, `_top`, `framename`）；<br />href：指向的 URL；<br />rel：链接文档与当前文档的关系；<br />download：URL，为一个下载链接；|
+|`<link>`| 常用于链接外部 CSS 样式表、icon等，功能非常多。<br />只存在于 head 标签。 |rel="stylesheet" 关系：CSS 样式表<br />type="text/css"  类型：CSS 样式表<br />href：URL|
+|`<map>`| 带有可点击区域的图像映射，配合 area 标签一起使用。 |注：area + map 用在一张图片中部分区域需要做跳转时的情况。|
+|*`<area>`*| 定义图像映射中的区域。多个 area 嵌套在一个父 map 标签中。 |必须和 map + img 一起使用。|
 
 
 
-## 列表
+## 8 列表
 
-| 标签  | 基本使用 |常用属性|其他|
+| 标签  | 基本使用 |常用属性|语义化|
 | ---- | ---- | ---- | ---- |
 |`<ul>`| 无序列表 ||✅|
 |`<ol>`| 有序列表 |start：初始数字；<br />type：1，A，a，I，i 标记类型|✅|
@@ -634,17 +634,19 @@ HTML 5 中已 **不支持** / **非常不赞成** 的标签：`<dir>`
 
 浏览器 **兼容性差** 的标签：`<menu>`、`<menuitem>`、`<command>`
 
-## 表格
 
-| 标签  | 基本使用 |常用属性|其他|
-| ---- | ---- | ---- | ---- |
-|`<table>`| 表格容器 |width、border、剩下都不常用<br />cellpadding、cellspacing、frame、rules||
-|`<caption>`| 表格标题 |||
-|`<tr>`| 表格中的行 |align：左右对齐方式<br />valign：上下对齐方式||
-|`<th>`| 列，表头单元格，包裹在第一对 tr 中 |align、valign、colspan（跨列数）||
-|`<td>`| 列，标准单元格，包裹在其余的 tr 中 |align、valign、colspan（跨列数）||
-|`<col>`| 可定义表格中一个或多个列的属性值 |align、valign、width、span（跨列数）||
-|`<colgroup>`| 表格中供格式化的列组 |align、valign、width、span（跨列数）||
+
+## 9 表格
+
+| 标签  | 基本使用 |常用属性|
+| ---- | ---- | ---- |
+|`<table>`| 表格容器 |width、border、剩下都不常用<br />cellpadding、cellspacing、frame、rules|
+|`<caption>`| 表格标题 ||
+|`<tr>`| 表格中的行 |align：左右对齐方式<br />valign：上下对齐方式|
+|`<th>`| 列，表头单元格，包裹在第一对 tr 中 |align、valign、colspan（跨列数）|
+|`<td>`| 列，标准单元格，包裹在其余的 tr 中 |align、valign、colspan（跨列数）|
+|`<col>`| 可定义表格中一个或多个列的属性值 |align、valign、width、span（跨列数）|
+|`<colgroup>`| 表格中供格式化的列组 |align、valign、width、span（跨列数）|
 
 一个表格的常见结构：
 
@@ -699,37 +701,32 @@ valign：上下对齐方式。middle（默认）、top、bottom、baseline（基
 
 
 
-## 元信息
+## 10 元信息
 
-| 标签      | 基本使用                           | 常用属性                  | 其他 |
-| --------- | ---------------------------------- | ------------------------- | ---- |
-| `<head>`  | 关于文档的信息                     |                           |      |
-| `<title>` | 关于文档的标题                     |                           |      |
-| `<meta>`  | 关于 HTML 文档的元信息             | content、name、http-equiv |      |
-| `<base>`  | 页面中所有链接的默认地址或默认目标 | href（基准 URL）、target  |      |
+| 标签      | 基本使用                           | 常用属性                  |
+| --------- | ---------------------------------- | ------------------------- |
+| `<head>`  | 关于文档的信息                     |                           |
+| `<title>` | 关于文档的标题                     |                           |
+| `<meta>`  | 关于 HTML 文档的元信息             | content、name、http-equiv |
+| `<base>`  | 页面中所有链接的默认地址或默认目标 | href（基准 URL）、target  |
 
 HTML 5 中已 **不支持** / **非常不赞成** 的标签：`<basefont>`
 
 
 
-## 编程
+## 11 编程
 
-| 标签  | 基本使用 |常用属性|其他|
-| ---- | ---- | ---- | ---- |
-|`<script>`| 客户端脚本 |必选：type="text/javascript"<br />可选：<br />charset：字符编码。<br />src：外部脚本URL，<br />async：外部脚本异步执行，<br />defer：外部脚本推迟加载。||
-|`<noscript>`| 不支持 script 的环境，会显示替代文本 |||
-|`<embed>`| 外部应用程序（非 HTML）的容器 |type：嵌入类型；src：嵌入内容URL<br />height 容器高；width 容器宽；||
-|`<object>`| 嵌入对象：音频、视频、图像、PDF等 |众多，用到再添加。||
-|`<param>`| object 嵌入对象的参数。 |用到再添加。||
+| 标签  | 基本使用 |常用属性|
+| ---- | ---- | ---- |
+|`<script>`| 客户端脚本 |必选：type="text/javascript"<br />可选：<br />charset：字符编码。<br />src：外部脚本URL，<br />async：外部脚本异步执行，<br />defer：外部脚本推迟加载。|
+|`<noscript>`| 不支持 script 的环境，会显示替代文本 ||
+|`<embed>`| 外部应用程序（非 HTML）的容器 |type：嵌入类型；src：嵌入内容URL<br />height 容器高；width 容器宽；|
+|`<object>`| 嵌入对象：音频、视频、图像、PDF等 |众多，用到再添加。|
+|`<param>`| object 嵌入对象的参数。 |用到再添加。|
 
 HTML 5 中已 **不支持** / **非常不赞成** 的标签：`<applet>`
 
 
 
+# 4 常见的问题
 
-
-结构化的目的：
-
-1.   突出文章内容主次。提升用户阅读体验；
-2.   为搜索引擎展示页面基本信息提供方便，标题、基本概述等等。
-3.   为视力障碍者提供方便的屏幕阅读器。可以展示文档的基本内容。
