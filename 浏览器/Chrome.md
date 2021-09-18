@@ -2,7 +2,7 @@
 
 ## 问题1： Chrome 进程架构是怎样的？
 
-<img src="Chrome/b61cab529fa31301bde290813b4587fc.png" alt="img" style="zoom:67%;" />
+<img src="https://github.com/MoxyNJ/GreenTea-Lemon/blob/master/%E6%B5%8F%E8%A7%88%E5%99%A8/Chrome/b61cab529fa31301bde290813b4587fc.png" alt="img" style="zoom:67%;" />
 
 从图中可以看出，最新的 Chrome 浏览器包括：1 个浏览器（Browser）主进程、1 个 GPU 进程、1 个网络（NetWork）进程、多个渲染进程和多个插件进程。
 
