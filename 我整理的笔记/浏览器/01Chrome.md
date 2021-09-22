@@ -2,7 +2,7 @@
 
 ## 问题1： Chrome 进程架构是怎样的？
 
-<img src="Chrome/b61cab529fa31301bde290813b4587fc.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/b61cab529fa31301bde290813b4587fc.png" alt="img" style="zoom:67%;" />
 
 从图中可以看出，最新的 Chrome 浏览器包括：1 个浏览器（Browser）主进程、1 个 GPU 进程、1 个网络（NetWork）进程、多个渲染进程和多个插件进程。
 
@@ -46,7 +46,7 @@ https://www.geekbang.org
 https://www.geekbang.org:8080
 ```
 
-<img src="Chrome/d8fe2afbd8ea2d4a8d8cc4bb14c50f28.png" alt="img" style="zoom:50%;" />
+<img src="01Chrome/d8fe2afbd8ea2d4a8d8cc4bb14c50f28.png" alt="img" style="zoom:50%;" />
 
 所以，当 n 个网页是同一站点（same-site）：
 
@@ -174,7 +174,7 @@ Chrome 有个机制，同一个域名同时最多只能建立 6 个 TCP 连接�
 curl -i  https://time.geekbang.org/
 ```
 
-<img src="Chrome/b8993c73f7b60feb9b8bd147545c47d7.png" alt="img" style="zoom: 67%;" />
+<img src="01Chrome/b8993c73f7b60feb9b8bd147545c47d7.png" alt="img" style="zoom: 67%;" />
 
 #### 结构：
 
@@ -214,7 +214,7 @@ curl -i  https://time.geekbang.org/
 
 下图是一个服务器响应的数据结构：
 
-<img src="Chrome/3e30476a4bbda49fd7cd4fd0ea09f076.png" alt="img" style="zoom: 67%;" />
+<img src="01Chrome/3e30476a4bbda49fd7cd4fd0ea09f076.png" alt="img" style="zoom: 67%;" />
 
 服务器会依次发送：响应行、响应头和响应体。
 
@@ -241,7 +241,7 @@ curl -I http://time.geekbang.org/
 
 显示如下：
 
-<img src="Chrome/28d5796c6ab7faa619ed8f1bd17b0843.jpg" alt="img" style="zoom: 25%;" />
+<img src="01Chrome/28d5796c6ab7faa619ed8f1bd17b0843.jpg" alt="img" style="zoom: 25%;" />
 
 状态码 301，就告知了浏览器，需要重定向。具体含义是：浏览器需要重新导航，请求的 URL 地址应该是响应头的 **Location** 字段中保存的值。
 
@@ -281,7 +281,7 @@ Connection:Keep-Alive
 
 ## 问题3：浏览器发起网络请求的步骤有哪些？
 
-<img src="Chrome/1277f342174b23f9442d3b27016d7980.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/1277f342174b23f9442d3b27016d7980.png" alt="img" style="zoom:67%;" />
 
 上图可见，一共有三个阶段：
 
@@ -313,7 +313,7 @@ Connection:Keep-Alive
 
 通过一个具体案例来说明情况：
 
-<img src="Chrome/5fc2f88a04ee0fc41a808f3481287408-16315245739758.png" alt="img" style="zoom:50%;" />
+<img src="01Chrome/5fc2f88a04ee0fc41a808f3481287408-16315245739758.png" alt="img" style="zoom:50%;" />
 
 上图是当浏览器对同一个地址，在不同时间段向服务器发送  HTTP 请求时的处理方式：
 
@@ -386,7 +386,7 @@ If-None-Match:"4f80f-13c-3a1xb12a"
     4.  把数据发送给浏览器。
 -   浏览器：收到数据，展示用户登录的状态信息。
 
-<img src="Chrome/d9d6cefe8d3d6d84a37a626687c6ecb3.png" alt="img" style="zoom:50%;" />
+<img src="01Chrome/d9d6cefe8d3d6d84a37a626687c6ecb3.png" alt="img" style="zoom:50%;" />
 
 
 
@@ -406,7 +406,7 @@ F5：正常处理流程。缓存中如果有资源，就会本地直接获取。
 
 下图是一个完整的流程示意图：
 
-<img src="Chrome/92d73c75308e50d5c06ad44612bcb45d.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/92d73c75308e50d5c06ad44612bcb45d.png" alt="img" style="zoom:67%;" />
 
 这里面涉及到四个进程的分工合作：
 
@@ -564,7 +564,7 @@ URL 请求到页面开始解析。
 
 但此时页面显示的依然是之前打开的页面内容。只有当进入提交文档阶段，页面内容才会被替换。会被替换为空白。
 
-<img src="Chrome/fad33fc7c5f2bdf4e20cac7691484130.png" alt="img" style="zoom: 33%;" />
+<img src="01Chrome/fad33fc7c5f2bdf4e20cac7691484130.png" alt="img" style="zoom: 33%;" />
 
 
 
@@ -601,7 +601,7 @@ URL 请求到页面开始解析。
 
 网络进程接收了 **响应行** 和 **响应头** 之后，可能会发生 **重定向**。
 
-<img src="Chrome/0c4987fe5d05646fa8245d8cc50d1a43.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/0c4987fe5d05646fa8245d8cc50d1a43.png" alt="img" style="zoom:67%;" />
 
 如果 **响应行** 的状态码：
 
@@ -626,7 +626,7 @@ URL 请求到页面开始解析。
 curl -I https://time.geekbang.org/
 ```
 
-<img src="Chrome/8951e161b5f44a73e52c16b631a63e1c.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/8951e161b5f44a73e52c16b631a63e1c.png" alt="img" style="zoom:67%;" />
 
 如果是一个安装包，其 Content-Type 的值是 application/octet-stream，显示如下：
 
@@ -634,7 +634,7 @@ curl -I https://time.geekbang.org/
 curl -I https://res001.geekbang.org/apps/geektime/android/2.3.1/official/geektime_2.3.1_20190527-2136_offical.apk
 ```
 
-<img src="Chrome/595902748d7d4c2f9c1d4783962ae43b.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/595902748d7d4c2f9c1d4783962ae43b.png" alt="img" style="zoom:67%;" />
 
 
 
@@ -660,7 +660,7 @@ https://www.geekbang.org
 https://www.geekbang.org:8080
 ```
 
-<img src="Chrome/d8fe2afbd8ea2d4a8d8cc4bb14c50f28-1956368.png" alt="img" style="zoom: 50%;" />
+<img src="01Chrome/d8fe2afbd8ea2d4a8d8cc4bb14c50f28-1956368.png" alt="img" style="zoom: 50%;" />
 
 
 
@@ -680,7 +680,7 @@ https://www.geekbang.org:8080
 
 更新内容如下图所示：
 
-<img src="Chrome/d3c5a6188b09b5b57af439005ae7dfb8.png" alt="img" style="zoom: 67%;" />
+<img src="01Chrome/d3c5a6188b09b5b57af439005ae7dfb8.png" alt="img" style="zoom: 67%;" />
 
 用户可以感知到的导航阶段，就是在浏览器的地址栏里面输入了一个地址后，之前的页面没有立马消失，而是要加载一会儿才会更新出空白页面。
 
@@ -688,13 +688,13 @@ https://www.geekbang.org:8080
 
 ## 问题3：一个完整的渲染流程是怎样的 ？从 HTML CSS JavaScript 怎样渲染成一个网页？
 
-<img src="Chrome/2b08a85c63bee68c6fd95dabb648fd79.png" alt="img" style="zoom:50%;" />
+<img src="01Chrome/2b08a85c63bee68c6fd95dabb648fd79.png" alt="img" style="zoom:50%;" />
 
 从图中可以看出，左边输入的是 HTML、CSS、JavaScript 数据，这些数据经过中间渲染模块的处理，最终输出为屏幕上的像素。
 
 下面是一个完整的渲染流程：
 
-<img src="Chrome/975fcbf7f83cc20d216f3d68a85d0f37.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/975fcbf7f83cc20d216f3d68a85d0f37.png" alt="img" style="zoom:67%;" />
 
 结合上图，一个完整的渲染流程大致可总结为如下：
 
@@ -725,7 +725,7 @@ https://www.geekbang.org:8080
 
 下图就是一个 DOM 树的构建过程：
 
-<img src="Chrome/125849ec56a3ea98d4b476c66c754f79.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/125849ec56a3ea98d4b476c66c754f79.png" alt="img" style="zoom:67%;" />
 
 #### 分析
 
@@ -741,7 +741,7 @@ https://www.geekbang.org:8080
 
 在开发者工具中，选择 `Console` 标签打开控制台，输入 `document`，看到完整的 DOM 树结构：
 
-<img src="Chrome/47f57c3eee749dd838939bfe5dd64573-163162618057315.png" alt="img" style="zoom: 50%;" />
+<img src="01Chrome/47f57c3eee749dd838939bfe5dd64573-163162618057315.png" alt="img" style="zoom: 50%;" />
 
 
 
@@ -783,7 +783,7 @@ https://www.geekbang.org:8080
 
 获取来源：`<link>` 引用的外部 CSS 文件、`<style>` 标签内的 CSS 文件、 元素 `style` 属性。
 
-<img src="Chrome/8ec7d5ecfadcd05b3f1ec762223a9aab.png" alt="img" style="zoom:50%;" />
+<img src="01Chrome/8ec7d5ecfadcd05b3f1ec762223a9aab.png" alt="img" style="zoom:50%;" />
 
 
 
@@ -791,7 +791,7 @@ https://www.geekbang.org:8080
 
 比如，`2em` 被解析成了 `32px`，red 被解析成了 `rgb(255,0,0)`，`bold` 被解析成了 `700`……
 
-<img src="Chrome/1252c6d3c1a51714606daa6bdad3a560.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/1252c6d3c1a51714606daa6bdad3a560.png" alt="img" style="zoom:67%;" />
 
 
 
@@ -812,13 +812,13 @@ CSS 层叠：它是一个定义了如何合并来自多个源的属性值的算�
 - 图中区域 2，表示了被选中标签身上添加的所有元素样式；
 - 图中区域3，表示了这些元素样式的来源。
 
-<img src="Chrome/88a3aac427cc7c09361eac01a85fc7b2.png" alt="img" style="zoom:50%;" />
+<img src="01Chrome/88a3aac427cc7c09361eac01a85fc7b2.png" alt="img" style="zoom:50%;" />
 
 查看层叠：开发者工具中，选择 `element` 标签中的 `Computed` 子标签：
 
 会显示该 DOM 元素最终计算的样式。
 
-<img src="Chrome/d87415b0187e3860404bf963f1c3d646.png" alt="img" style="zoom:50%;" />
+<img src="01Chrome/d87415b0187e3860404bf963f1c3d646.png" alt="img" style="zoom:50%;" />
 
 ### 3. 布局 Layout
 
@@ -845,7 +845,7 @@ CSS 层叠：它是一个定义了如何合并来自多个源的属性值的算�
 
 下图是创建布局树的过程：
 
-<img src="Chrome/8e48b77dd48bdc509958e73b9935710e.png" alt="img" style="zoom: 67%;" />
+<img src="01Chrome/8e48b77dd48bdc509958e73b9935710e.png" alt="img" style="zoom: 67%;" />
 
 #### 3.2 布局计算
 
@@ -873,7 +873,7 @@ Chrome 团队正在重构布局代码，让这两个步骤分开。
 
 
 
-<img src="Chrome/e8a7e60a2a08e05239456284d2aa4061.png" alt="img" style="zoom: 50%;" />
+<img src="01Chrome/e8a7e60a2a08e05239456284d2aa4061.png" alt="img" style="zoom: 50%;" />
 
 满足以下两点中的一个，就会新建一个图层：
 
@@ -889,9 +889,9 @@ Chrome 团队正在重构布局代码，让这两个步骤分开。
 
  `Layers` 标签默认是不显示的，在 More tools 中找到。
 
-<img src="Chrome/image-20210914222922516.png" alt="image-20210914222922516" style="zoom:50%;" />
+<img src="01Chrome/image-20210914222922516.png" alt="image-20210914222922516" style="zoom:50%;" />
 
-<img src="Chrome/e2c917edf5119cddfbec9481372f8fc0.png" alt="img" style="zoom:50%;" />
+<img src="01Chrome/e2c917edf5119cddfbec9481372f8fc0.png" alt="img" style="zoom:50%;" />
 
 
 
@@ -899,7 +899,7 @@ Chrome 团队正在重构布局代码，让这两个步骤分开。
 
 在完成图层树的构建之后，**渲染引擎** 会把一个图层的绘制拆分成很多小的 **绘制指令**，然后再把这些指令 **按照顺序** 组成一个待 **绘制列表**，如下图所示：
 
-<img src="Chrome/40825a55214a7990bba6b9bec6e54108.png" alt="img" style="zoom:50%;" />
+<img src="01Chrome/40825a55214a7990bba6b9bec6e54108.png" alt="img" style="zoom:50%;" />
 
 #### 分析
 
@@ -915,7 +915,7 @@ Chrome 团队正在重构布局代码，让这两个步骤分开。
 
 在开发者工具，选择 `Layers` 标签的 `document` 子标签，就可以查看绘制列表的形成：
 
-<img src="Chrome/303515c26fcd4eaa9b9966ad7f190370.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/303515c26fcd4eaa9b9966ad7f190370.png" alt="img" style="zoom:67%;" />
 
 
 
@@ -940,11 +940,11 @@ Chrome 团队正在重构布局代码，让这两个步骤分开。
 
 然后，合成线程会先确定 **视口**（ViewPort）相对于 **页面** 的位置，优先转换视口区域的 **可见图块**（visible tiles）：
 
-<img src="Chrome/bcc7f6983d5ece8e2dd716f431d0e052.png" alt="img" style="zoom:50%;" />
+<img src="01Chrome/bcc7f6983d5ece8e2dd716f431d0e052.png" alt="img" style="zoom:50%;" />
 
 渲染进程维护了一个 **栅格化线程池**，所有的图块栅格化都是在线程池内执行的。如果栅格化操作使用了 GPU，那么最终生成位图的操作是在 GPU 中完成的。GPU 操作是在 GPU 进程中，这里涉及到了跨进程协作，最终运行方式如下图所示：
 
-<img src="Chrome/a8d954cd8e4722ee03d14afaa14c3987.png" alt="img" style="zoom: 67%;" />
+<img src="01Chrome/a8d954cd8e4722ee03d14afaa14c3987.png" alt="img" style="zoom: 67%;" />
 
 ### 7. 合成和显示 display
 
@@ -1031,7 +1031,7 @@ Chrome 团队正在重构布局代码，让这两个步骤分开。
 
 
 
-<img src="Chrome/1bfcd419acf6402c20ffc1a5b1909d8c-1889675.png" alt="1bfcd419acf6402c20ffc1a5b1909d8c" style="zoom:50%;" />
+<img src="01Chrome/1bfcd419acf6402c20ffc1a5b1909d8c-1889675.png" alt="1bfcd419acf6402c20ffc1a5b1909d8c" style="zoom:50%;" />
 
 
 
@@ -1259,7 +1259,7 @@ div{
 5.   渲染进程完成 CSSOM 构建，然后依次完成布局树、图层树、绘制、栅格化等操作；
 6.   浏览器进程最终把渲染好的页面展示出来。
 
-<img src="Chrome/70a7ea0212ff35fc2be79f1d574ed518.png" alt="70a7ea0212ff35fc2be79f1d574ed518" style="zoom: 67%;" />
+<img src="01Chrome/70a7ea0212ff35fc2be79f1d574ed518.png" alt="70a7ea0212ff35fc2be79f1d574ed518" style="zoom: 67%;" />
 
 这其中，构建 CSOM 之前，有一段空间时间，是网络进程构建请求，然后通过 TCP 连接获取 CSS 文件的等待时间。
 
@@ -1293,7 +1293,7 @@ div{
 
 这就形成了 DOM 解析等待 JavaScript 执行、JavaScript 执行等待这些 CSS文件转化为 CSSOM 阻塞链。
 
-<img src="Chrome/f85f8778f273710ca559a52027ed731c.png" alt="f85f8778f273710ca559a52027ed731c" style="zoom:67%;" />
+<img src="01Chrome/f85f8778f273710ca559a52027ed731c.png" alt="f85f8778f273710ca559a52027ed731c" style="zoom:67%;" />
 
 ### 情况3：CSS 和 JavaScript 是外部文件
 
@@ -1314,7 +1314,7 @@ CSS 和 JavaScript 都是外部文件，需要加载。此时若引入 Chrome �
 
 在接收到 HTML 数据之后，预解析线程会开始预解析 HTML 文件中的资源。当HTML 预解析器识别出来了有 CSS 文件和 JavaScript 文件需要下载，然后就并行发起这些文件的下载请求。这样，就会缩短 JavaScript 阻塞时间。
 
-<img src="Chrome/7641c75a80133e747aa2faae8f4c8d1f.png" alt="7641c75a80133e747aa2faae8f4c8d1f" style="zoom:67%;" />
+<img src="01Chrome/7641c75a80133e747aa2faae8f4c8d1f.png" alt="7641c75a80133e747aa2faae8f4c8d1f" style="zoom:67%;" />
 
 ## 问题3：如何缩短首次加载时的白屏时间？
 
@@ -1341,7 +1341,7 @@ CSS 和 JavaScript 都是外部文件，需要加载。此时若引入 Chrome �
 
 ### 1. 更新了元素的几何属性（重排）
 
-<img src="Chrome/b3ed565230fe4f5c1886304a8ff754e5.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/b3ed565230fe4f5c1886304a8ff754e5.png" alt="img" style="zoom:67%;" />
 
 通过 JavaScript 或者 CSS 修改元素的 **几何位置属性**，例如改变元素的宽度、高度等，那么浏览器会触发 **重新布局**，解析之后的一系列子阶段，这个过程就叫 **重排**。
 
@@ -1351,7 +1351,7 @@ CSS 和 JavaScript 都是外部文件，需要加载。此时若引入 Chrome �
 
 ### 2. 更新元素的绘制属性（重绘）
 
-<img src="Chrome/3c1b7310648cccbf6aa4a42ad0202b03.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/3c1b7310648cccbf6aa4a42ad0202b03.png" alt="img" style="zoom:67%;" />
 
 如果修改 **没有** 导致元素 **几何位置的变换** ，比如更新元素的背景颜色，那么 **布局阶段** 将不会被执行，直接进入了 **绘制阶段**，然后执行之后的一系列子阶段，这个过程就叫 **重绘**。
 
@@ -1361,7 +1361,7 @@ CSS 和 JavaScript 都是外部文件，需要加载。此时若引入 Chrome �
 
 ### 3. 避开重排和重绘（合成）
 
-<img src="Chrome/024bf6c83b8146d267f476555d953a2c.png" alt="img" style="zoom:67%;" />
+<img src="01Chrome/024bf6c83b8146d267f476555d953a2c.png" alt="img" style="zoom:67%;" />
 
 如果既不修改元素的几何位置属性，也不修改元素的背景色等属性，渲染引擎将跳过布局和绘制，只执行后续的合成操作，我们把这个过程叫做 **合成**。
 
