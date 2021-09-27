@@ -320,7 +320,24 @@ yield 委托（yield delegation）。
 
 
 
+```js
+function* foo() {
+    let x = yield "foo 1";
+    let y = yield "foo 2";
+    let z = yield "foo 3";
+    console.log(x, y, z)
+    return "foo return"
+}
 
+function* bar() {
+    let x = yield* foo()
+    console.log("foo return:", x)
+    yield "bar a"
+    return "bar return"
+}
+```
+
+<img src="06Generator/截屏2021-09-26 下午2.42.20.png" alt="截屏2021-09-26 下午2.42.20" style="zoom: 50%;" />
 
 
 
