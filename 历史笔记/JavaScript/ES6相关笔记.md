@@ -559,7 +559,7 @@ log('Hello', '') // Hello
   
   add(1,2);   // 3
   add(1,);   // 41
-add() ;    // 70
+  add() ;    // 70
   add(,2);   // 报错
   add(,)     // 报错
   add(undefined, undefined)   // 70
@@ -2121,7 +2121,7 @@ s1 === s2 // true
 
 ### `Symbol.keyFor()`
 
-作用：根据标识符 string，在已经登记的 Symbol名单中，查找该 Symbol。
+作用：根据标识符 string，在已经登记的 Symbol 名单中，查找该 Symbol。
 
 参数：string，要查找的标识符
 
@@ -2631,9 +2631,9 @@ let difference = new Set([...a].filter(x => !b.has(x)));
 不同的是：
 
 	1. 成员只能是对象（不能是 Number、Boolean、Symbol、String）；
- 	2.  WeakSet 的对象是**弱引用**，即垃圾回收机制：**不考虑WeakSet对垃圾回收的影响**。换句话说，就是如果某个对象，其他方式的引用次数为 0 后，就会被垃圾回收，WeakSet的引用不在考虑范围内。
- 	3. 参数：数组/类数组对象，成员必须是对象，也就是非基本数据类型都可以。
- 	4. WeakSet 不能遍历，因为成员是弱引用，随时都可能消失。WeakSet没有 size属性，没有 forEach 属性。
+	2.  WeakSet 的对象是**弱引用**，即垃圾回收机制：**不考虑WeakSet对垃圾回收的影响**。换句话说，就是如果某个对象，其他方式的引用次数为 0 后，就会被垃圾回收，WeakSet的引用不在考虑范围内。
+	3. 参数：数组/类数组对象，成员必须是对象，也就是非基本数据类型都可以。
+	4. WeakSet 不能遍历，因为成员是弱引用，随时都可能消失。WeakSet没有 size属性，没有 forEach 属性。
 
 ```javascript
 // 创建 WeakSet数据结构
@@ -2919,7 +2919,7 @@ map.forEach(function(value, key, map) {
 
 # 十一、Proxy 代理
 
-一种“元编程”（meta programming），对编程语言进行编程。Proxy提供了一个中间环节，即外界访问某个对象时，中间假设的一个“拦截”，可以对访问的数据进行过滤/改写。
+一种 “元编程”（meta programming），对编程语言进行编程。Proxy提供了一个中间环节，即外界访问某个对象时，中间假设的一个“拦截”，可以对访问的数据进行过滤/改写。
 
 **个人理解**：Proxy一旦拦截了即将进行的操作，就会只执行Proxy中的拦截代码，原始函数调用就不执行了。例如：在拦截  get() 操作的时候。如果不架设 Proxy 拦截，那么get() 方法中的代码会正常执行。一旦架设了 Proxy 去拦截 get() 操作，那么原本 get() 中的代码就不会被执行。转而去执行 Proxy 中 get() 中的拦截代码。所以，其实在Proxy中，对get() 的拦截代码，也是一个几乎一模一样的 get() 函数（参数个数，get操作等等，一摸一样）。
 
@@ -3380,7 +3380,7 @@ p.func()         // true
    - 这样的目的，有这样一种情况：对某个对象进行某些操作的时候（调用某个方法），希望在该操作生效时，可以执行一些其他代码。这就需要Proxy + Reflect了：先用 Proxy代理，拦截某些特定操作，然后执行 Reflect反射，把拦截的操作原封不动的先执行，最后便可以执行自己的代码了：
 
 ```javascript
-// 举例一：Proxy代理的方法，一定会有 Reflect反射的方法，与之对应。
+// 举例一：Proxy代理的方法，一定会有 eflect反射的方法，与之对应。
 Proxy(target, {
   set(target, name, value, receiver){
     // 利用Reflect执行拦截的该操作。
@@ -3970,7 +3970,7 @@ b.name    // "vehicle"
 
 ### 4.2 `[[HomeObject]]` 
 
-类的构造方法、静态方法，拥有：`[[HomeObject]]`特性。该特性是一个指针，指向定义该方法的对象。比如：上文的`constructor()`方法，始终指向Vehicle类。
+类的构造方法、静态方法，拥有：`[[HomeObject]]`特性。该特性是一个指针，指向定义该方法的对象。比如：上文的 `constructor()`方法，始终指向 Vehicle类。
 
 - super 依赖于 `[[HomeObject]]`，始终指向该特性。这是在JavaScript定义时就规定的，不可以在运行时动态指定。即，在运行时可以调整类中 this 的指向，但是无法改变 super 的指向，它就是按照原型链，指向类的原型。
 
