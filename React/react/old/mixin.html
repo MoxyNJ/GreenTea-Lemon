@@ -1,0 +1,38 @@
+<script>
+
+function mixin(sourceObj, targetObj) {
+    for (var key in sourceObj) {
+        if (!(key in targetObj)) {
+            targetObj[key] = sourceObj[key];
+        }
+    }
+    return targetObj;
+}
+
+var Vehicle = {
+    engines: "Vehicle",
+
+    ignition: function() {
+        console.log(this.engines + " function");
+    },
+
+    drive: function() {
+        this.ignition();
+        console.log("Vehicle " + this.engines + " function");
+    }
+}
+
+var Car = mixin(Vehicle, {
+    engines: "Car",
+
+    drive: function() {
+        Vehicle.drive.call(this);
+        console.log("Car " + this.engines + " function");
+    }
+});
+
+Car.drive();
+
+
+
+</script>
