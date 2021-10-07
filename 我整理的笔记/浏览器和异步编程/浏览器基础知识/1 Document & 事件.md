@@ -1110,8 +1110,6 @@ function getCoords(elem) {
 
 
 
-
-
 ### 2.2.1 冒泡
 
 冒泡（bubbling）：当事件发生在某元素上，会首先运行在该元素上的处理程序，然后运行其父元素上的处理程序，然后一直向上到其他祖先上的处理程序。
@@ -1497,3 +1495,39 @@ alert(event.clientX); // 100
 - 如果希望让 `onclick` 不受 `menu-open` 或者其它嵌套事件的影响，优先被处理完毕。
 
   那么，我们就可以将 `dispatchEvent`（或另一个触发事件的调用）放在 `onclick` 末尾，或者最好将其包装到零延迟的 `setTimeout` 中：
+
+
+
+## 2.6 事件监听的三种写法：
+
+```js
+<button id="btn1">Button 1</button>
+<button id="btn2">Button 2</button>
+<button onclick="demo()">Button 3</button>
+
+<script type="text/javaScript">
+    // 方法一
+    const btn1 = document.getElementById('btn1')
+    btn1.addEventListener('click', ()=>{
+        alert('按钮1被点击了')
+    })
+
+	// 方法二
+    const btn2 = document.getElementById('btn2')
+    btn2.onclick = () => {
+        alert('按钮2被点击了')
+    }
+
+    // 方法三
+    function demo(){
+        alert('按钮3被点击了')
+    }
+</script>
+```
+
+
+
+
+
+
+

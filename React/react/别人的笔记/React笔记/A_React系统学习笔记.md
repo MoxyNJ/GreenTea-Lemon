@@ -2,8 +2,6 @@
 
 # 目录
 
->
->
 >[TOC]
 
 # Ⅰ-React基础知识与概念
@@ -88,31 +86,32 @@ ReactDOM.render(VDOM,docoment.getElementById('test'))
 >2. 标签中混入JS表达式时要用{}
 >3. 样式的类名指定不要用class,要用className
 >4. 内联样式,要用style={{key:value}}的形式(`双{}代表对象,单{}代表表达式`)去写
->5. 只有一个跟标签(整个虚拟DOM在外层有且仅有一个容器包裹)
+>5. 只有一个根标签 (整个虚拟DOM在外层有且仅有一个容器包裹)
 >6. 标签必须闭合
->7. 标签首字母
+>7. 标签首字母：
 >
->   若`小写字母开头`,则将该标签转为html中同名元素,若html中无该标签对应的同名元素,则`报错`
+> - 若 `小写字母开头` ，则将该标签转为html中同名元素,若html中无该标签对应的同名元素,则`报错`
 >
->   若`大写字母开头`,ract就去渲染对应组件,若组件没有定义,则`报错`
+> - 若 `大写字母开头` ，react 就去渲染对应组件,若组件没有定义,则`报错`
 
 ### 2、区分【js语句(代码)】与【js表达式】
 
->1. 表达式:一个表达式会产生一个值,可以放在任何一个需要值的地方
+>表达式：一个表达式会产生一个值,可以放在任何一个需要值的地方
 >
->   下面这些都是表达式
+>下面这些都是表达式：
 >
->   1. a
->   2. a+b
->   3. demo(1)
->   4. arr.map()
->   5. function test(){}
+>  1. a
+>  2. a+b
+>  3. demo(1)
+>  4. arr.map()
+>  5. function test(){}
 >
->2. 语句:不能放在创建虚拟dom语句中
 >
->   1. if(){}
->   2. for(){}
->   3. switch(){}
+>语句：不能放在创建虚拟dom语句中，下面都是语句：
+>
+>  1. `if(){}`
+>    2. `for(){}`
+>    3. `switch(){}`
 
 ## 三、两种组件定义区别、组件与模块理解
 
@@ -120,29 +119,31 @@ ReactDOM.render(VDOM,docoment.getElementById('test'))
 
 ##### ①函数式声明组件
 
-> 执行了ReactDOM.render(<MyComponent/>.......之后，发生了什么？
+> 执行了 `ReactDOM.render(<MyComponent/>.......` 之后，发生了什么？
 >
-> 1.React解析组件标签，找到了MyComponent组件。
+> 1.React 解析组件标签，找到了 `MyComponent` 组件。
 >
 > 2.发现组件是使用函数定义的，随后调用该函数，将返回的虚拟DOM转为真实DOM，随后呈现在页面中。
 
 ##### ②类式组件(下面的实例都是指类组件)
 
->执行了ReactDOM.render(<MyComponent/>.......之后，发生了什么？
+执行了 `ReactDOM.render(<MyComponent/>.......` 之后，发生了什么？
+
+>​	1.React解析组件标签，找到了`MyComponent`组件。
 >
->​	1.React解析组件标签，找到了MyComponent组件。
+>​	2.发现组件是使用类定义的，随后 `new` 出来该类的实例，并通过该实例调用到原型上的 `render`方法。
 >
->​	2.发现组件是使用类定义的，随后new出来该类的实例，并通过该实例调用到原型上的render方法。
->
->​	3.将render返回的虚拟DOM转为真实DOM，随后呈现在页面中。
->
->组件中的render是放在哪里的？
->
->​	MyComponent的原型对象上，供实例使用。
->
->组件中的render中的this是谁？
->
-> ​	MyComponent的实例对象 <=> MyComponent组件实例对象。
+>​	3.将 `render` 返回的虚拟DOM转为真实DOM，随后呈现在页面中。
+
+组件中的 `render` 是放在哪里的？
+
+>​	`MyComponent` 的原型对象上，供实例使用。
+
+组件中的 `render` 中的 `this` 是谁？
+
+>​	`MyComponent` 的实例对象 <=> `MyComponent` 组件实例对象。
+
+
 
 ### Ⅱ-模块与模块化
 
