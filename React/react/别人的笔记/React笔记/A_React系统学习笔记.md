@@ -292,7 +292,6 @@ ReactDOM.render(VDOM,docoment.getElementById('test'))
 	//创建组件
 		class Person extends React.Component{
 			render(){
-				// console.log(this);
 				const {name,age,sex} = this.props
 				return (
 					<ul>
@@ -310,6 +309,8 @@ ReactDOM.render(VDOM,docoment.getElementById('test'))
 		// console.log('@',...p);
 		// ReactDOM.render(<Person name={p.name} age={p.age} sex={p.sex}/>,document.getElementById('test3'))
         //此处使用赋值解构方式,使得代码更简洁
+        //使用 p2 = {...p} 对一个对象进行展开，相当于一个浅拷贝。
+        //不能使用 p2 = ...p 省略括号是错误的。
 		ReactDOM.render(<Person {...p}/>,document.getElementById('test3'))
 ```
 
