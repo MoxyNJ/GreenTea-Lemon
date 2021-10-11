@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<title>2_react生命周期(旧)</title>
 </head>
+
 <body>
 	<!-- 准备好一个“容器” -->
 	<div id="test"></div>
-	
+
 	<!-- 引入react核心库 -->
 	<script type="text/javascript" src="../js/react.development.js"></script>
 	<!-- 引入react-dom，用于支持react操作DOM -->
@@ -88,8 +90,8 @@
 			}
 
 			//组件更新完毕的钩子
-			componentDidUpdate(){
-				console.log('Count---componentDidUpdate');
+			componentDidUpdate(preProps, preState){
+				console.log('Count---componentDidUpdate', preProps, preState);
 			}
 
 			render(){
@@ -160,4 +162,5 @@
 		ReactDOM.render(<Count/>,document.getElementById('test'))
 	</script>
 </body>
+
 </html>

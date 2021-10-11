@@ -867,7 +867,7 @@ HTML中，标签中的 `class` 特性，对于DOM操作中的：
 -   `scrollLeft`，`scrollTop`：从元素的左上角开始，滚动出元素的上半部分的 width/height。
     -   换句话说，`scrollTop` 就是“已经滚动了多少”，见下图。
 
- <img src="source/截屏2021-06-24 下午2.27.18-4516080.png" alt="截屏2021-06-24 下午2.27.18" style="zoom:67%;" />
+ <img src="source/截屏2021-06-24 下午2.27.18-4516080.png" alt="截屏2021-06-24 下午2.27.18" />
 
 
 

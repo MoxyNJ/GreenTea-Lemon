@@ -84,8 +84,8 @@ ReactDOM.render(VDOM,docoment.getElementById('test'))
 
 ### 1、规则
 
->1. 定义虚拟DOM时,不要写引号
->2. 标签中混入JS表达式时要用{}
+>1. 定义虚拟 DOM 时,不要写引号
+>2. 标签中混入 JS 表达式时要用{}
 >3. 样式的类名指定不要用class,要用className
 >4. 内联样式,要用style={{key:value}}的形式(`双{}代表对象,单{}代表表达式`)去写
 >5. 只有一个跟标签(整个虚拟DOM在外层有且仅有一个容器包裹)
@@ -378,7 +378,7 @@ ReactDOM.render(VDOM,docoment.getElementById('test'))
 }
 ```
 
-###### 2、回调形式的ref
+###### 2、回调形式的ref 
 
 ```jsx
 /**下面的this指的是组件实例,我直接this.input1 = c 意思是给实例上的input1赋值,之后直接通过调用打印得到*/
