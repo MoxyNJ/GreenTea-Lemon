@@ -2,6 +2,8 @@
 
 # 目录
 
+>
+>
 >[TOC]
 
 # Ⅰ-React基础知识与概念
@@ -33,13 +35,13 @@
 
 ### 2、React高效的原因
 
->1. 使用虚拟(virtual)DOM,不总是直接操作页面真实DON
+>1. 使用虚拟(virtual)DOM,不总是直接操作页面真实DOM
 >2. DOM Diffing算法,最小化页面重绘
 >3. `注意`：React并不会提高渲染速度,反而可能会增加渲染时间,真正高效的原因是它能有效`减少渲染次数`
 
 ### 3、创建虚拟DOM的两种方式
 
-#### 	Ⅰ- js创建虚拟DOM(`不推荐`)
+#### 	Ⅰ- js 创建虚拟DOM (`不推荐`)
 
 ```js
 //1.创建虚拟DOM,创建嵌套格式的doms
@@ -48,37 +50,37 @@ const VDOM=React.createElement('h1',{id:'title'},React.createElement('span',{},'
 ReactDOM.render(VDOM,docoment.getElementById('test'))
 ```
 
-#### 	Ⅱ -jsx创建虚拟DOM
+#### 	Ⅱ -jsx 创建虚拟DOM
 
 ```jsx
 //1.创建虚拟DOM
 	const VDOM = (  /* 此处一定不要写引号，因为不是字符串 */
     	<h1 id="title">
-			<span>Hello,React</span>
-		</h1>
+			    <span>Hello,React</span>
+		  </h1>
 	)
 //2.渲染虚拟DOM到页面
 	ReactDOM.render(VDOM,document.getElementById('test'))
 
 //3.打印真实DOM与虚拟DOM,这一步不是jsx创建虚拟dom必须，我只是为了方便查阅
 	const TDOM = document.getElementById('demo')
-    console.log('虚拟DOM',VDOM);
+  console.log('虚拟DOM',VDOM);
 	console.log('真实DOM',TDOM);
 ```
 
-> 可以看到，上下两种方式，明显`jsx`的写法更符合我们的习惯,当出现多重嵌套时,js创建方法会使我们编程出现很大麻烦
+> 可以看到，上下两种方式，明显 `jsx` 的写法更符合我们的习惯,当出现多重嵌套时, js 创建方法会使我们编程出现很大麻烦
 >
-> 但是jsx其实也只是帮我们做了一层编译,当我们写完jsx代码后,最终我们的代码也会被编译成js的书写方式
+> 但是 jsx 其实也只是帮我们做了一层编译,当我们写完 jsx 代码后, 最终我们的代码也会被编译成 js 的书写方式
 
-### 4、关于虚拟DOM
+### 4、关于虚拟 DOM
 
->1. 本质时Object类型的对象(一般对象)
->2. 虚拟DOM比较'轻',真实DOM比较'重',因为虚拟DOM是React内部在用,无需真实DOM上那么多的属性(只有React需要的属性)
->3. 虚拟DOM最终会被React转化为真实DOM,呈现在页面上
+>1. 本质是 Object 类型的对象(一般对象)
+>2. 虚拟 DOM 比较'轻' , 真实 DOM 比较'重' , 因为虚拟 DOM 是 React 内部在用 , 无需真实 DOM 上那么多的属性(只有 React 需要的属性)
+>3. 虚拟 DOM 最终会被 React 转化为真实 DOM , 呈现在页面上
 
-## 二、jsx语法规则
+## 二、jsx 语法规则
 
->JSX是一种JavaScript的语法扩展、是一种嵌入式的类似XML的语法,常应用于React架构中,但也不仅限于此.应该说JSX因React框架而流行,但也存在其他的实现.只要你够厉害,甚至能在单片机上实现(当然你要自己写出它的实现方式)
+>JSX 是一种 JavaScript 的语法扩展、是一种嵌入式的类似 XML 的语法,常应用于 React 架构中, 但也不仅限于此. 应该说 JSX 因 React 框架而流行, 但也存在其他的实现. 只要你够厉害, 甚至能在单片机上实现 (当然你要自己写出它的实现方式)。
 
 ### 1、规则
 
@@ -86,32 +88,31 @@ ReactDOM.render(VDOM,docoment.getElementById('test'))
 >2. 标签中混入JS表达式时要用{}
 >3. 样式的类名指定不要用class,要用className
 >4. 内联样式,要用style={{key:value}}的形式(`双{}代表对象,单{}代表表达式`)去写
->5. 只有一个根标签 (整个虚拟DOM在外层有且仅有一个容器包裹)
+>5. 只有一个跟标签(整个虚拟DOM在外层有且仅有一个容器包裹)
 >6. 标签必须闭合
->7. 标签首字母：
+>7. 标签首字母
 >
-> - 若 `小写字母开头` ，则将该标签转为html中同名元素,若html中无该标签对应的同名元素,则`报错`
+>   若`小写字母开头`,则将该标签转为html中同名元素,若html中无该标签对应的同名元素,则`报错`
 >
-> - 若 `大写字母开头` ，react 就去渲染对应组件,若组件没有定义,则`报错`
+>   若`大写字母开头`,ract就去渲染对应组件,若组件没有定义,则`报错`
 
 ### 2、区分【js语句(代码)】与【js表达式】
 
->表达式：一个表达式会产生一个值,可以放在任何一个需要值的地方
+>1. 表达式:一个表达式会产生一个值,可以放在任何一个需要值的地方
 >
->下面这些都是表达式：
+>   下面这些都是表达式
 >
->  1. a
->  2. a+b
->  3. demo(1)
->  4. arr.map()
->  5. function test(){}
+>   1. a
+>   2. a+b
+>   3. demo(1)
+>   4. arr.map()
+>   5. function test(){}
 >
+>2. 语句:不能放在创建虚拟dom语句中
 >
->语句：不能放在创建虚拟dom语句中，下面都是语句：
->
->  1. `if(){}`
->    2. `for(){}`
->    3. `switch(){}`
+>   1. if(){}
+>   2. for(){}
+>   3. switch(){}
 
 ## 三、两种组件定义区别、组件与模块理解
 
@@ -119,31 +120,29 @@ ReactDOM.render(VDOM,docoment.getElementById('test'))
 
 ##### ①函数式声明组件
 
-> 执行了 `ReactDOM.render(<MyComponent/>.......` 之后，发生了什么？
+> 执行了ReactDOM.render(<MyComponent/>.......之后，发生了什么？
 >
-> 1.React 解析组件标签，找到了 `MyComponent` 组件。
+> 1.React解析组件标签，找到了MyComponent组件。
 >
 > 2.发现组件是使用函数定义的，随后调用该函数，将返回的虚拟DOM转为真实DOM，随后呈现在页面中。
 
 ##### ②类式组件(下面的实例都是指类组件)
 
-执行了 `ReactDOM.render(<MyComponent/>.......` 之后，发生了什么？
-
->​	1.React解析组件标签，找到了`MyComponent`组件。
+>执行了ReactDOM.render(<MyComponent/>.......之后，发生了什么？
 >
->​	2.发现组件是使用类定义的，随后 `new` 出来该类的实例，并通过该实例调用到原型上的 `render`方法。
+>​	1.React解析组件标签，找到了MyComponent组件。
 >
->​	3.将 `render` 返回的虚拟DOM转为真实DOM，随后呈现在页面中。
-
-组件中的 `render` 是放在哪里的？
-
->​	`MyComponent` 的原型对象上，供实例使用。
-
-组件中的 `render` 中的 `this` 是谁？
-
->​	`MyComponent` 的实例对象 <=> `MyComponent` 组件实例对象。
-
-
+>​	2.发现组件是使用类定义的，随后new出来该类的实例，并通过该实例调用到原型上的render方法。
+>
+>​	3.将render返回的虚拟DOM转为真实DOM，随后呈现在页面中。
+>
+>组件中的render是放在哪里的？
+>
+>​	MyComponent的原型对象上，供实例使用。
+>
+>组件中的render中的this是谁？
+>
+> ​	MyComponent的实例对象 <=> MyComponent组件实例对象。
 
 ### Ⅱ-模块与模块化
 
@@ -197,19 +196,15 @@ ReactDOM.render(VDOM,docoment.getElementById('test'))
 ##### ① 理解
 
 >1. state是组件对象最重要的属性,值是对象(可以包含多个key:value的组合)
->2. 组件被称为`状态机`,通过更新组件的state来更新对应的页面显示(重新渲染组件)
+>2. 组件被称为`状态机`,通过更新组件的 state 来更新对应的页面显示(重新渲染组件)
 
 ##### ② 强烈注意
 
->1. 组件中的render方法中的this为组件实例对象
->
->2. 组件自定义方法中this为undefined,如何解决?
->
->   a) 强制绑定this:通过函数对象的bind()
->
->   b) 箭头函数`推荐`
->
->3. 状态数据,不能直接修改或者更新
+1.   组件中的 render 方法中的 this 为组件实例对象。
+2.   组件自定义方法中 this 为 undefined，如何解决?
+     -   强制绑定this: 通过函数对象的 bind()，在构造函数中定义属性：`this.changeWeather = this.changeWeather.bind(this)`
+     -   箭头函数，更推荐。this 直接绑定为定义函数时的 this 环境，即实例化对象。
+3.   状态数据, 不能直接修改或者更新
 
 ##### ③代码示例
 
