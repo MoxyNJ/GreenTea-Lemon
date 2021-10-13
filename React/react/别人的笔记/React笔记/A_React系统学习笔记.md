@@ -721,6 +721,8 @@ handleSubmit = (event)=>{
 
 ### 2、react脚手架项目结构
 
+加粗为必须要的元素。
+
 > public ---- 静态资源文件夹
 >
 >​            favicon.icon ------ 网站页签图标
@@ -735,7 +737,7 @@ handleSubmit = (event)=>{
 >
 >​            robots.txt -------- 爬虫协议文件
 >
->src ---- 源码文件夹
+>**src ---- 源码文件夹**
 >
 >​            App.css -------- App组件的样式
 >
