@@ -1500,7 +1500,7 @@ alert(event.clientX); // 100
 
 ## 2.6 事件监听的三种写法：
 
-```js
+```html
 <button id="btn1">Button 1</button>
 <button id="btn2">Button 2</button>
 <button onclick="demo()">Button 3</button>
@@ -1524,6 +1524,8 @@ alert(event.clientX); // 100
     }
 </script>
 ```
+
+- 注意：方法三在标签中直接添加函数，**有括号**，不是 `demo` 而是 `demo()`。
 
 
 
