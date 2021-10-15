@@ -171,7 +171,7 @@ store.dispatch(action4);
 
 
 
-## 1.5 Redux 结构划分
+## 1.5 Redux 结构划分（node）
 
 对上面的基础 Redux 进行结构划分：
 
@@ -194,7 +194,7 @@ redux 的整体结构需要 4 个文件，如下：
 
 - 业务逻辑中，使用的是 Action 名称，redux 中，通过 Action 名称找到对应的 type 类型，然后执行操作。
 
-
+使用 `node index.js` 就在 node 环境中使用 redux。
 
 ```js
 // -------------- store 文件夹，有 4 个文件组成 redux --------------
@@ -283,7 +283,9 @@ store.dispatch(deAction());
 
 
 
-# 2 Redux 使用
+# 2 Redux 使用（react）
+
+## 2.1 理论
 
 下面会将 Redux 和 React 结合。
 
@@ -322,6 +324,25 @@ store.dispatch(deAction());
    - Redux 会把这个 state 更新到自己的 store 中。
 
 5. 进入一个新的循环，一旦 store 发生改变就会被订阅到，然后调用 `this.setState()` 同步更新组件的 state，最后
+
+
+
+## 2.2 不同
+
+第 1.5 节已经把 redux 进行了结构划分，store 文件夹中有 4 个文件，分别控制不同的模块。
+
+与 node 环境唯一不同的是，index.js 的引入 redux 要作如下修改：
+
+```js
+// node中是:
+// import redux from "redux";
+// const store = redux.createStore(reducer);
+
+import { createStore } from "redux";
+import reducer from "./reducer.js";
+const store = createStore(reducer);
+export default store;
+```
 
 
 
