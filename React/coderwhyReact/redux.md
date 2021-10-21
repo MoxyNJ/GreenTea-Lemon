@@ -308,7 +308,7 @@ store.dispatch(deAction());
 
 2. **Component**。
 
-   - 通过在组件的 `componentDidMount()` 中订阅  `this.setState()` ，就会让这个组件的 state 随着 store 变化而保持最新。
+   - 通过在组件的 `componentDidMount()` 中订阅  `this.setState()` ，就会让这个组件自身的 state 随着 store 中的 state 变化而保持最新。也就是说，store 中会保存全部需要共享的数据，组件会额外的保存一份 store 中自己需要的数据。
 
    - 同时在组件中的 `button` 按钮定义触发事件，一旦触发，就使用 Dispatches 派发 Action，去更新 store 中的数据。
 
@@ -318,11 +318,10 @@ store.dispatch(deAction());
    - 在这里定义 Dispatch 派发时， 同时指定要执行的 action 名称以及传入对应的操作参数。
 
 4. **Reducer**。
-
    - Redux 通过 Reducer 把数据修改。 
    - reducer 收到需要操作的 state 和 操作方法 action，根据 `action.type` ，对数据进行操作。最后返回一个新的 state。
    - Redux 会把这个 state 更新到自己的 store 中。
-
+   
 5. 进入一个新的循环，一旦 store 发生改变就会被订阅到，然后调用 `this.setState()` 同步更新组件的 state，最后
 
 
@@ -346,15 +345,207 @@ export default store;
 
 
 
+## 2.3 把相同的逻辑放到一起
+
+比如在例子中，page 文件下的两个组件 about 和 home 中有非常多相似的代码，可以提取出来放在一个文件中。
+
+ ![image-20211020113122660](redux/image-20211020113122660.png)
+
+把 home 和 about 组件中，不一样的部分抽离出去，把相同的部分放到一起。
+
+在 utils 文件中，建立一个 `connect.js` 和 `context.js` 。其中 `connect(mapStateTpProps, mapDispatchToProp)` 函数，链接着 redux  和 component，通过 props 把数据和方法传递给 about 和 home 组件。
+
+- 依赖 staate 
+- 依赖 dispatch
+
+内容在 16.React Hooks（二）15:00 讲述。
+
+- 高阶组件 `context` 部分没有太明白，还没听。
+- `const StoreContext = React.createContext();`
 
 
 
+综上，目前看不懂没关系，有一个封装好的库，等效 `connect`  和 `context`：`redux-react`
+
+![image-20211020195550761](redux/image-20211020195550761.png)
+
+![image-20211020195609263](redux/image-20211020195609263.png)
+
+![image-20211020195629430](redux/image-20211020195629430.png)
 
 
 
+## 2.4 组件中的异步操作
+
+![image-20211020200841719](redux/image-20211020200841719.png)
+
+- 老师服务器的接口：http://123.207.32.32:8000/home/multidata
+
+![image-20211020205135379](redux/image-20211020205135379.png)
 
 
 
+![image-20211020212149994](redux/image-20211020212149994.png)
+
+## 2.5 redux-devtools
+
+![image-20211021110038754](redux/image-20211021110038754.png)
+
+## 2.6 redux-saga 中间件
+
+- 暂时跳过，用到的话就学
+
+![image-20211021132102827](redux/image-20211021132102827.png)
+
+
+
+## 2.7 reducer 的拆分
+
+### 2.7.1 为什么叫 reducer？
+
+因为 reducer 的原型是 JavaScript 中的 `Array.prototype.reduce()` 方法：
+
+reduce 的语法：
+
+```js
+[1,2,3,4,5].reduce((preValue, item), initialValue) => {
+    // 操作
+}
+```
+
+reduce 的回调方法，就被称之为一个 reducer。它具体表现是这样的：
+
+1. 每次调用 reducer 前，都会获取一个原有的 preValue 值。
+2. 需要传入 item 来修改 preValue。
+3. 最后返回修改后的值。
+4. 如果没有传入 preValue，还可以设置一个默认值 initialValue。
+
+
+
+与之相比，redux 中的 reducer 是这样的：
+
+```js
+function reducer(state = defaultState, action) {
+  switch (action.type) {
+    case ADD_NUMBER:
+      return { ...state, counter: state.counter + action.num };
+    case SUB_NUMBER:
+      return { ...state, counter: state.counter - action.num };
+    case DECREMENT:
+      return { ...state, counter: state.counter - 1 };
+    case INCREMENT:
+      return { ...state, counter: state.counter + 1 };
+    case CHANGE_BANNERS:
+      return { ...state, banners: action.banners };
+    case CHANGE_RECOMMEND:
+      return { ...state, recommends: action.recommends };
+    default:
+      return state;
+  }
+}
+```
+
+如果开头写成箭头函数：
+
+```js
+(state = defaultState, action) => {
+    // 操作
+}
+```
+
+可以看到，它和 reduce 非常的相似：
+
+1. 每次调用 reducer 前，需要获取一个原有的值 state；
+2. 需要传入 action 里面保存了对旧 state 需要删改的操作；
+3. 最后返回修改后的新 state；
+4. 如果没有传入 state，就会有一个默认的 defaultState 传入。
+
+
+
+## 2.7.2 为什么要拆分 reducer
+
+如果项目对数据的操作：
+
+1. 条目非常多，可能有上千行，reducer 非常长；
+2. 对数据的操作有明显的类别，如异步网络申请数据、本地数据、不同的组件数据等。
+
+```js
+// 拆分 counterReducer
+const initialCounterState = {
+  counter: 0,
+};
+function counterReducer(state = initialCounterState, action) {
+  switch (action.type) {
+    case ADD_NUMBER:
+      return { ...state, counter: state.counter + action.num };
+    case SUB_NUMBER:
+      return { ...state, counter: state.counter - action.num };
+    case DECREMENT:
+      return { ...state, counter: state.counter - 1 };
+    case INCREMENT:
+      return { ...state, counter: state.counter + 1 };
+    default:
+      return state;
+  }
+}
+
+// 拆分 homeReducer
+const initialHomeState = {
+  banners: [],
+  recommends: [],
+};
+function homeReducer(state = initialHomeState, action) {
+  switch (action.type) {
+    case CHANGE_BANNERS:
+      return { ...state, banners: action.banners };
+    case CHANGE_RECOMMEND:
+      return { ...state, recommends: action.recommends };
+    default:
+      return state;
+  }
+}
+
+function reducer(state = {}, action) {
+  return {
+    counterInfo: counterReducer(state.counterInfo, action),
+    homeInfo: homeReducer(state.homeInfo, action),
+  };
+}
+
+export default reducer;
+```
+
+- 改变了 redux 中 state 的结构
+
+```js
+//之前的结构：
+state = {
+    counter: 0,
+    banners: [......],
+    recommders: [......],
+}
+
+//之后的结构：
+state = {
+    counterInfo: {
+        counter： 0,
+    },
+    homeInfo: {
+        banners: [......],
+        recommders: [......],
+    }
+}
+```
+
+其实有一个官方的库 combinReducers 可以实现多个 reducer 的合并
+
+![image-20211021152151688](redux/image-20211021152151688.png)
+
+
+
+## 2.8 管理 state
+
+![image-20211021152331164](redux/image-20211021152331164.png)
 
 
 
