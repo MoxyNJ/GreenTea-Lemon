@@ -623,7 +623,7 @@ state = {
 
   ![image-20211021201814785](redux/image-20211021201814785.png)
 
-## 4.2 使用 hooks
+## 4.2 使用基础 hooks
 
 ### 1 State Hook
 
@@ -698,25 +698,220 @@ function handleBtnClick2() {
 
 ### 2 Effect Hook
 
-只要组件调用被重新渲染，就会触发 `useEffect`
+![image-20211022151619748](redux/image-20211022151619748.png)
 
-- 相当于 `componentDidMount` + `componentDidUpdate` 的合二为一
+#### 2.1 基本使用
+
+只要组件调用被重新渲染，就会触发 `useEffect` 的第一个参数：
+
+- 第一个参数是一个回调函数。
+
+```jsx
+//在函数组件中使用 hooks
+useEffect(()=>{
+    console.log("订阅一些事件")
+    console.log(“只要组件重新渲染就会调用这里，相当于componentDidMount+componentDidUpdate”)
+    
+    return ()=>{
+        console.log("取消订阅事件")
+        console.log("在卸载组件前，或重新渲染组件前，都会调用这里")
+    }
+})
+
+//给useEffect添加了第二个参数，一个空数组
+useEffect(()=>{
+    console.log(“组件第一次渲染调用这里，相当于componentDidMount”)
+    
+    return ()=>{
+        console.log("取消订阅事件")
+        console.log("在卸载组件前调用这里,相当于componentWillUnmount")
+    }
+},[])
+```
+
+#### 2.2 多个useEffect一起使用
+
+以前在组件 `componentDidMount` 内部会非常繁杂，有对事件监听的代码、有网络请求资源的代码、也有修改 DOM 的代码等等。
+
+可以定义多个  `useEffect`  函数，每个 `useEffect` 都有不同的使用逻辑，它们因作用域的限制互不干扰。这样代码也更可读。
+
+- React 会按照 `useEffect` 定义的顺序来顺序执行。  
+
+#### 2.3 第二个参数
+
+- `useEffect()` 第二个参数是一个数组。
+
+  数组成员是变量，只有变量发生改变，才会执行 `useEffect()` 
+
+- 如果传入变量 `counter` 表示这个 `useEffect` 的执行依赖 `state` 中的 `counter` 变量。该函数在第一次渲染的时候一定会执行一次，后续只有 `counter` 变量发生改变，才会执行。
+
+- 如果传入空数组 `[]` 表示这个 `useEffect` 的执行不依赖任何变量。这就表示该函数只会在第一次渲染的时候执行一次，之后不会再执行。相当于 `componentDidMount`。
 
 
 
+### 3 Context Hook
+
+![image-20211022151723448](redux/image-20211022151723448.png)
+
+ 使用 Context Hook就可以解决使用时层层嵌套的这个问题：
+
+在外层组件中：
+
+```jsx
+// 1 引入 createContext 方法
+import React, { createContext } from "react";
+//...
+// 2 创建并导出需要共享的 context。
+export const UserContext = createContext();
+export const ThemeContext = createContext();
+
+// 3 在外层组件内，利用 <XxxxContext.Provider> 对需要共享context的多个组件进行包裹
+export default function App() {
+  return (
+    <div>
+      {/* 4. context Hook 使用 */}
+      <UserContext.Provider value={{ name: "Moxy", age: 18 }}>
+        <ThemeContext.Provider value={{ fontsize: "30px", color: "red" }}>
+          <Father1 />
+          <Father2>
+              <Child1 />
+          </Father2>
+        </ThemeContext.Provider>
+      </UserContext.Provider>
+    </div>
+  );
+}
+```
+
+在内层的任意一个组件中，不论是 Father 还是嵌套在内部的 Child：
+
+```jsx
+// 1 引入 useContext 方法
+import React, { useContext } from "react";
+// 2 引入共享的两个 context
+import { UserContext, ThemeContext } from "../App";
+
+export default function ContextHook() {
+// 3 获取context内的数据
+  const user = useContext(UserContext);
+  const theme = useContext(ThemeContext);
+
+  console.log(user, "&", theme);
+// {name: 'Moxy', age: 18} '&' {fontsize: '30px', color: 'red'}
+// 正确获取了值。
+    
+    return <div>我是 Child 组件</div>;
+}
+```
 
 
 
+## 4.3 使用扩展 hooks
+
+### 3.1 useReducer
+
+1. useReducer 是 useState hooks 的扩展。在逻辑相对复杂的情况下，可以用 reducer 的 switch 进行判断。
+2. 如果多个组件均有一个相同的判断方式（可以用同一个 switch 判断），那么单独定义一个 reducer 纯函数，然后不同的组件 import 引入这个 reducer 即可。
+
+使用1：在一个组件中使用 reducer：
+
+```jsx
+// 1 引入 useReducer
+import React, { useReducer } from "react";
+
+// 2 定义 reducer方法，这个方法接收两个参数：要操作的数据 state，操作的方法名称 action
+function reducer(state, action) {
+  switch (action.type) {
+    case "increment":
+      return { ...state, counter: state.counter + 1 };
+    case "decrement":
+      return { ...state, counter: state.counter - 1 };
+    default:
+      return;
+  }
+}
+
+export default function Home() {
+ // 3 创建一个 Reducer，输入两个参数：一个reducer方法，一个数据对象，
+ // 	useReducer 会返回两个结构：
+    // 		1. 存放数据的 state 对象，保存的就是 {counter:0}，
+    //		2. 触发 action 的方法，dispatch，使用 dispatch 来操作 state。
+  const [state, dispatch] = useReducer(reducer, { counter: 0 });
+
+  return (
+    <div>
+      <h2>Home当前计数：{state.counter}</h2>
+{/* 4 对state进行操作，通过调用 dispatch()方法，传入action对象，成员有操作的方法名称type。*/}
+    {/*  React会拿着方法名称 action.type在reducer纯函数中重找对应的操作方法，然后更新state*/}       
+      <button onClick={(e) => dispatch({ type: "increment" })}>+1</button>
+      <button onClick={(e) => dispatch({ type: "decrement" })}>-1</button>
+    </div>
+  );
+}
+```
 
 
 
+使用2：多个组件共用一个 reducer：
+
+- 需要注意的是，这里的 `useReducer` 只是对 `useState` 的一种特殊用法。使用方式类似了 redux 中的 reducer。但是 `useReducer` 是无法共享 state 数据的，和 redux 也毫无关系。唯一可以共享的只是 `reducer` 纯函数，操作 state 的方法。
+
+```jsx
+// reducer.js
+// 导出一个 reducer 纯函数
+export default function reducer(state, action) {
+    switch(action.type) {
+        case "increment":
+            return {...state, counter: state.counter + 1};
+        case "decrement":
+            return {...state, counter: state.counter - 1};
+        default:
+            return state;
+    }
+}
+
+
+// home.js
+// Home 组件等其他组件可以共用这个方法
+import React, { useReducer } from "react";
+// 引入 Reducer 纯函数
+import reducer from './reducer'
+
+export default function Home() {
+  const [state, dispatch] = useReducer(reducer, { counter: 0 });
+
+  return (
+    <div>
+      <h2>Home 当前计数：{state.counter}</h2>
+      <button onClick={(e) => dispatch({ type: "increment" })}>+1</button>
+      <button onClick={(e) => dispatch({ type: "decrement" })}>-1</button>
+    </div>
+  );
+}
+
+
+// about.js
+// About 组件等其他组件可以共用这个方法
+import React, { useReducer } from "react";
+// 引入 Reducer 纯函数
+import reducer from './reducer'
+
+export default function About() {
+  const [state, dispatch] = useReducer(reducer, { counter: 0 });
+
+  return (
+    <div>
+      <h2>About 当前计数：{state.counter}</h2>
+      <button onClick={(e) => dispatch({ type: "increment" })}>+1</button>
+      <button onClick={(e) => dispatch({ type: "decrement" })}>-1</button>
+    </div>
+  );
+}
+```
 
 
 
-
-
-
-
+### 21综合项目实战（五），看到 01：26：00
 
 
 
