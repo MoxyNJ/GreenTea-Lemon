@@ -625,9 +625,7 @@ state = {
 
 ## 4.2 使用 hooks
 
-### 4.2.1 基本 hooks
-
-#### `useState`
+### 1 State Hook
 
 - 本身是一个函数，来自 react 包
 
@@ -668,7 +666,49 @@ export default function CounterHook() {
 
 
 
-看到了21节视频的开头。
+`setState` 函数可以有两种用法，参数：
+
+1. 直接传入更新后的数值；
+2. 传入一个方法，这个方法会携带之前的数值，进行操作后再返回新数值。
+
+他们的区别是，如果多个 `setState` 连续使用。直接传入数值会发生合并，只有一个 `setState`起作用；而如果传入的是函数，就会全部起作用：
+
+```jsx
+//方式一，四个setCount会发生合并，最终结果只 +10
+function handleBtnClick1() {
+    setCount(count + 10);
+    setCount(count + 10);
+    setCount(count + 10);
+    setCount(count + 10);
+}
+
+//方式二，四个setCount不会合并，最终结果 +40
+function handleBtnClick2() {
+    setCount((prevCount) => prevCount + 10);
+    setCount((prevCount) => prevCount + 10);
+    setCount((prevCount) => prevCount + 10);
+    setCount((prevCount) => prevCount + 10);
+}
+
+<button onClick={handleBtnClick1}>+40</button>
+<button onClick={handleBtnClick2}>+40</button>
+```
+
+
+
+### 2 Effect Hook
+
+只要组件调用被重新渲染，就会触发 `useEffect`
+
+- 相当于 `componentDidMount` + `componentDidUpdate` 的合二为一
+
+
+
+
+
+
+
+
 
 
 
