@@ -395,6 +395,10 @@ export default store;
 
 - 暂时跳过，用到的话就学
 
+![image-20211021154424828](redux/image-20211021154424828.png)
+
+![image-20211021154435110](redux/image-20211021154435110.png)
+
 ![image-20211021132102827](redux/image-20211021132102827.png)
 
 
@@ -549,11 +553,122 @@ state = {
 
 
 
+![image-20211021153403222](redux/image-20211021153403222.png)
+
+## 2.9 单向数据流
+
+有三个理解：
+
+1. React 官网中有提到单向数据流：
+   - 只的就是通过 props 进行数据传递。一个项目中，组件是按以树的结构组织起来的。上层的组件可以通过  props 向下层组件传递数据。也就是父组件可以单向的向子组件传递数据。
+2. Vue 和 React 中，每个组件内部也有一个单向数据流：
+   - 一个组件从功能的实现上看，有三个模块：
+     1. UI，组件最终展示的数据和界面；
+     2. action，对组件中数据的操作方式，比如增删改等操作；
+     3. State，组件数据保存的地方，组件的状态。
+   - 所以，在 UI、action、State 之间也是按照单向数据流传递的：
+     - 在 UI 页面中，用户通过交货产生了对数据的操作，触发 action；
+     - React 接收到特定的 action 操作，进而对组件的 State 进行修改；
+     - 组件的 State 一旦发生变化，就会触发 `render()` 重新渲染 UI ，页面发生变化。
+3. Redux 中，对数据的操作也是一个单项数据流：
+   - 一个 Store 从对数据的操作来看，有 3 个模块：
+     1. UI，组件最终展示的数据和界面；
+     2. Dispatch，组件中对数据的操作方式，比如增删改等操作；
+     3. Store，组件中保存数据的地方。
+        - Reducer，Store 中保存对数据操作的地方。Dispatch 触发 Reducer ，完成对数据的操作。
+        - State，Store 中保存数据的地方。
+     4. 所以，数据在UI、Dispatch、Store（Reducer、State）中也是一个单项数据流：
+        - 用户通过 UI 界面触发事件，引发 Dispatch 派发申请对数据进行操作；
+        - Dispatch 调用 Store 中的 Reducer，通过携带的 action 识别 Reducer 中对应的操作。然后修改数据；
+        - 修改后的数据会更新 Store 中的 State。
+        - 数据更新完毕后，会通知 React 组件，最终 `render()` 重新渲染 UI 界面。
 
 
 
+2. 组件内部的单项数据流。
+
+<img src="redux/image-20211021155446622.png" alt="image-20211021155446622" style="zoom:67%;" />
 
 
+
+3. Redux中的单向数据流。
+
+<img src="redux/image-20211021155549892.png" alt="image-20211021155549892" style="zoom:67%;" />
+
+
+
+# 3 Router
+
+![image-20211021161035575](redux/image-20211021161035575.png)
+
+
+
+![image-20211021162400826](redux/image-20211021162400826.png)
+
+路由管理不仅可以用一个长串的 `<Switch></Switch>` 管理，还可以用一个文件夹 router，利用 react-router-config 包进行管理。
+
+![image-20211021172005696](redux/image-20211021172005696.png)
+
+
+
+# 4 React Hooks
+
+20.综合项目实战（四）开始讲述。
+
+## 4.1 Hooks 的优缺点
+
+![image-20211021201132578](redux/image-20211021201132578.png)
+
+![image-20211021201512082](redux/image-20211021201512082.png)
+
+  ![image-20211021201814785](redux/image-20211021201814785.png)
+
+## 4.2 使用 hooks
+
+### 4.2.1 基本 hooks
+
+#### `useState`
+
+- 本身是一个函数，来自 react 包
+
+- 有参数和返回值
+  - 参数：作用是给创建出来的 state 状态一个默认值。
+  - 返回：一个数组，包含两个成员：当前状态 state 对象 + 操作状态的函数
+
+![](redux/image-20211021211745512.png)
+
+![image-20211021211834830](redux/image-20211021211834830.png)
+
+```jsx
+import React, { useState } from "react";
+
+export default function CounterHook() {
+  //2 解构赋值
+  const [count, setCount] = useState(0);
+  return (
+    <div>
+      <h1>当前计数：{count}</h1>
+      <button onClick={(e) => setCount(count + 1)}> +1 </button>
+      <button onClick={(e) => setCount(count - 1)}> -1 </button>
+    </div>
+  );
+}
+
+```
+
+上图是一个函数组件，其显示的页面如下：
+
+![image-20211021211318199](redux/image-20211021211318199.png)
+
+当我们点击 +1 或者 -1 的时候。会重新执行一次 `function CounterHook()` 方法中的代码，也就是完全的重新执行一次函数式组件。
+
+1. 每次调用该方法，都会通过 useState，获取当前组件的 state 状态；
+2. 然后根据新的 state 值，渲染页面。
+3. 该数组中的 state 会被 React 保存下来，每次调用时取出。
+
+
+
+看到了21节视频的开头。
 
 
 
