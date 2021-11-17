@@ -1,0 +1,18 @@
+<script>
+let x = 'main';
+
+function call(func) {
+    console.log(this.x);
+}
+
+function func() {
+    console.log(this);
+}
+
+let a = {
+    x : 'a object',
+    call : call,
+
+}
+
+</script>

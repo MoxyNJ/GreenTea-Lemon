@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        class Car {
+            constructor(name, price) {
+                this.name = name;
+                this.price = price;
+            }
+            wheel = 4;
+            callMyCar() {
+                console.log(this.name, this.price, this.wheel);
+            }
+        }
+        const c1 = new Car('蔚来', 199);
+        const c2 = new Car('特斯拉', 299);
+    </script>
+</body>
+
+</html>

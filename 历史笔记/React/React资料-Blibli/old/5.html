@@ -1,0 +1,38 @@
+<html>
+<head>
+</head>
+
+<body>
+    <div class="moxy">
+        <span class="1 m"></span>
+        <span class="2 m"></span>
+        <span class="3 m"></span>
+        <span class="4 m"></span>
+        <span class="5 m"></span>
+        <span class="6 m"></span>
+    </div>
+      
+        
+
+
+</body>
+<script>
+    let myDiv = document.getElementsByClassName("0");
+    console.log(myDiv);
+    console.log(Object.prototype.toString.call(myDiv));
+
+    let myClass = document.querySelector('.moxy');
+    console.log(myClass);
+    console.log(Object.prototype.toString.call(myClass));
+
+    let myChild = myClass.querySelectorAll('.m');
+    console.log(myChild);
+    console.log(Object.prototype.toString.call(myChild));
+
+    console.log(myClass.childNodes);
+    console.log(Object.prototype.toString.call(myClass.childNodes));
+
+    console.log(myClass.children);
+    console.log(Object.prototype.toString.call(myClass.children));
+</script>
+</html>

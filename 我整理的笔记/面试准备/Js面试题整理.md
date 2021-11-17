@@ -103,24 +103,7 @@ if (!Array.isArray){
 
 
 
-## 3 快排
-
-![这里写图片描述](Js%E9%9D%A2%E8%AF%95%E9%A2%98%E6%95%B4%E7%90%86/4abde1748817d7f35f2bf8b6a058aa40tplv-t2oaga2asx-watermark.awebp)
-
-```js
-// 原生 API，sort() 将元素转换为字符串，然后按照 UTF-16 进行排序。
-// 即使数组内容全部是 number，也会转化为 string 然后再进行比较。
-["c","b","a","A","C","B",3,2,1].sort()		// (9) [1, 2, 3, 'A', 'B', 'C', 'a', 'b', 'c']
-
-// 快速排序
-
-```
-
-https://juejin.cn/post/6844903609885261832
-
-
-
-## 4 同源策略和跨域资源共享
+## 3 同源策略和跨域资源共享
 
 ### 1 同源
 
@@ -216,6 +199,293 @@ Origin: https://www.mywebsite.com           // <- 浏览器自己加的
 全称：JSON with padding 
 
 利用动态创建 `<script>` 标签向服务器发送 GET 请求，服务器收到请求后将数据放在一个指定的 **回调函数** 中并传送回来。
+
+
+
+
+
+# 算法相关
+
+## 1 快排
+
+![这里写图片描述](Js%E9%9D%A2%E8%AF%95%E9%A2%98%E6%95%B4%E7%90%86/4abde1748817d7f35f2bf8b6a058aa40tplv-t2oaga2asx-watermark.awebp)
+
+```js
+// 原生API: sort() 将元素转换为字符串，然后按照 UTF-16 进行排序。
+// 即使数组内容全部是 number，也会转化为 string 然后再进行比较。
+["c","b","a","A","C","B",3,2,1].sort()		// (9) [1, 2, 3, 'A', 'B', 'C', 'a', 'b', 'c']
+
+// 快速排序 1
+function quickSort(arr) {
+    let left = 0,
+        right = arr.length - 1;
+
+    main(arr, left, right);
+
+    return arr;
+    function main(arr, left, right) {
+        if (arr.length === 1) return;
+
+        let index = partition(arr, left, right);
+
+        if (left < index - 1) main(arr, left, index - 1);
+        if (index < right) main(arr, index, right);
+    }
+
+    function partition(arr, left, right) {
+        let pvoit = arr[Math.floor((left + right) / 2)];
+
+        while (left <= right) {
+            while (arr[left] < pvoit) left++;
+            while (arr[right] > pvoit) right--;
+
+            if (left <= right) {
+                [arr[left], arr[right]] = [arr[right], arr[left]];
+                left++;
+                right--;
+            }
+        }
+        return left;
+    }
+}
+
+let arr = [5, 43, 7, 60, 5, 3, 21, 8, 1];
+console.log(quickSort(arr));
+```
+
+简便方法：
+
+```js
+// 快速排序 2
+function quickSort(array) {
+    if (array.length < 2) {
+        return array
+    }
+    let pivot = array[array.length - 1]
+    let left = array.filter((value, index) => {
+        return value <= pivot && index != array.length - 1
+    })
+    let right = array.filter((value) => {
+        return value > pivot
+    })
+    return [...quickSort(left), pivot, ...quickSort(right)]
+}
+```
+
+
+
+## 2 数组去重
+
+一共有六种方法，逐次优化：
+
+1. 双层 `for` 循环；
+2. `filter` + `indexOf`；
+3. `sort` + 冒泡；
+4. `object` 的 `key` 唯一性 + `hasOwnProperty` +  `filter`；
+5. `set` 去重，一行代码解决；
+6. `reduce` -  对象数组去重。
+
+结论1，5 -> 1，速度越来越慢。所以原生的 `set` 是最快的。
+
+结论2，`object` 的时间复杂度最低，空间复杂度最高，因为在堆内存中创建了一个 `object`。
+
+时间复杂度：
+
+- `O(n^2)`：双层 `for`、`filter` + `indexOf` 
+- `O(nlogn)`：`sort` + 冒泡（`sort` 在大于10个元素时，使用了快排；小于10个用双重 `for` 循环）；
+- `O(n)`：`object` 唯一性、`reduce` 对象数组去重、`set`（`new Set()` 和 `[...set]` 都是 `O(n)`）；
+
+#### 1. 双层 for 循环
+
+效率最低，原理最简单。
+
+```js
+function distinct(arr) {
+    for (let i=0, len=arr.length; i<len; i++) {
+        for (let j=i+1; j<len; j++) {
+            if (arr[i] == arr[j]) {
+                arr.splice(j, 1);
+                // splice 会改变数组长度，所以要将数组长度 len 和下标 j 减一
+                len--;
+                j--;
+            }
+        }
+    }
+    return arr;
+}
+```
+
+#### 2. filter + indexOf
+
+- `filter` 负责过滤数组
+- `indexOf`  负责判断该元素是否已重复。`indexOf` 会返回 value 对应的 **第一个** key，如果 key 不等于当前遍历的 index，则证明该元素之前已经出现过。
+
+```js
+function distinct(arr) {
+  return arr.filter((item, index) => {
+    return arr.indexOf(item) === index;
+  });
+}
+```
+
+#### 3. sort + 冒泡
+
+- `sort` 负责排序，
+- 冒泡：利用 `for` 对比前后两个元素是否相同
+- `concat`：浅拷贝一份数组，sort会修改原数组。
+
+```js
+function distinct(arr) {
+  let res = [];
+  let sortedArray = arr.concat().sort();
+  let seen;
+  for (let i = 0; i < sortedArray.length; i++) {
+    // 第一个元素 和 前后不相等的元素 放入 res 数组中
+    if (!i || seen !== sortedArray[i]) {
+      res.push(sortedArray[i]);
+      seen = sortedArray[i];
+    }
+  }
+
+  return res;
+}
+```
+
+#### 4. object + hasOwnProperty + filter
+
+- 利用 `object` 的 `key`  唯一性，每遍历一个数组成员，就把这个成员的值作为 `obj` 的键，对应的值为 `true`；  
+- `hasOwnProperty`  判断当前数组成员是否已在 `object` 中；
+- `filter` 过滤重复的数组成员。
+- `typeof item + item` 是因为 `object` 的 `key` 只能是字符串形式，无法区分 `'123'` 和 `123`。
+
+```js
+function distinct(arr) {
+  let obj = {};
+
+  return arr.filter((item) => {
+    return obj.hasOwnProperty(typeof item + item)
+      ? false
+      : (obj[typeof item + item] = true);
+  });
+}
+```
+
+#### 5. set 去重
+
+利用 `set` 的 `key` 唯一性对数组去重，效率最高。
+
+```js
+// 可以简化为一行代码
+function distinct(arr) {
+  return Array.from(new Set(arr));
+}
+
+const unique = (arr) => [...new Set(arr)];
+```
+
+#### 6. reduce - 对象数组去重 
+
+- 该方法用于数组的成员是对象，要判断这些对象中的 “主键” 来去重（例子中就是 `name` 的值）。
+
+```js
+function distinct(arr) {
+  let temp = {};
+
+  return arr.reduce((prev, curv) => {
+    if (!temp[curv.name]) {
+      prev.push(curv);
+      temp[curv.name] = true;
+    }
+    return prev;
+  }, []);
+}
+
+var resources = [
+  { name: "张三", age: "18" },
+  { name: "张三", age: "19" },
+  { name: "张三", age: "20" },
+  { name: "李四", age: "19" },
+  { name: "王五", age: "20" },
+  { name: "赵六", age: "21" },
+];
+
+console.log(distinct(resources));
+```
+
+
+
+#### 速度分析：
+
+**Set  <  Object 键唯一   <  sort + 冒泡  <  filter + indexOf  <  双重 for 循环**
+
+```js
+// 分析方法
+// arr 利用 from，对刚创建好的数组进行成员初始化： [0, 1, 2, 3, 4, ...]
+let arr1 = Array.from(new Array(100000), (x, index)=>{
+    return index
+})
+
+let arr2 = Array.from(new Array(50000), (x, index)=>{
+    return index+index
+})
+
+let start = new Date().getTime()
+console.log('开始数组去重')
+
+// 浅拷贝一份原数组
+let arr = a.concat(b);
+
+function distinct(arr) {
+    // 数组去重
+}
+
+console.log('去重后的长度', distinct(arr).length)
+
+let end = new Date().getTime()
+console.log('耗时', end - start)
+```
+
+
+
+#### 去重分析：
+
+`NaN` 历史遗留问题，自身不相等，`NaN` 是一个对象。
+
+```js
+console.log(NaN == NaN); // false
+console.log(NaN === NaN); // false
+
+console.log({} == {}); // false
+console.log({} === {}); // false
+
+console.log(/a/ == /a/); // false
+console.log(/a/ === /a/); // false
+```
+
+
+
+将这样一个数组按照上面的方法去重后的比较：
+
+```js
+var array = [1, 1, '1', '1', null, null, undefined, undefined, new String('1'), new String('1'), NaN, NaN];
+```
+
+| 方法                       | 结果                                                     | 不去重的部分                     |
+| -------------------------- | -------------------------------------------------------- | -------------------------------- |
+| 双层 for 循环              | `[1, "1", null, undefined, String, String,  NaN, NaN]`   | `Object` 、`NaN`                 |
+| Array.sort()加一行遍历冒泡 | `["1", 1, String, 1, String, NaN, NaN, null, undefined]` | `Object`、`NaN`、`123` & `'123'` |
+| Array.filter()加 indexOf   | `[1, "1", null, undefined, String, String]`              | `object`，忽略 `NaN`             |
+| Object 键值对去重          | `[1, "1", null, undefined, String, NaN]`                 | **全部去重**                     |
+| ES6中的Set去重             | `[1, "1", null, undefined, String, String, NaN]`         | `object`                         |
+
+-  Object 对象去重复：时间复杂度 `O(n)` 最低；空间复杂度最高，因为在堆内存中创建了一个对象；
+
+- `Array.filter()` + `indexOf` ：时间复杂度 `O(n^2)`。
+  - 因为 `indexOf` 内部是通过 for 循环遍历实现的
+
+
+
+
 
 
 
