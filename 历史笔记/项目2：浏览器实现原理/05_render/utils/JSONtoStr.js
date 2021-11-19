@@ -9,7 +9,7 @@ module.exports.JSONToStr = function JSONToStr(json) {
       if (typeof value === "object" && value !== null) {
         if (cache.indexOf(value) !== -1) {
           // 移除
-          console.log("remove:", value);
+          // console.log("remove:", value);
           let re = null;
           let res = Object.prototype.toString.call(value);
           if (res === "[object Array]") {

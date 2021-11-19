@@ -458,7 +458,6 @@ function layout(element) {
       }
       crossBase += crossSign * (lineCrossSize + step);
     });
-    console.log(items + "cross");
   }
 }
 

@@ -1,5 +1,7 @@
 const net = require("net");
 const parser = require("./parser");
+const images = require("images");
+const render = require("./render");
 
 const { writeString, JSONToStr } = require("./utils/JSONtoStr");
 
@@ -298,10 +300,18 @@ void (async function () {
     },
   });
 
+  // send request, response received
   let response = await request.send();
 
+  // parse HTML, DOM received
+  // parse CSS, DOM computed
   let dom = parser.parseHTML(response.body);
-  // console.log(JSONToStr(dom));
   writeString(JSONToStr(dom));
-  console.log("done");
+
+  // render, create a images instead of a screen
+  let viewport = images(1000, 600);
+  render(viewport, dom);
+
+  // save & show images
+  viewport.save(`viewport${Date.now()}.jpg`);
 })();
