@@ -1,53 +1,60 @@
 # 整理问题
 
-2. 除了 flex 居中，其他垂直水平居中方式。尽量说全面
-3. 宽度固定，高度不定的元素在整个页面水平垂直居中
-   - 盒子内部有一些文字，如何让这些文字在容器内水平垂直居中。
-
-2. 有哪些页面布局
-   - 响应式布局、流式布局、rem 布局 ...
-3. CSS 动画
-4. CSS 实现三角形
-5. `animation` 和 `transition`
-   - 常见的动画属性
-6. css 旋转
-7. css 不会继承的属性
+css 不会继承的属性
 
 
 
-第一代排版技术：
+**第一代排版技术：**
 
 1. 清除浮动
 2. 盒模型、CSS3模型
    - padding 和 margin 的区别
 3. position、display 有哪些属性，各自的区别
+4. CSS 清除浮动
 
 
 
-CSS 选择器：
+**CSS 动画：**
 
-1. `.a.b`  `.a .b`     `.a+.b`
-2. CSS 选择器有哪些
-   - 伪类、伪元素是什么？
-   - 优先级
+- 文字如何加阴影
+
+- CSS 实现三角形
 
 
 
 ## 1. CSS 单位怎么区分
 
-###  1.1 `px`、`em`、`rem` 的区别
+### 1.0 长度单位
+
+相对长度单位：相对字体长度单位（em、ex、rem、ch）、相对视区长度单位（vh、vw、vmin、vmax）
+
+绝对长度单位：（px、剩余非常少见：pt、cm、mm、pc等）
+
+
+
+ex：是字符 x 高度，与 font-size 对应。font-size 值越大，则 ex 就越大；
+
+em：是传统 m 的宽度，也是汉字的高度。即一个字模的宽度。根据不同的英文字体，宽度会发生变化。但中文通常一个汉字正好是一个 m 的宽度和高度。font-size 是按照父元素字符尺寸来计算。
+
+rem：root em。1 rem 和根字符大小一样，font-size 都按照根字符来计算。
+
+ch：是阿拉伯字母 0 的宽度。等宽字体。
+
+
+
+### 1.1 `px`、`em`、`rem` 的区别
 
 1. `px`：固定的像素，一旦设置了就无法因为适应页面大小而改变。
 2. `em` ：相对其父元素来设置字体大小。
 3. `rem`：相对于 `<html>` 根元素来设置字体大小。
 4. `30%`：如果要设置多列布局，使用 百分号是更好的选择。但是 `%` 的计算非常困难。
 
-#### `em`：
+**`em`：**
 
 - 子元素字体大小的 `em`，是相对于 **父元素** 字体大小 `font-size`；
 - 元素的 `width`/`height`/`padding`/`margin`的 `em`，是相对于 **该元素** 的字体大小 `font-size`；
 
-#### `rem`：
+**`rem`：**
 
 - **全部的长度都相对于根元素**。
 
@@ -77,7 +84,7 @@ CSS3 的新特性，与视图窗口有关
 
 <img src="HTML&CSS/170e82463b522ff6tplv-t2oaga2asx-watermark.awebp" alt="img" style="zoom:50%;" />
 
-### 2. px 和视口
+### 1.3 px 和视口
 
 #### 1 像素
 
@@ -171,7 +178,7 @@ CSS3 的新特性，与视图窗口有关
 
 
 
-## 3. flex 布局的属性有哪些
+## 3. flex 的属性有哪些
 
 #### 概述：
 
@@ -282,7 +289,7 @@ flex item（6）：
 
 ## 5. CSS 中与文字 / 排版相关的属性有哪些？
 
-#### CSS2.2（尽量按重要性排序）:
+### CSS2.2（尽量按重要性排序）:
 
 **具体每个属性的用法，再看一下书中勾画的部分**
 
@@ -365,11 +372,13 @@ background-clip：裁剪背景图片。元素背景（背景图片或颜色）�
 
 ## 7 居中对齐
 
-### 7.1 垂直居中 - 第一代排版技术 正常流
+### 7.1 垂直居中
 
-**(1) 单行内容的近似垂直居中。**
+#### (1) 正常流
 
-把 height 和 line-height 设置为相同的尺寸，就可以实现单行文字 + 图片的近似垂直居中的效果：
+单行内容：把 height 和 line-height 设置为相同的尺寸，就可以实现单行文字 + 图片的近似垂直居中的效果：
+
+- 如果文字长度一旦过多，出现了折行，此时因行间距 line-height 的影响，就会溢出粉色盒子。
 
 ```html
 <div>
@@ -387,11 +396,7 @@ background-clip：裁剪背景图片。元素背景（背景图片或颜色）�
 
  <img src="HTML&CSS/%E6%88%AA%E5%B1%8F2021-08-05%20%E4%B8%8B%E5%8D%8810.36.08.png" alt="截屏2021-08-05 下午10.36.08" style="zoom:50%;" />
 
-如果文字长度一旦过多，出现了折行，此时因行间距 line-height 的影响，就会溢出粉色盒子。
-
-
-
-**(2) 多行近似垂直居中对齐**
+多行内容：
 
 ```html
 <div>
@@ -421,7 +426,7 @@ background-clip：裁剪背景图片。元素背景（背景图片或颜色）�
 
 
 
-**(3) 图片 + 文字的垂直居中**
+图片 + 文字的垂直居中：
 
 ```html
 <div>
@@ -446,398 +451,211 @@ background-clip：裁剪背景图片。元素背景（背景图片或颜色）�
 
  <img src="HTML&CSS/%E6%88%AA%E5%B1%8F2021-08-05%20%E4%B8%8B%E5%8D%8810.52.27.png" alt="截屏2021-08-05 下午10.52.27" style="zoom:33%;" />
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 末尾. font-size、line-height、vertical-align 之间的关系
-
-### 6.1 引入
-
-#### strut 支撑节点
-
->   Each line box starts with a zero-width inline box with the elememt's font and line height properties. We call that imaginary box a "strut".
-
-在每一个 line box 的前面，都会有一个支撑节点。这个节点的 width 宽度为 0、拥有 line box 的字体和行高属性。
-
-
-
-#### 行模型
-
-<img src="HTML&CSS/%E8%A1%8C%E6%A8%A1%E5%9E%8B.png" alt="行模型" style="zoom: 40%;" /><img src="HTML&CSS/截屏2021-08-05 下午9.42.24.png" alt="截屏2021-08-05 下午9.42.24" style="zoom: 25%;" />
-
-IFC 的每一行，就是一个 line box。在行模型中，具有以下几个注意点：
-
-line-top / line-bottom：行高之间的区域。在 inline boxes 中，无法通过 height 定义盒子的高度，而通常是用 line-height 去定义。
-
-text-top / text-bottom：字体大小的区域，是文字区域的顶部和底部所围成的区域，可以理解为当我们在页面中按住左键选中文字后，变色的区域。这个区域由 font-size 决定。
-
-
-
-line-height：line-top 和 line-bottom 之间的高度，通常就是 line-height 即，行高。
-
--   两条基线之间的距离，也是 line-height。
-
-x-height：在英文字母中，小写 x 的高度，就被定义为 x-height。
-
-base-line：在英文字母中，小写 x 的下边缘，就被定义为 base-line 基线。基线通常在中文最底端靠上一点的位置。
-
--   如果是替换元素（通常是图片），baseline 则是该元素的下边缘位置。
-
-
-
-半行间距：半行间距分为上下两部分。源自于当 line-height 的高度大于 font-size 时，多出来的部分会平均分为两份，分别作为 上行间距、下行间距。
-
--   所以如果 line-height 的高度小于 font-size时，半行间距就会变成负数，此时上下两行文字就会部分被重叠。
-
-
-
-文字的中线：文字的中线不是上下水平居中的一条线，而是小写字母 x 上下水平居中的一条线。可以看成是 x 中心交叉点所在的水平线。
-
--   文字的中线是比，文字真正水平居中的中心线要略低的。
-
--   所以关于文字的基线 / 中线，都是参考 x 字母来定义的。
-
-
-
-文字的近似居中对齐：
-
--   先说说我们要达到的居中对齐效果：在一个父元素中，包裹着几个文字和一个图片。我们要使这些文字 / 图片相对于父元素内部，水平居中对齐。参考线是父元素内部的中线。
--   再说说实际发生的效果：在上面的语境中，父元素一定是一个 block box。那么其内部的几个文字和图片，组成起来就是一个 line box，即一个行盒。上文提到过，文字的中线是围绕字母 x 来定义的。所以这些文字会对齐到父元素内部环境中的文字中线。也就是所有文字 / 图片都会对齐到 “文字的中线”，而不是盒子的中线，图片也会参考 “文字的中线” 去对齐。
-    -   最终效果是，图片自身的水平中心线与 “文字的中线”对齐。而文字的中线比真正的水平中心线略低。这最终导致了文字和图片的不是真正的居中，而是比真正居中略低的 “近似居中对齐”
-
-
-
-<img src="HTML&CSS/%E6%88%AA%E5%B1%8F2021-08-05%20%E4%B8%8B%E5%8D%8810.15.10.png" alt="截屏2021-08-05 下午10.15.10" style="zoom:30%;" />
-
-上图可以看到，父元素框的真正水平中心线是白色的、代表图片的绿色框真正水平中心线是黄色的。它们都对齐到 “文字的中线”，即x的中心交叉点。所以，文字和替换元素最终垂直对齐的是近似居中效果。
-
-
-
-### 6.2 line-height	
-
-line-height 就是文字间的行间距，也称为行高。它能影响文字之间的间距，vertical-align 也会影响到文字的上下间距。
-
-#### 属性值
-
-默认值：normal。
-
--   line-height 的默认值不是固定的，而是根据 font-size 和文字种类动态定义。默认 font-size 为16px，line-height 为18px
-
-数值：`line-height: 1.5`。行高计算值为 **当前环境** font-size * 1.5。其子元素继承的数值，是属性值 `1.5`，子元素拿到属性之后重新计算。
-
-百分比值：`line-height: 150%`。行高计算值为 **当前环境** font-size * 150%。其子元素继承的数值，是计算值`font-size * 150%`，子元素直接拿到最终的计算值。此时子元素的 line-height 和子元素的 font-size 没有任何关系。
-
-长度值：
-
--   `line-height: 20px`。子元素继承拿到最终的计算值（也是属性值）。此时子元素的 line-height 和子元素的 font-size 没有任何关系。
--   `line-height: 1.5em`。行高计算值为 **当前环境** font-size * 1.5。其子元素继承的数值，是计算值`font-size * 150%`，子元素直接拿到最终的计算值。此时子元素的 line-height 和子元素的 font-size 没有任何关系。
-
-
-
-所以，通常使用数值来定义 line-height，避免子元素重新定义字体大小后，出现行间距过大/过小的情况。
-
-通常的 line-height 设置在 1.6～1.8 之间。浏览器默认宋体的间距在 1.32。
-
-
-
-#### 大值特性
-
--   在一个 line box中，出现多个 line-height 属性值不同，最终该 line box 会应用 line-height 的最大属性值，作为整行的行间距值。
-
--   所以，对一个内部是 IFC 环境的 div，设置一个 line-height，没有应用在 div 自身，而是其子内联子元素上。因为 div 本身是一个 block 不会包裹任何文字，所以 line-hieght 对它是无效的。真正应用的是 div 内部的子内联元素（匿名内联盒、内联盒等），尤其是内部 **宽度为0的strut 支撑节点**。
-
-
-
-### 6.3 vartical-align
-
-垂直对齐方式，决定文本的垂直对齐高度基于哪一条线。所以， vartical-align 主要应用在内联元素。（还支持 table-cell 等）
-
-#### 属性值
-
-线类：baseline（默认）、top、middle、bottom
-
-文本类：text-top、text- bottom
-
-上/下标类：sub、super
-
-数值类：根据最终的计算值，文本会基于 baseline 上下偏移。和坐标轴 y 轴一样，正值向上偏移、负值向下便宜。
-
--   数值：20px
-
--   百分比值：20%
-
--   长度值：2em
-
-
-
-垂直对齐方式的值：
-
-baseline：默认是基于基线对齐。所有文本的基线就是字母 x 的下边缘。所有替换元素（如 img）的基线，就是元素本身的下边缘。
-
-midde：就是上文所述的，“文字的中线”，也就是近似垂直居中。所以，当一个图片和几个文字利用 `vartical-align: middle` 去垂直居中对齐是，文字会明显的偏下一点（因为图片的 middle 是真正的垂直居中、“文字的中线” 比真正的居中要靠下，图片自然下移）
-
-top / bottom：这里文字的顶端 / 底端 和 替换元素的 顶端 / 底端 没有歧义。所以可以自然的对齐。
-
-text-top / text-bottom：和父容器内容区的顶部 / 底部 对齐，用的少。
-
-百分比值：基于 line-height 计算。用的少。
-
-
-
-### 关于 height 和 line-height
-
-对一个 block box 设置 height：改变了该盒子的高度尺寸。
-
-对一个 block box 设置 line-height：改变了该盒子内部 “strut 支撑节点” 以及子 inline boxes 的行间距。如果这个 box 内部的内联元素重新定义了 line-height，就会覆盖 block box 的 line-height 的值。
-
-结合以上，要牢记这个原则：**height 影响的是盒子的高度、line-height 影响的是文字的行间距，这两者本就不是一个事物。**
-
-
-
-  **1.浏览器中默认文字大小 font-size 为16px;
-  2.浏览器中默认文字行间距 line-height 为18px；**
-
-
-
-**两者间的配合 1：实现单行内容的近似垂直居中。**
-
-把 height 和 line-height 设置为相同的尺寸，就可以实现单行文字 + 图片的近似垂直居中的效果：
-
-```html
-<div>
-  	我在这里近似垂直居中了
-</div>
-<style>
-  div {
-    height: 100px;
-    width: 200px;
-    line-height: 100px;
-    background-color: pink;
-  }
-</style>
+绝对垂直居中：
+
+```css
+.parent::after, .son{
+    display:inline-block;
+    vertical-align:middle;
+}
+.parent::after{
+    content:'';
+    height:100%;
+}
 ```
 
- <img src="HTML&CSS/%E6%88%AA%E5%B1%8F2021-08-05%20%E4%B8%8B%E5%8D%8810.36.08.png" alt="截屏2021-08-05 下午10.36.08" style="zoom:50%;" />
+#### (2) `Flex Box`
 
-如果文字长度一旦过多，出现了折行，此时因行间距 line-height 的影响，就会溢出粉色盒子。
-
-
-
-**两者间的配合 2: 实现多行近似垂直居中对齐**
-
-```html
-<div>
-  <span>我居中了吗？我居中了吗？我居中了吗？我居中了吗？我居中了吗？我居中了吗？我居中了吗？我居中了吗？我居中了吗？我居中了吗？我居中了吗？
-  </span>
-</div>
-<style>
-  div {
-    line-height: 200px;
-    background-color: pink;
-  }
-
-  span {
-    display: inline-block;
-    line-height: 30px;
-    vertical-align: middle;
-  }
-</style>
+```css
+.parent {
+    display: flex;
+    align-items: center;
+}
 ```
 
- <img src="HTML&CSS/%E6%88%AA%E5%B1%8F2021-08-06%20%E4%B8%8A%E5%8D%8811.21.32.png" alt="截屏2021-08-06 上午11.21.32" style="zoom:40%;" />
+#### (3) 绝对定位
 
-1.   span 设置为 inline-block，已确保内部可以拥有自己的行间距。同时设置自己的行间距为 30px。
-2.   div 行间距设置为 200px，利用宽度为 0 的strut 支撑节点，把 div 的高度撑起来的同时，此时 “文字的中线” 也在盒子的近似中间水平。
-     -   **明确一点：** div 作为一个 block 是不需要行高的，它设置 line-height 就是为了子内联元素的继承。最直接的，宽度为 0 的strut 支撑节点继承了这一属性。
-3.   span 此时设置上下居中对齐，也就是 `vertical-align: middle;` 那么它就会寻找所在父元素的 “文字的中线” 去对齐。最终效果就是水平近似居中对齐。
+`transform`
 
-
-
-问题1：span 为什么要设置为 inline-block？
-
-如果不设置 inline-block，而是默认的内联元素，就会发生下图左这样的情况。span 的 `line-height: 30px` 似乎没有正确被应用，而是使用了父元素 div 的 200px 行间距。实际上，此时的，span 作为内联元素，确实是应用了 30px 的行间距。但是 span 作为内联元素，也会参与到 div 创建的 IFC 环境中，在每一行都会形成一个 行盒 line box。这个行盒的 line-hegiht 是遵循当前行盒中，所有内联元素 line-hieght 最大的那个元素，也就是匿名内联盒 **（通常没有任何文字，那就是宽度为 0 的strut 支撑节点）**，它继承了 div 设置的行间距 200px。所以 span 最终虽然应用了自己的 30px 行间距，但参与 IFC 时 line box 会应用最大的 200px，最终出现了下图左的效果。
-
--   如果设置 inline-block，则 span 外部作为一个整体，依然会参与 IFC 中，但是内部却创建了一个新的 BFC（其内部只有文字，所以是一个 IFC）。可以看到 div 环境中的 匿名内联盒行高依然是 200px，span 其内部也自己形成了一个 IFC 正常流，提前发生了折行。内部行间距也正确应用为了 30px。可以看到，span 外部的行间距已然是 200px。
-
-<img src="HTML&CSS/%E6%88%AA%E5%B1%8F2021-08-06%20%E4%B8%8A%E5%8D%8811.46.54.png" alt="截屏2021-08-06 上午11.46.54" style="zoom:45%;" />               <img src="HTML&CSS/截屏2021-08-06 上午11.47.21.png" alt="截屏2021-08-06 上午11.47.21" style="zoom:45%;" />        
-
- ```html
-<div>
-    --这里是匿名内联盒--
-    <span>
-      滚滚长江东逝水，浪花淘尽英雄。是非成败转头空。
-    	青山依旧在，几度夕阳红。白发渔樵江渚上，惯看秋月春风。
-    	一壶浊酒喜相逢。古今多少事，都付笑谈中。
-    </span>
-</div>
-<style>
-  	div {
-    	line-height: 100px;
-    	background-color: pink;
-  	}
-	  span {
-  	  /* display: inline-block; */
-    	line-height: 20px;
-	  }
-</style>
- ```
-
-
-
-问题 2：div 为什么不能用属性 `height:200px` 来设置盒子的尺寸？
-
-如果此处不用属性` line-height: 200px;`，而是用属性 `height:200px`。则该 div 行间距是默认的 18px，也就是说，盒子虽然尺寸被撑起来了，但是 “文字的中线” 却不在盒子水平居中附近的位置，而是很靠上的地方（line-height 为 18px，所以一定在上方 小于 18px）
-
-
-
-**两者间的配合 3：`vertical-align:middle` 失效**
-
-有些情况下，会遇到这种问题，`vertical-align:middle`设置后，没有实现居中效果。
-
-```html
-<div>
-  <img class="middle" src="1.png" />
-</div>
-<style>
-  div {
-    height: 400px;
-    background-color: pink;
-  }
-
-  img {
-    vertical-align: middle;
-  }
-</style>
+```css
+.son {
+    position: absolute;
+    top: 50%;
+    transform: translate( 0, -50%);
+}
 ```
 
- <img src="HTML&CSS/%E6%88%AA%E5%B1%8F2021-08-05%20%E4%B8%8B%E5%8D%8810.42.56.png" alt="截屏2021-08-05 下午10.42.56" style="zoom:33%;" />
+`top: 50%`
 
-本质原因不是在于 vertical-align，而是设置了 height 的值，只改变了粉色盒的尺寸，而没有改变粉色盒的行间距 line-height。之前提到过，文字和图片等内联元素的居中，是参考 “文字的中线”，而不是盒子的实际上下中线。所以上面的例子中，粉色盒子的 font-size 和  line-height 是都默认尺寸。
-
--   解决：粉色盒子的 `line-height` = `height`，即达到近似水平居中。上文中，div 添加属性 `line-height: 400px;` 即可。
-
- <img src="HTML&CSS/%E6%88%AA%E5%B1%8F2021-08-05%20%E4%B8%8B%E5%8D%8810.52.27.png" alt="截屏2021-08-05 下午10.52.27" style="zoom:33%;" />
-
-### 文字容器的最终高度
-
-上文提到过，文字的高度依赖于 line-height，但这不是绝对的。文字容器的最终高度，是 font-size、line-height 和 vertical-align 共同作用的结果。
-
-案例1 ：
-
-```html
-<div>
-  	x<span>文字x</span>
-</div>
-<style>
-    div { line-height: 32px; }
-    span { font-size: 24px; }
-</style>
+```css
+.son {
+    position: absolute;
+    top: 50%;
+    height: 高度;
+    margin-top: -0.5高度;
+}
 ```
 
-在 div 容器中默认的字体大小是 16px，行高为32px；div 内部的 span 标签设置字体大小得我 24px。最终，div 内部的行高设置为 34 px。下面来解释这里的原因：
-
-1.   设置：div 内部的匿名内联盒、宽度为0的strut 支撑节点，行高都是 32px，字号为 16px；
-2.   设置：span 的内部行高继承自 div 也是 32px，字号为 24px；
-3.   可以看到下图效果，虽然 div 内部存在两种字体，但是他们看起来依然在一条直线上，这条直线就是 baseline。这是由于 vertical-align 垂直排列方式默认为 baseline 的作用结果。
-4.   字号越大，相对基线的位置就会越靠下，见下右图 字号16px 的文字基线明显高于 字号 32px的文字基线。这就导致字号大的字体会向上移动才能基线对齐。而此时大号文字向上移动后，因字号过大，会超出 line-height 高度。所以纵向上看，顶部会被大号字体 “撑开”。
-5.   最终效果来看，顶部被大号字体撑高了 2px，最终行高是 34px。
-
- <img src="HTML&CSS/截屏2021-08-06 下午4.14.39.png" alt="截屏2021-08-06 下午4.14.39" style="zoom:50%;" />        <img src="HTML&CSS/%E6%88%AA%E5%B1%8F2021-08-06%20%E4%B8%8B%E5%8D%884.27.29.png" alt="截屏2021-08-06 下午4.27.29" style="zoom:50%;" />   
 
 
+### 7.2 水平居中
 
-tips：如何解决顶部被撑开？
+#### (1) 正常流
 
-按照原理，只要字号 font-size 小于 line-height 就不会被撑开。改变 vertical-align 的垂直对齐方式，可以设置为 bottm、top 等，就可以避免撑开。
+行内元素
 
-
-
-案例 2:
-
-```html
-    <div>
-        我是字符x <img src="1.png" />
-    </div>
-    <style>
-        div {
-            line-height: 32px;
-            background-color: pink;
-        }
-    </style>
+```css
+.parent {
+    text-align: center;
+}
 ```
 
-可以看到，当出现文字 + 图片的时候，就会有下图左边这样，底部多出一条边的效果；只有图片（下图右边）也会出现这样的效果。
+块级元素
 
-这是因为上文提到默认基线对齐的结果。文字的基线是 x 字母的下边缘，替换元素的基线是整个元素的下边缘。所以这里图片对齐到了文字的基线处。如果 div 没有文字（右边的图），依然会有一个 **宽度为0的strut 支撑节点** 来提供 div 内部 IFC的行高和基线等基本参考线。
+```css
+.son {
+    margin: 0 auto;
+}
+```
 
-解决方案：
+#### (2) `Flex Box`
 
-1.   更改图片的 vertical-align。图片不按照基线对齐，而是与文字的底部 bottom、顶部 top 对齐等方式，就不会有空隙了。
-2.   让图片变成 block，这里便不是一个 IFC，不会遵循文字排版的垂直对齐规则了。
-     -   但这种方法的只适合下图右，没文字的情况。否则图片会因是一个 block 而按照 BFC 排版，直接折行到下一排。
-3.   div 内部的 line-height 足够小。常用：`line-height: 0`上文提到过，一旦 line-height 尺寸小于 font-size，则不存在半行间距。下面的空隙也就不存在了。
-     -   但这种方法的只适合下图右，没文字的情况。否则文字会因 line-height 尺寸过小而溢出 div 盒子。
+```
+.parent {
+    display: flex;
+    justify-content: center;
+}
+```
 
- <img src="HTML&CSS/%E6%88%AA%E5%B1%8F2021-08-06%20%E4%B8%8B%E5%8D%884.36.53.png" alt="截屏2021-08-06 下午4.36.53" style="zoom:50%;" />                 <img src="HTML&CSS/截屏2021-08-06 下午4.38.21.png" alt="截屏2021-08-06 下午4.38.21" style="zoom:50%;" />
+#### (3) 绝对定位
+
+`transform`
+
+```js
+.son {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+```
+
+`left: 50%`
+
+```css
+.son {
+    position: absolute;
+    width: 180px;
+    left: 50%;
+    margin-left: -90px;
+}
+```
+
+`left/right: 0`
+
+```css
+.son {
+    position: absolute;
+    width: 180px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+```
+
+### 7.3 水平 + 垂直居中
+
+三种方法：
+
+- `Flex Box`：`parent` ===  `justify-content: center;` + `align-items: center;`
+
+- 绝对定位： `transform`
+- 绝对定位：`left / top:50%`；
+
+```css
+.son {
+    position: absolute;
+    left: 50%;
+    top:  50%;
+    transform: translate(-50%, -50%);
+}
+
+.son {
+    position: absolute;
+    width: 180px;
+    left: 50%;
+    top:  50%;
+    margin-left: -90px;
+    margin-top:  -90px;
+}
+```
 
 
 
-### 总结：height、line-height、font-size 三者的关系
+## 8. 如何实现隐藏
+
+- `display: none` 从 DOM 中直接删除。
+
+**文本的隐藏**
+
+利用字号：`font-size: 0` 文字就会在视觉层隐藏，但是屏幕阅读设备、DOM流中依然存在；
+
+利用缩进：`text-indent` 设置为一个非常大的负值，则改行文本会因溢出盒子，甚至 html 页面而消失不见。但是会出现溢出容器问题。
+
+```css
+.hide-text {
+  	text-indent: 100%;    /* 百分比相对于包含块来决定的，100%则正好让文本想左移动了包含块的长度 */ 
+  	white-space: nowrap;  /* 规定文本不换行，这样该段落的所有文字都可以利用缩进移动到最左边，消失不见 */
+  	overflow: hidden；    /* 解决溢出容器的问题 */ 
+}
+```
+
+**盒子的隐藏**
+
+`z-index` 层叠上下文。当层叠上下文内的某个父元素拥有一个背景色，那把要隐藏的元素的 z-index 设置为负值便可以达到效果隐藏 / 遮挡的效果。这是一个可访问性隐藏。对原来的布局、以及元素的行为没有任何影响。
+
+
+
+**图片的隐藏**
+
+`clip`  利用裁剪效果。可以达到隐藏的效果，但缺点是元素需要绝对定位。focus 控件焦点也会有细微问题。
+
+
+
+## 9 CSS3 新特性
+
+文字相关的属性：
+
+column：文本的多栏布局，定义一共有几栏；
+
+column-gap：文本的多栏布局，定义两个栏间隔的宽度；
+
+column-span：文本的多栏布局，定义该元素实现跨栏（通常是文中的小标题）；
+
+text-feature-settings：控制OpenType字体中的高级印刷功能。
+
+font-variant-numeric：控制数字，分数和序号标记的替代字形
+
+font-kerning：使用字体中储存的字距信息。
+
+text-shadow：为文字添加阴影。阴影值由元素在X和Y方向的偏移量、模糊半径和颜色值组成。
+
+
+
+## 10 height、line-height、vartical-align 和 font-size
+
+`line-height`：就是文字间的行间距，也称为行高。它能影响文字之间的间距，vertical-align 也会影响到文字的上下间距。
+
+`vartical-align`：垂直对齐方式，决定文本的垂直对齐高度基于哪一条线。所以， vartical-align 主要应用在内联元素。（还支持 table-cell 等）
+
+
+
+**总结：height、line-height、font-size 三者的关系**
 
 `line-height` 与 `font-size`：
 
 -   行高 > 字号，则字符上下有半行距的空隙；
 -   行高 = 字号，则字符正好占满行高；
 -   行高 < 字号，则多行字符会上下 “挤” 再一起。
-
-
 
 `height` 与 `line-height`：
 
@@ -853,6 +671,777 @@ tips：如何解决顶部被撑开？
 | width          |                         | 父容器实际宽度 x 50%                           |      |
 | padding        | 内联元素的padding会断行 | 不论上下左右，都是：<br />父容器实际宽度 x 50% |      |
 | margin         | 可以为负值              |                                                |      |
+
+
+
+## 11. CSS 选择符
+
+#### 选择符的种类（4）
+
+- 基本、高级、属性、伪元素和伪类
+
+#### 1 基本选择符
+
+元素选择符： `p`
+
+ID选择符：`#myId`
+
+类选择符：`.myClass`
+
+通用选择符：`*` 选择所有元素。
+
+后代选择符： `[空格]` ，如 `blockquote p` 则选择了块引用的所有 p 后代（子后代、子孙后代全部包括）。
+
+多选：`, ` ，用逗号连接，则表示连续选择多个元素，同时应用相同的 CSS 属性。
+
+#### 2 高级选择符
+
+子选择符：`>` ，如 `#nav > li`  只选择了 id 为 nav 的 li 元素，只选择直接后代，也就是子后代，**多个元素**。
+
+相邻同辈选择符：`+`，如 `h2 + p` 只选择了 h2 元素 **后面** 的、拥有 **共同父元素** 的 **一个元素** p。
+
+一般同辈选择符：`~`，如 `h2 ~ p` 会选择 h2 元素 **后面** 的、拥有 **共同父元素** 的 **全部元素** p。
+
+#### 3 属性选择符
+
+属性选择符 1 ：`标签名[属性名]` ，比如 `abbr[title]`。表示选择所有这些属性：`<abbr title="xxxx">`。
+
+属性选择符 2 ：`标签名[属性名="属性值"]`，如 `abbr[title="a"]`。选择这些属性：`<abbr title="a">`。
+
+要匹配以某些字符开头的属性值：等号前加 `^`，如 `a[href^='http:']` 
+
+要匹配包含某些字符的属性值：等号前加上 `$`，如 `img[src$=".png"]` 
+
+要匹配以空格分隔的字符串中的属性值：等号前加上 `~`，如 `a[rel~=next]` 
+
+要匹配开头指定值或指定值后连接一个短线：`|`，如 `a[lang|=en]` ，可以匹配属性值为 en 或 en-us。
+
+#### 4 伪元素和伪类
+
+伪类和伪元素可用来修饰不在文档树中的部分。这样做通常是为了不想给页面添加额外的标记，但又想创建 / 选择一些元素。
+
+#### 4.1 伪类
+
+通过伪类选择器，可以找到那些不存在 DOM 树中的信息，或者不能被常规 CSS 选择器获取到的信息。
+
+- 获取不存在与DOM树中的信息。比如 a 标签的 :link、visited，这些信息不存在与 DOM 树结构中，只能通过 CSS 选择器来获取；
+
+- 获取不能被常规CSS选择器获取的信息。比如：获取第一个子元素，无法用常规的 CSS 选择器获取，只能通过 :first-child 获取。
+
+##### 状态伪类：
+
+未访问过的链接，或其他可交互元素：`a:link`
+
+访问过的链接，或其他可交互元素：`a:visited`
+
+鼠标悬停 、 键盘聚焦的链接，或其他可交互元素：`a:hover`、`a:focus`
+
+活动状态的可交互元素：`a:active`
+
+- 注：为了防止后定义的样式覆盖前面定义的样式，上面这几个伪类要按照以下顺序依次定义：`:link`, `visited`, `:hover`, `:focus`, `:active`。
+
+##### 结构化伪类：
+
+`:not()`：反选
+
+`:target`：目标
+
+`:nth-child()`：根据不同的属性值，来选择子元素：
+
+- odd、even、n、2n+4：选中奇数、偶数、第 n 个元素（1开始）、（n = 0, 1, 2...）的表达式结果
+
+- `nth-child(n+3)` ：选择列表中的标签从第 3 个开始到最后（>=3）
+
+  `nth-child(-n+3)` ：选择列表中的标签从 0 到 3，即小于 3 的标签(<=3)
+
+`:nth-last-child()` ：属性值和 `:nth-child()` 相同，只不过它是倒着数。
+
+- `nth-last-child(3)` ：选择列表中的倒数第 3 个标签
+
+`:nth-of-type(n)`：匹配指定类型的第 N 个子元素，**与元素类型有关**。可以插入含n的表达式，来选中同类型元素。
+
+- 如 `.myDiv p:nth-of-type(3)`：匹配 class 值为 myDiv 内的第 3 个 p 元素。
+
+
+
+`:first-child` 相当于 `:nth-child(1)`
+
+`:last-child` 相当于 `:nth-last-child(1)`
+
+`:only-child`：配没有任何兄弟元素的元素
+
+- 相当于：`:first-child:last-child`或者`:nth-child(1):nth-last-child(1)`。
+
+`:only-of-type()`：匹配父元素中，类型是唯一的那个子元素。
+
+- `.myDiv :only-of-type()`：在 .myDiv 中，寻找类型唯一的子元素，如果有，则匹配成功。注意 .myDiv 后有一个空格。
+
+
+
+![weilei.png](HTML&CSS/16ef8eecad4f1adbtplv-t2oaga2asx-watermark.awebp)
+
+
+
+#### 4.2 伪元素
+
+伪元素用于创建一些 **不在文档树中的元素**，并为其添加样式。
+
+比如说，我们可以通过 :before 来在一个元素前增加一些文本，并为这些文本添加样式。虽然用户可以看到这些文本，但是这些文本实际上不在文档树中。
+
+> 因此，伪类与伪元素的区别在于：有没有创建一个文档树之外的元素。
+
+- `::before`：在选中元素的内容（content） 的前面插入一个伪元素。
+- `::after`：在选中元素的内容（content） 的后面插入一个伪元素。
+
+- `::first-letter` ：选择一段文本的第一个字符，如 `p::first-letter`。
+
+- `::first-line`：选择一段文本的第一行，如 `#myPara::first-letter`。
+
+其他常见的伪元素有：`::selection`、`::placeholder` 等。
+
+
+
+#### ::after 和 :after 的区别
+
+在实际的开发工作中，我们会看到有人把伪元素写成`:after`，这实际是 CSS2 与 CSS3新旧标准的规定不同而导致的。
+
+CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分伪类和伪元素，规定伪元素使用 2 个冒号。所以，对于 CSS2 标准的老伪元素，比如`:first-line`，`:first-letter`，`:before`，`:after`，写一个冒号浏览器也能识别，但对于 CSS3 标准的新伪元素，比如 `::selection`，就必须写2个冒号了。
+
+
+
+## 12. CSS 优先级 / 层叠 cascade
+
+当出现多条规则同时选择一个元素的情况时，通过 层叠 的机制来处理这种冲突。
+
+层叠机制的重要性级别从高到低如下所示：
+
+1. `!important` 标注的用户样式；
+2. `!important` 标注的网页样式；
+3. 网页样式；
+4. 用户样式；
+5. 浏览器的默认样式。
+
+给用户的 `!important` 标注提升为最高权重，主要出于无障碍交互的需要。比如，允许阅读困难的用户使用高对比度的用户样式表。
+
+
+
+#### 特殊性
+
+在满足上文层叠规则后，再按照选择符的特殊性排序。特殊性更高的选择符会覆盖特殊性、低的选择符。如果两条规则的特殊性相等，则后定义的覆盖之前的规则。
+
+任何选择符的特殊性都对应于 4 个级别，按照权重由大到小依次是：
+
+1. 行内样式，记为 1；
+2. ID 选择符
+3. class 类选择符、伪类选择符、属性选择符
+4. type 类型选择符、伪元素选择符
+
+| 选择符                                                       | 特殊性     |                                |
+| ------------------------------------------------------------ | ---------- | ------------------------------ |
+| `style="xxx"`                                                | 1, 0, 0, 0 |                                |
+| `#myContainer #content {}`                                   | 0, 2, 0, 0 |                                |
+| `div #content {}`                                            | 0, 1, 0, 1 |                                |
+| `div p {}`                                                   | 0, 0, 0, 2 |                                |
+| `#content > [id="main"] .news-story:nth-of-type(1) h2.first {}` | 0, 1, 4, 1 | 依次是：100, 10, 10, 10, 1, 10 |
+| `div > #main > h2 {}`                                        | 0, 1, 0, 2 | 依次是：1, 100, 1              |
+|                                                              |            |                                |
+
+- 注 1 ：`*` 通用选择符的权重最小，可以看似是 0。
+- 注 2 ：继承而来的样式没有权重，所以即使是权重最小的 `*` 通用选择符也能轻易覆盖继承的样式。
+
+```html
+<h2>
+    这段话的字体是红色的，但是紧跟后面的 em 是黑色的。<em>我是黑色的</em>
+</h2>
+
+<style>
+    * {
+        color: black;
+    }
+    h2 {
+        color: red;
+    }
+</style>
+```
+
+
+
+## 13. 应用 CSS 样式的方法
+
+方法 1 ：`style` 
+
+把样式直接放在 style 元素中，然后把 style 放置在页面文档的 head 部分。
+
+```html
+<style>
+	/* 这里写入样式 */
+</style>
+```
+
+优点：不通过外部方式引入 CSS，浏览器不需要额外下载 CSS 文件而耽误建立连接的时间。
+
+缺点：一个 CSS 样式不能在多个页面重用。
+
+
+
+方法 2 ：`link`
+
+```html
+<link href="Mycss.css" rel="stylesheet" />
+```
+
+使用 link 元素把独立的 CSS 文件引入到页面中。
+
+优点：可以在不同的 HTML 页面中复用；功能不同的页面，可以按需加载不一样的 CSS样式文件，不需要一次性全部加载。
+
+缺点：需要额外下载 CSS 文件，但通常速度会很快。
+
+
+
+方法3：`@import`
+
+在 HTML 文档的 head 部分把 @import 指令放在一个 style 元素中，也相当于从外部引入了 CSS 文件。
+
+```html
+<style>
+	@import url("Mycss.css");
+</style>
+```
+
+当有多个 CSS 样式应用时，声明次序就是它们在 HTML 源代码中出现的次序。也就是说，出现当有多个 CSS 样式均定义了某一个元素时，最后一个加载的 CSS 规则，会最终被应用到元素上的样式。通常所有的 CSS 样式都在 head 部分中引入。
+
+
+
+## 14. 常见布局
+
+### 14.1 两栏布局（3）
+
+![img](HTML&CSS/1620a136d179e360tplv-t2oaga2asx-watermark.awebp)
+
+利用 `float` + `margin` 实现
+
+```css
+.left {
+    background-color: #f00;
+    float: left;
+    width: 100px;
+}
+.right {
+    background-color: #0f0;
+    margin-left: 100px; /*大于等于#left的宽度*/
+}
+```
+
+
+
+利用 `float` + `overflow` 实现
+
+```css
+#left {
+    background-color: #f00;
+    float: left;
+    width: 100px;
+}
+#right {
+    background-color: #0f0;
+    overflow: hidden; /*触发bfc达到自适应*/
+}
+```
+
+从整体来看，`left` 和 `right` 被一个 `body` 包裹，`left` 是左浮动。所以这两个盒子会并排放在一起；
+
+从各自来看，`left` 和 `right` 内部都是一个 BFC，所以内容相互不影响。而右侧的 right 设置 `width: 100%` 把剩余空间都吃掉了。
+
+优缺点：
+
+- 优点：代码简单，容易理解，无需关注定宽的宽度，利用 `bfc` 达到自适应效果
+- 缺点：浮动脱离文档流，需要手动清除浮动，否则会产生高度塌陷；不支持ie6
+
+
+
+利用 `flex` 实现：
+
+```css
+#parent{
+    display: flex;
+}
+#left {
+    width: 100px;
+    background-color: #f00;
+}
+#right {
+    flex: 1; /*均分了父元素剩余空间*/
+    background-color: #0f0;
+}
+```
+
+
+
+### 14.1 三栏布局（3）
+
+#### 两列定宽,一列自适应
+
+![image.png](HTML&CSS/1620a136d1ea53c5tplv-t2oaga2asx-watermark.awebp)
+
+**使用 `float` + `margin` 实现**
+
+```css
+#parent{
+    min-width: 310px; /*100+10+200,防止宽度不够,子元素换行*/
+}
+#left {
+    margin-right: 10px;  /*#left和#center间隔*/
+    float: left;
+    width: 100px;
+    background-color: #f00;
+}
+#center{
+    float: left;
+    width: 200px;
+    background-color: #eeff2b;
+}
+#right {
+   margin-left: 320px;  /*等于#left和#center的宽度之和加上间隔,多出来的就是#right和#center的间隔*/
+   background-color: #0f0;
+}
+```
+
+**使用 `float` + `overflow` 实现**
+
+```css
+#parent{
+    min-width: 320px; /*100+10+200+20,防止宽度不够,子元素换行*/
+}
+#left {
+    margin-right: 10px; /*间隔*/
+    float: left;
+    width: 100px;
+    background-color: #f00;
+}
+#center{
+    margin-right: 10px; /*在此定义和#right的间隔*/
+    float: left;
+    width: 200px;
+    background-color: #eeff2b;
+}
+#right {
+    overflow: hidden;  /*触发bfc*/
+    background-color: #0f0;
+}
+```
+
+#### 两侧定宽, 中间自适应
+
+##### 双飞翼布局方法
+
+![image.png](HTML&CSS/1620a136d1cc24f8tplv-t2oaga2asx-watermark.awebp)
+
+```html
+<body>
+<div id="header"></div>
+<!--中间栏需要放在前面-->
+<div id="parent">
+    <div id="center">
+        <div id="center_inbox">中间自适应</div>
+        <hr>  <!--方便观察原理-->
+    </div>
+    <div id="left">左列定宽</div>
+    <div id="right">右列定宽</div>
+</div>
+<div id="footer"></div>
+</body>
+
+<style>
+#header {
+    height: 60px;
+    background-color: #ccc;
+}
+#left {
+    float: left;
+    width: 100px;
+    height: 500px;
+    margin-left: -100%; /*调整#left的位置,值等于自身宽度*/
+    background-color: #f00;
+    opacity: 0.5;
+}
+#center {
+    height: 500px;
+    float: left;
+    width: 100%;
+    background-color: #eeff2b;
+}
+#center_inbox{
+    height: 480px;
+    border: 1px solid #000;
+    margin: 0 220px 0 120px;  /*关键!!!左右边界等于左右盒子的宽度,多出来的为盒子间隔*/
+}
+#right {
+    float: left;
+    width: 200px;
+    height: 500px;
+    margin-left: -200px;  /*使right到指定的位置,值等于自身宽度*/
+    background-color: #0f0;
+    opacity: 0.5;
+}
+#footer {
+    clear: both;  /*注意清除浮动!!*/
+    height: 60px;
+    background-color: #ccc;
+}
+</style>
+```
+
+##### 圣杯布局方法
+
+![image.png](HTML&CSS/1620a136f3b3a4aatplv-t2oaga2asx-watermark.awebp)
+
+```html
+<style>
+#header{
+    height: 60px;
+    background-color: #ccc;
+}
+#parent {
+    box-sizing: border-box;
+    height: 500px;
+    padding: 0 215px 0 115px;  /*为了使#center摆正,左右padding分别等于左右盒子的宽,可以结合左右盒子相对定位的left调整间距*/
+}
+#left {
+    margin-left: -100%;  /*使#left上去一行*/
+    position: relative;
+    left: -115px;  /*相对定位调整#left的位置,正值大于或等于自身宽度*/
+    float: left;
+    width: 100px;
+    height: 500px;
+    background-color: #f00;
+    opacity: 0.5;
+}
+#center {
+    float: left;
+    width: 100%;  /*由于#parent的padding,达到自适应的目的*/
+    height: 500px;
+    box-sizing: border-box;
+    border: 1px solid #000;
+    background-color: #eeff2b;
+}
+#right {
+    position: relative;
+    left: 215px; /*相对定位调整#right的位置,大于或等于自身宽度*/
+    width: 200px;
+    height: 500px;
+    margin-left: -200px;  /*使#right上去一行*/
+    float: left;
+    background-color: #0f0;
+    opacity: 0.5;
+}
+#footer{
+    height: 60px;
+    background-color: #ccc;
+}
+</style>
+
+<body>
+<div id="header"></div>
+<div id="parent">
+    <!--#center需要放在前面-->
+    <div id="center">中间自适应
+        <hr>
+    </div>
+    <div id="left">左列定宽</div>
+    <div id="right">右列定宽</div>
+</div>
+<div id="footer"></div>
+</body>
+```
+
+**使用 `flex` 实现**
+
+```html
+<style>
+#parent {
+    height: 500px;
+    display: flex;
+}
+#left {
+    width: 100px;
+    background-color: #f00;
+}
+#center {
+    flex: 1;  /*均分#parent剩余的部分*/
+    background-color: #eeff2b;
+}
+#right {
+    width: 200px;
+    background-color: #0f0;
+}
+</style>
+
+<body>
+<div id="parent">
+    <div id="left">左列定宽</div>
+    <div id="center">中间自适应</div>
+    <div id="right">右列定宽</div>
+</div>
+</body>
+```
+
+**使用绝对定位：**
+
+```html
+<style>
+#parent {
+    position: relative; /*子绝父相*/
+}
+#left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 500px;
+    background-color: #f00;
+}
+#center {
+    height: 500px;
+    margin-left: 100px; /*大于等于#left的宽度,或者给#parent添加同样大小的padding-left*/
+    margin-right: 200px;  /*大于等于#right的宽度,或者给#parent添加同样大小的padding-right*/
+    background-color: #eeff2b;
+}
+#right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 500px;
+    background-color: #0f0;
+}
+</style>
+
+<body>
+<div id="parent">
+    <div id="left">左列定宽</div>
+    <div id="center">中间自适应</div>
+    <div id="right">右列定宽</div>
+</div>
+</body>
+```
+
+
+
+## 15. CSS动画
+
+精简版总结：
+
+`animation` 动画：关键帧、往复性；
+
+`transition` 过渡：属性、触发动作、一次性；
+
+`transform` 变形：改变 CSS 形状的属性。
+
+| 属性               | 含义                                                         |
+| ------------------ | ------------------------------------------------------------ |
+| animation（动画）  | 用于设置动画属性，他是一个简写的属性，包含6个属性，比 `transition` 更强大。 |
+| transition（过渡） | 用于设置元素的样式过度，和 `animation` 有着类似的效果，但细节上有很大的不同 |
+| transform（变形）  | 可以把元素静态旋转、缩放、移动，和设置样式的动画并没有什么关系，<br />就相当于color一样用来设置元素的 “外表样式” |
+| translate（移动）  | translate只是transform的一个属性值，即移动。                 |
+
+#### transition 过渡
+
+比如一个属性的背景色从 `红色` 变为 `黑色`，就是一种过渡。
+
+- 过渡有三个要素：开始状态、结束状态、过渡触发点
+
+- `@media`、`:hover`、`:focus` 等等，都是过渡的触发点。
+
+`transition` 的要点：
+
+- 一条 `transition` 规则，只能定义一个属性变化；
+- 只能定义开始和结束状态，没有中间状态；
+- 需要事件触发（比如 `:hover`），无法自动触发；
+
+语法：`transition: property duration timing-function delay;`
+
+| 值                | 描述                       |
+| ----------------- | -------------------------- |
+| `property`        | 要实现的过渡效果           |
+| `duration`        | 过渡的时间（s / ms）       |
+| `timing-function` | 速度曲线                   |
+| `delay`           | 触发后，过渡延迟执行的时间 |
+
+```css
+/* 给box定义一个"过渡动画"：变形 1s完成 缓进 推迟1s执行 */
+.box {
+    transition: transform 1s ease-in 1s;
+}
+/* "变形"的触发时机是 :hover，180旋转+长宽缩小0.5*/
+.box:hover {
+    transform: rotate(180deg) scale(.5, .5);
+}
+```
+
+- `transition` 产生动画的条件是 `transition` 设置的 `property` 发生变化，也就是这里的第一个属性值（`transform` 变形）。
+
+ ![image](HTML&CSS/163c42601ede4b6etplv-t2oaga2asx-watermark.awebp)
+
+#### animation
+
+通过自定义动画组合，实现了`animation` 的多个 `transition` 的效果叠加，并且可操作性更强。
+
+animation 是 8 个属性的简写：以下属性如果单独写，要加 `animation-xxx`：
+`animation: name duration timing-function delay iteration-count direction play-state fill-mode;`
+
+| 值              | 描述                                                         |
+| --------------- | ------------------------------------------------------------ |
+| name            | 与 `@keyframes` 定义的动画名称一致，调用定义好的动画；       |
+| duration        | 执行动画的总时间；                                           |
+| timing-function | 速度曲线，应用在每一个小动画上，而不是整体应用一次；         |
+| delay           | 整个 animation执行动画之前等待的时间；                       |
+| iteration-count | 动画的播放次数，具体(`number`) / 无线(`infinite`)            |
+| direction       | 动画播放方向：<br />normal (按时间轴顺序)，<br />reverse (时间轴反方向运行)<br />alternate (轮流，即来回往复进行)<br />alternate-reverse (动画先反运行，再轮流往复执行) |
+| play-state      | 控制动画的暂停和继续：running (继续)，paused (暂停)          |
+| fill-mode       | 控制动画结束后元素的样式，有四个值：<br />none (动画开始的状态)，<br />forwards (动画结束的状态)，<br />backwards (动画第一帧的状态)，<br />both (根据 direction 轮流应用 forwards 和 backwards )，<br />           注意与 iteration-count 不要冲突(动画执行无限次) |
+
+相比 transition，animation 的优点：
+
+- 一个动画可以有多个中间节点，每个节点都能定义自己的样式；
+- 动画可以指定执行次数、可以暂停和继续，可以自动执行，不需要触发机制。
+- 可以指定动画结束后是否恢复样式；
+- 可以指定动画的播放形式。
+
+```css
+.box {
+    height: 100px;
+    width: 100px;
+    border: 15px solid black;
+    animation: changebox 1s ease-in-out 1s infinite alternate running forwards;
+}
+
+.box:hover {
+    animation-play-state: paused;
+}
+
+@keyframes changebox {
+    10% {
+        background: red;
+    }
+    50% {
+        width: 80px;
+    }
+    70% {
+        border: 15px solid yellow;
+    }
+    100% {
+        width: 180px;
+        height: 180px;
+    }
+}
+```
+
+- 定义了一个 `changebox` 的动画组合。组合中通过百分比的形式，定义了每个阶段需要达成的 “目标”。
+- 动画在 `:hover` 后，设置为 `paused` 会暂停。
+
+ ![image](HTML&CSS/163c4261137cc7dftplv-t2oaga2asx-watermark.awebp)
+
+## 16 实现图片的旋转
+
+```css
+.rotate {
+    width: 100px;
+    height: 100px;
+    background-color: pink;
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+```
+
+![动画](HTML&CSS/%E5%8A%A8%E7%94%BB.gif)
+
+
+
+## 17. CSS 实现图形
+
+#### triangle 三角形
+
+关键词：`transparent` 透明的
+
+步骤一：给四个边设置不同的颜色：
+
+```html
+<style>
+  .triangle {
+    width: 0;
+    height: 0;
+    border-top: 100px solid #f00;
+    border-right: 100px solid #0f0;
+    border-bottom: 100px solid #00f;
+    border-left: 100px solid #ff0;
+  }
+</style>
+
+<div class="triangle"></div>
+```
+
+![image-20211123105742366](HTML&CSS/image-20211123105742366.png)	
+
+步骤二：
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
