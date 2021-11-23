@@ -1,6 +1,206 @@
 # 整理问题
 
-css 不会继承的属性
+## css 属性的继承
+
+#### 常见非继承属性
+
+1. 尺寸：height，width，max-height, min-height, max-width, min-width
+2. 位置：display、position、left、right、top、bottom
+3. 文本效果：text-shadow
+4. 背景属性：background
+5. 生成内容：content
+6. 层叠：z-index
+7. 盒模型属性：float，margin, padding, border
+
+#### 常见可继承属性
+
+1. 字体系列属性：font-family，font-size
+2. 文本系列属性：text-indent，line-height，color
+3. 元素可见性：visibility
+4. 表格布局属性：border-style
+5. 列表布局属性：list-style list-style-type
+6. 光标属性：cursor
+
+
+
+# 正常流
+
+## 1. 盒模型
+
+### 1.1 display 显示类型
+
+设置元素的外部和内部显示类型。
+
+- 外部显示类型：决定了该元素处在正常流中的表现：是块级元素，还是内联级元素。
+
+- 内部显示类型：决定该元素的后代元素排版 / 布局方式：flow layout、grid、flex。
+
+#### 可选的值（1+5+5+2）：
+
+默认：
+
+- `static`：默认正常流 flow layout。遵循 CSS 2 系列的排版规则，是一个 BFC / IFC。
+
+外部显示类型为`block`：
+
+- `block`
+- `table`：外部显示为 `block`，内部显示为 `table`。
+- `flex`：外部显示类型为 `block`，内部显示类型为 `flex`。
+  - 该盒子的所有直接子元素都会成为 flex 元素，会根据弹性盒子（Flexbox）规则进行布局。
+- `grid`：同上，内部会变成 grid 盒子。 
+
+外部显示类型为 `inline`：
+
+- `inline`、`inline-table`、`inline-flex`、`inline-grid`：与上文对应，外部显示为 `inline`。
+
+- `inline-block`：外部显示类型为 `inline`，内部显示类型为 `block`，这个盒子能设置 `width` 了。
+
+其他：
+
+- `list-item`：元素创建为盒子后：一个主块盒 + 一个标记盒。
+- `none`：该元素和后代都从 DOM 中删除。
+
+
+
+#### `inline-block` 的特性：
+
+内部显示类型为块级元素 block-level element，外部显示类型为行内级元素 inline-level element。
+
+- 拥有部分 block 的性质：
+  - width、height 有效，可以设置盒子内容 content 的大小；
+  - padding、margin、border 会推开其他盒子。
+
+- 拥有部分 inline 的性质：
+  - 盒子不会主动换行，多个内联块盒子会并排排放，和正常流一样，只有达到边界才会 “被迫” 换行；
+
+- 问题：
+  - 如果设置了 width 内容宽度：则该盒子内的文本内容，会在盒内换行，不会横向溢出盒子。一但文本内容过多，就会纵向溢出盒子。
+  - 如果没有设置 width 内容宽度：则该盒子的宽度，会随着文本内容的增多而撑开。但是如果盒子边界达到容器宽度，文本内容会在盒子中换行。
+- 总结：` inline-block` 内联块盒，也就是说，是盒子之间内联关系的，内部块级的盒子。
+
+
+
+### 1.2 position 定位方式
+
+通过 position 确定定位方式。参考包含块，通过 top, right, bottom, left 属性确定偏移量。
+
+#### 可选的值（5）
+
+- `static`：默认定位。元素按照正常流的方式排版， 盒偏移量（top, right, bottom, left 属性）无效。
+- `relative`：相对定位。先按照 **正常流排版**，然后按照 包含块为基、盒偏移量为距离进行定位。
+- `absolute`：绝对定位。先 **脱离正常流**， 然后按照 包含块为基、盒偏移量为距离进行定位。
+- `fixed`：固定定位。先 **脱离正常流**，然后按照 包含块（绝大多数情况下是视口）为基、盒偏移量为距离进行定位。
+- `sticky`：粘性定位（CSS3）。是 **相对定位** 和 **固定定位** 的混合。基于盒偏移量值进行偏移。
+  - 元素在跨越特定阈值（盒偏移量）前为相对定位，之后为固定定位。
+
+
+
+### 1.3 float 与清除浮动
+
+让元素 **脱离正常流**，沿其容器的左侧或右侧放置，容器内的其他 **文本** 和 **内联元素** 会添加 `margin` 后环绕它。
+
+#### clear 清除浮动
+
+**向下移动**：让一个元素移动到在它前面的那个浮动元素的下面。
+
+- 针对 float 元素：可以让该 float元素 **不是平移** 的方式排到其他浮动元素后，而是 **另起一行拍到第一个** 。
+- 针对 非float 元素：可以让该元素的文本 / 内联元素，不是环绕 float 元素。而是将该元素的内容全部移到 float 元素的下方。同时会发生外边距折叠。
+
+
+值：none、left、right、both
+
+
+
+
+
+## 2 格式化上下文
+
+- Formatting context：格式化上下文
+- Block formatting context：块级格式化上下文，简称 BFC。
+- Inline formatting context：行内级格式化上下文，简称 IFC。
+
+在一个BFC中，所有块级元素，会从包含块的内容块(content)顶部开始，在 **垂直方向** 依次排版。
+
+**BFC 对 float / clear 的影响：**
+
+- **浮动定位** 和 **清除浮动** 时只会应用于同一个 BFC 内的元素。
+- **浮动** 不会影响其它 BFC 中元素的布局，而 **清除浮动** 只能清除同一 BFC 中在它 **前面的元素** 的浮动。
+
+**BFC 对 外边距折叠的影响：**
+
+- 外边距折叠（Margin collapsing）只会发生在属于同一 BFC 的块级元素之间。
+- 也会作用于同一个 BFC 的父子元素之间。
+
+**注意：IFC、flex、grid 都不会发生 Margin Collapse。**因为边距折叠只会发生在一个 BFC 中，如果创建了新的BFC，就不会发生边距折叠。
+
+
+
+#### 2.1 BFC 的生成条件 (2)：
+
+- 该元素必须是一个 block-level element：因为只有块级元素，才会生成块级格式化上下文 BFC。
+- 该元素的内部可以放正常流：反情况理解，如果内部不能防止正常流（比如，块级的替换元素内部不受 CSS 样式影响，flex 内部必须放置 flex-item 等），那该元素的内部就不会生成一个 BFC，而是会放置特定的内容物。
+
+具体情况（5）：
+
+- `<html>` 根元素。
+- `float` 元素。
+- `position` 脱离正常流元素。`fixed`、`absolute` 固定定位、绝对定位的元素。
+- `display` 创建包含块元素：
+  - 内联块和列表：`inline-block`、`list-item`
+  - 表格相关：`table-cells`、`table-captions`、`table`、`inline-table`
+  - `flex` 和 `grid`：fiex item、grid cell。
+
+- `overflow` 非 visible 元素。overflow：hidden、scroll、auto、inherit。
+  - `overflow` 属性是当内容移除元素边框时的处理方式。
+
+
+
+
+## 3 高度坍塌和清除浮动
+
+高度坍塌：指父元素本来应该包括子元素的高度，但是实际上父元素比子元素的高度要小。
+
+```html
+<style>
+  .container {
+    background: rgb(253, 234, 234);
+  }
+
+  .box1 {
+    float: left;
+    width: 200px;
+    height: 200px;
+    background-color: rgb(0, 225, 255);
+  }
+
+  .box2 {
+    width: 400px;
+    height: 100px;
+    background: rgb(160, 235, 74);
+  }
+</style>
+
+<div class="container">
+  <div class="box1"></div>
+  <div class="box2"></div>
+</div>
+```
+
+![image-20211123163104250](HTML&CSS/image-20211123163104250.png)
+
+出现 `container` 高度坍台的原因：
+
+1. `box1` 设置为浮动，脱离了当前正常流，移动到当前位置的左边。
+2. `container` 内失去了 `box1` 的占位，所以高度参考 `box2`，出现了高度坍塌。
+3. `container`设置 `overflow：auto` 内部创建了一个 BFC，
+
+
+
+
+
+
+
+
 
 
 
@@ -14,11 +214,11 @@ css 不会继承的属性
 
 
 
-**CSS 动画：**
 
-- 文字如何加阴影
 
-- CSS 实现三角形
+
+
+
 
 
 
@@ -1227,7 +1427,7 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
 
 
 
-## 15. CSS动画
+## 15. CSS 动画
 
 精简版总结：
 
@@ -1389,43 +1589,153 @@ animation 是 8 个属性的简写：以下属性如果单独写，要加 `anima
 <div class="triangle"></div>
 ```
 
-![image-20211123105742366](HTML&CSS/image-20211123105742366.png)	
+![image-20211123105917129](HTML&CSS/image-20211123105917129.png)
 
-步骤二：
+步骤二：只需要将任意三边设置为 `transparent`，则剩下的一边就是一个三角形。
 
+- 对这条边设置宽度，可以调整三角形的高度：
 
+```css
+.triangle {
+    width: 0;
+    height: 0;
+    border: 100px solid transparent;
+    border-bottom: 173px solid #0ff;
+}
+```
 
+- 注意上方还有顶边的 `100px` 空隙，如果去掉需要用负的 margin。
 
+![image-20211123110315390](HTML&CSS/image-20211123110315390.png)
 
+- 梯形只需要对盒子设置一个宽高即可：
 
+```css
+.object {
+    width: 50px;
+    height: 50px;
+    border: 100px solid transparent;
+    border-bottom: 100px solid #0ff;
+}
+```
 
+​    ![image-20211123110534256](HTML&CSS/image-20211123110534256.png)       ![image-20211123110544252](HTML&CSS/image-20211123110544252.png)
 
+#### circle  圆形
 
+关键属性：`border-radius`，把四个边的圆角都设置一个百分比。
 
+```html
+<style>
+    .circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: cyan;
+    }
+</style>
 
+<div class="circle"></div>
+```
 
+ ![image-20211123110731763](HTML&CSS/image-20211123110731763.png)
 
+## 17 阴影效果
 
+#### 文字阴影（`text-shadow`）
 
+`text-shadow: h-shadow v-shadow blur color;`
 
+- 对应的属性：x-方向偏移、y-方向偏移、模糊半径、颜色。
 
+```css
+ /*测试一  Moxy*/
+ text-shadow:2px 3px 12px #000;  
+ 
+ /*测试二 Ninjee*/
+ text-shadow:2px 3px 1px #000;
+```
 
+![image-20211123122526838](HTML&CSS/image-20211123122526838.png)
 
+#### 盒子阴影（`box-shadow`）
 
+`box-shadow: offset-x offset-y blur-radius spread-radius color  `
 
+- x-方向偏移值、y- 方向偏移值 、模糊半径、扩张半径、阴影颜色
 
+`offset-x offset-y`：往右下投影则为正，右上则为负。这和 `top`、`left` 的数值计算是一致的。
 
+ ![image-20211123112354701](HTML&CSS/image-20211123112354701.png)
 
+模糊半径 `blur-radius`、扩张半径 `spread-radius`
 
+![giphy (2).gif](HTML&CSS/fcef77a4985f4ee8b517cef2b5322e21tplv-k3u1fbpfcp-watermark.awebp)
 
+![giphy (3).gif](HTML&CSS/aedfe1d8fffb48a8a65057e9828fc46btplv-k3u1fbpfcp-watermark.awebp)
 
+#### 多重阴影
 
+可以一次涉及多种阴影，每一个阴影用 “`,`” 隔开即可：
 
+```css
+box-shadow:-10px 0 10px red, 10px 0 10px blue,0 -10px 10px yellow,0 10px 10px green;
+```
 
+![image-20211123122618986](HTML&CSS/image-20211123122618986.png)
 
+#### drop-shadow 阴影
 
+`drop-shadow` 
 
+```css
+drop-shadow(offset-x offset-y blur-radius spread-radius color)
+```
 
+- 和 `box-shadow` 属性的语法几乎相同，都是添加阴影的方法。
+
+不同点：
+
+- `box-shadow` 属性：在元素的整个框后面创建一个盒子形状的矩形阴影； 
+- `drop-shadow()` 过滤器：创建一个 **符合图像本身形状** (alpha通道) 的阴影。
+
+![image.png](HTML&CSS/5c390652100341e6999e9dedaf6c3341tplv-k3u1fbpfcp-watermark.awebp)
+
+注意三角形的位置。使用 `box-shadow` 三角形的位置是没有阴影的；但是使用` drop-shadow` 有。
+
+```html
+<style>
+    .bubble-box {
+        width: 150px;
+        margin: 40px; padding: 50px;
+        background-color: #66CCFF;
+        position: relative;
+        font-size: 24px;
+    }
+    .triangle {
+        position: absolute;
+        left: -40px;
+        width: 0; height: 0;
+        overflow: hidden;
+        border: 20px solid transparent;
+        border-right-color: #66CCFF;
+    }
+    .box-shadow {
+        box-shadow: 5px 5px 10px black;
+    }
+    .drop-shadow {
+        filter: drop-shadow(5px 5px 10px black);
+    }
+</style>
+<div class="bubble-box box-shadow">
+    <i class="triangle"></i>
+    box-shadow
+</div>
+<div class="bubble-box drop-shadow">
+    <i class="triangle"></i>
+    filter: drop-shadow
+</div>
+```
 
 
 
