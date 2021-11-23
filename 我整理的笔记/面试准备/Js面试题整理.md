@@ -484,7 +484,318 @@ var array = [1, 1, '1', '1', null, null, undefined, undefined, new String('1'), 
 
 
 
+## 3. 树的遍历
 
+### 3.1 二叉树的遍历
+
+- **先序遍历**：若二叉树为空，则空操作返回，否则先访问根结点，然后前序遍历左子树，再前序遍历右子树。
+- https://juejin.cn/post/6844904047107899400
+- https://juejin.cn/post/6994744122837827592
+
+```js
+const preorderTraversal = function(root) {
+    const res = []
+    traversal(root)
+    return res
+
+    function traversal (root) {
+        if (root !== null) {
+            res.push(root.val)     // 访问根节点的值
+            traversal(root.left)   // 递归遍历左子树
+            traversal(root.right)  // 递归遍历右子树
+        }
+    }
+}
+```
+
+<img src="Js%E9%9D%A2%E8%AF%95%E9%A2%98%E6%95%B4%E7%90%86/66b7cfe365c84208a03bf2d59e7a5880tplv-k3u1fbpfcp-watermark.awebp" alt="img" style="zoom:50%;" />
+
+
+
+### 3.2 遍历 JSON 中查找 value
+
+```js
+// 查找 301
+function findItems(list, targetValue){
+    let res = [];
+    traversal(res, list, targetValue);
+    return res
+
+    function traversal(res, list, targetValue) {
+        for (let item of list) {
+            const { value, children, label } = item;
+
+            if (value && value == targetValue)
+                res.push({ label, value });
+
+            if (Array.isArray(children) && children.length)
+                traversal(res, children, targetValue);
+        }
+    }
+}
+	
+const res = findItems(list, 200)
+console.log(res) 	// [{label: '财务部', value: 200}]
+```
+
+数据：
+
+```js
+  const list = [{
+      "value": 192,
+      "label": "技术部",
+      "children": [{
+          "value": 193,
+          "label": "软件组",
+          "children": [{
+              "value": 195,
+              "label": "软件一组"
+            },
+            {
+              "value": 196,
+              "label": "软件二组"
+            }
+          ]
+        },
+        {
+          "value": 198,
+          "label": "运维组"
+        }
+      ]
+    },
+    {
+      "value": 200,
+      "label": "财务部",
+      "children": [{
+          "value": 201,
+          "label": "会计"
+        },
+        {
+          "value": 203,
+          "label": "出纳"
+        }
+      ]
+    },
+    {
+      "value": 300,
+      "label": "人资部",
+      "children": [{
+          "value": 301,
+          "label": "行政"
+        },
+        {
+          "value": 302,
+          "label": "人资"
+        }
+      ]
+    }
+  ]
+```
+
+
+
+## 4 深拷贝、浅拷贝
+
+#### 浅拷贝
+
+使用 `for...in` 和 `hasOwnProperty` 遍历：
+
+- `for..in` 常用于遍历对象，会遍历包括原型链上的所有可枚举的属性，不遍历 `symbol`。
+- `for...of` 常用于遍历数组，用 `in` 遍历数组会打乱数组顺序。不能遍历对象，对象默认没有 `iterable`
+
+```js
+function shallowClone(obj) {
+    let res = {};
+    for(let i in obj){
+        if (obj.hasOwnProperty(i)) {
+            res[i] = obj[i];
+        }
+    }
+    return res;
+}
+
+let a1 = {b: {c: {}}};
+let a2 = shallowClone(a1)
+a1.b === a2.b   // true
+```
+
+- 扩展运算符 `{...obj}`，
+
+- `Object.assign()`，
+
+- 常见的数组 API （`array.concat()`、`array.slice()` 等）
+
+
+
+#### 深拷贝
+
+方法一：`JSON.parse()`
+
+```js
+let obj2 = JSON.parse(JSON.stringify(obj));
+```
+
+问题：
+
+- 循环引用；
+- 不能序列化：`undefined`、`symbol`、`function`，直接忽略。
+- 栈溢出。
+
+解决 JSON 的循环引用问题：
+
+- 缓存中保存所有遇到的 `object`，每次添加一个 `object` 到 `cache` 中时，就判断 `cache` 中是否已经保存过该对象，如果保存过，则丢弃该对象。
+
+```js
+function JSONToStr(str) {
+  var cache = [];
+  var str = JSON.stringify(dom, function (key, value) {
+    if (typeof value === "object" && value !== null) {
+      if (cache.indexOf(value) !== -1) {
+          // 说明缓存中已经有该值
+          // 移除，或对这个值进行处理后再 push。
+        return;
+      }
+      // 收集所有的值
+      cache.push(value);
+    }
+    return value;
+  });
+  cache = null; // 清空变量，便于垃圾回收机制回收
+  return str;
+}
+```
+
+
+
+方法二：浅拷贝 + 递归
+
+- 效果和 JSON 的方法基本相同。
+
+当遍历到一个成员时，赋值前先进行类型判断，如果是 object，则递归调用函数。
+
+```js
+  function shallowClone(obj) {
+    let res = {};
+    for (let i in obj) {
+      if (obj.hasOwnProperty(i)) {
+        if (Object.prototype.toString.call(obj[i]) === '[object Object]') {
+          res[i] = shallowClone(obj[i])
+        } else {
+          res[i] = obj[i]
+        }
+      }
+    }
+    return res;
+  }
+
+  let demo = {
+    name: 'dayday',
+    book: {
+      title: 'Do you really Know JS',
+      price: "45"
+    }
+  }
+
+  let res = shallowClone(demo)
+  res.book === demo.book // false
+```
+
+方法三：终极办法
+
+- 解决循环引用 + 栈溢出
+
+假如一个对象a，a下面的两个键值都引用同一个对象b，经过深拷贝后，a的两个键值会丢失引用关系，从而变成两个不同的对象，o(╯□╰)o
+
+```
+var b = {};
+var a = {a1: b, a2: b};
+
+a.a1 === a.a2 // true
+
+var c = clone(a);
+c.a1 === c.a2 // false
+复制代码
+```
+
+如果我们发现个新对象就把这个对象和他的拷贝存下来，每次拷贝对象前，都先看一下这个对象是不是已经拷贝过了，如果拷贝过了，就不需要拷贝了，直接用原来的，这样我们就能够保留引用关系。
+
+- 引入一个数组 `uniqueList` 用来存储已经拷贝的数组，每次循环遍历时，先判断对象是否在 `uniqueList `中了，如果在的话就不执行拷贝逻辑了；
+- `find` 是抽象的一个函数，其实就是遍历 `uniqueList`；
+
+```js
+  // 保持引用关系
+  function cloneForce(x) {
+    const uniqueList = []; // 用来去重
+
+    let root = {};
+
+    // 循环数组
+    const loopList = [{
+      parent: root,
+      key: undefined,
+      data: x,
+    }];
+
+    while (loopList.length) {
+      // 深度优先
+      const node = loopList.pop();
+      const parent = node.parent;
+      const key = node.key;
+      const data = node.data;
+
+      // 初始化赋值目标，key为undefined则拷贝到父元素，否则拷贝到子元素
+      let res = parent;
+      if (typeof key !== 'undefined') {
+        res = parent[key] = {};
+      }
+
+      // =============
+      // 数据已经存在
+      let uniqueData = find(uniqueList, data);
+      if (uniqueData) {
+        parent[key] = uniqueData.target;
+        continue; // 中断本次循环
+      }
+
+      // 数据不存在
+      // 保存源数据，在拷贝数据中对应的引用
+      uniqueList.push({
+        source: data,
+        target: res,
+      });
+      // =============
+
+      for (let k in data) {
+        if (data.hasOwnProperty(k)) {
+          if (typeof data[k] === 'object') {
+            // 下一次循环
+            loopList.push({
+              parent: res,
+              key: k,
+              data: data[k],
+            });
+          } else {
+            res[k] = data[k];
+          }
+        }
+      }
+    }
+
+    return root;
+  }
+
+  function find(arr, item) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].source === item) {
+        return arr[i];
+      }
+    }
+
+    return null;
+  }
+
+  let y = cloneForce(list)
+```
 
 
 
@@ -493,8 +804,6 @@ var array = [1, 1, '1', '1', null, null, undefined, undefined, new String('1'), 
 
 
 # 积累的问题
-
-手写算法，用递归遍历一个树
 
 promise 手写实现一个 sleep
 

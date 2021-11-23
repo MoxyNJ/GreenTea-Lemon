@@ -1,31 +1,23 @@
 # 整理问题
 
-## css 属性的继承
-
-#### 常见非继承属性
-
-1. 尺寸：height，width，max-height, min-height, max-width, min-width
-2. 位置：display、position、left、right、top、bottom
-3. 文本效果：text-shadow
-4. 背景属性：background
-5. 生成内容：content
-6. 层叠：z-index
-7. 盒模型属性：float，margin, padding, border
-
-#### 常见可继承属性
-
-1. 字体系列属性：font-family，font-size
-2. 文本系列属性：text-indent，line-height，color
-3. 元素可见性：visibility
-4. 表格布局属性：border-style
-5. 列表布局属性：list-style list-style-type
-6. 光标属性：cursor
-
-
-
 # 正常流
 
 ## 1. 盒模型
+
+### 1.0 box-sizing
+
+`box-sizing` 设置 `width` 宽度的作用范围；
+
+- `content-box`：默认，`width` 就相当于 `content` 的宽度，其只作用于 `content` 区域。
+- `border-box`：`width` 作用于 `content` + `padding` + `border` 三个区域。
+
+默认情况下，盒子的总宽度 == `width` + `padding` + `border`
+
+设置了 `border-box`,盒子的总宽度 ==  `width`
+
+- `border-box` 盒子是 IE 的老标准。
+
+
 
 ### 1.1 display 显示类型
 
@@ -101,7 +93,7 @@
 
 #### clear 清除浮动
 
-**向下移动**：让一个元素移动到在它前面的那个浮动元素的下面。
+**向下移动**：不允许被清除浮动的元素的左边/右边挨着浮动元素。让它移动到它左边/右边浮动元素的下面。
 
 - 针对 float 元素：可以让该 float元素 **不是平移** 的方式排到其他浮动元素后，而是 **另起一行拍到第一个** 。
 - 针对 非float 元素：可以让该元素的文本 / 内联元素，不是环绕 float 元素。而是将该元素的内容全部移到 float 元素的下方。同时会发生外边距折叠。
@@ -111,9 +103,7 @@
 
 
 
-
-
-## 2 格式化上下文
+## 2. 格式化上下文
 
 - Formatting context：格式化上下文
 - Block formatting context：块级格式化上下文，简称 BFC。
@@ -125,17 +115,18 @@
 
 - **浮动定位** 和 **清除浮动** 时只会应用于同一个 BFC 内的元素。
 - **浮动** 不会影响其它 BFC 中元素的布局，而 **清除浮动** 只能清除同一 BFC 中在它 **前面的元素** 的浮动。
+- 计算 BFC 的高度时，内部的浮动元素也要参与计算（解决 float 高度坍塌）。
 
 **BFC 对 外边距折叠的影响：**
 
-- 外边距折叠（Margin collapsing）只会发生在属于同一 BFC 的块级元素之间。
-- 也会作用于同一个 BFC 的父子元素之间。
+- 外边距折叠（Margin collapsing）只会发生在属于同一 BFC中。
+- 只要是在同一个 BFC 中，块元素不论父子结构，在纵向上都会折叠。**兄弟** 、**父子** 块级元素都会发生。
 
-**注意：IFC、flex、grid 都不会发生 Margin Collapse。**因为边距折叠只会发生在一个 BFC 中，如果创建了新的BFC，就不会发生边距折叠。
+**注意：IFC、flex、grid 之间都不会发生 Margin Collapse。**因为边距折叠只会发生在一个 BFC 中，如果创建了新的BFC，就不会发生边距折叠。
 
 
 
-#### 2.1 BFC 的生成条件 (2)：
+#### 2.1 BFC 的生成条件 (5)：
 
 - 该元素必须是一个 block-level element：因为只有块级元素，才会生成块级格式化上下文 BFC。
 - 该元素的内部可以放正常流：反情况理解，如果内部不能防止正常流（比如，块级的替换元素内部不受 CSS 样式影响，flex 内部必须放置 flex-item 等），那该元素的内部就不会生成一个 BFC，而是会放置特定的内容物。
@@ -156,7 +147,7 @@
 
 
 
-## 3 高度坍塌和清除浮动
+## 3. 高度坍塌和清除浮动
 
 高度坍塌：指父元素本来应该包括子元素的高度，但是实际上父元素比子元素的高度要小。
 
@@ -186,39 +177,60 @@
 </div>
 ```
 
-![image-20211123163104250](HTML&CSS/image-20211123163104250.png)
+![image-20211123170444733](HTML&CSS/image-20211123170444733.png)
 
-出现 `container` 高度坍台的原因：
+出现 `container` 高度坍塌的原因：
 
 1. `box1` 设置为浮动，脱离了当前正常流，移动到当前位置的左边。
 2. `container` 内失去了 `box1` 的占位，所以高度参考 `box2`，出现了高度坍塌。
-3. `container`设置 `overflow：auto` 内部创建了一个 BFC，
+
+#### 解决方式一：BFC
+
+`container` 设置 `overflow：auto` 其内部创建了一个 BFC，根据规则 BFC 的高度计算需要参考 `float` 元素，所以元素会被撑开。
+
+- 只要让 `container` 成为 `box1` 的包含块即可撑开 `container` 的高度。
+
+![image-20211123170431340](HTML&CSS/image-20211123170431340.png)
+
+#### 解决方式二：clear float
+
+`clear` 清除浮动，会让被清除浮动的元素移动到浮动元素的下方。那么我们通过 CSS 创建一个内容为空的伪元素，然后让他清除浮动，就可以解决这个问题：
+
+- 注意这个伪元素必须设置为 `block`，否则变成内联了，无法撑开。
+- `::after` 会为选中元素的内容的后面，添加一个 新元素。在这里其实是对 `container` 容器内添加了一个子元素。
+
+```css
+.container::after {
+    content: "";
+    display: block; 
+    clear: both;
+}
+```
 
 
 
+# 常见问题
 
+## 0. css 属性的继承
 
+#### 常见非继承属性
 
+1. 尺寸：height，width，max-height, min-height, max-width, min-width
+2. 位置：display、position、left、right、top、bottom
+3. 文本效果：text-shadow
+4. 背景属性：background
+5. 生成内容：content
+6. 层叠：z-index
+7. 盒模型属性：float，margin, padding, border
 
+#### 常见可继承属性
 
-
-
-
-**第一代排版技术：**
-
-1. 清除浮动
-2. 盒模型、CSS3模型
-   - padding 和 margin 的区别
-3. position、display 有哪些属性，各自的区别
-4. CSS 清除浮动
-
-
-
-
-
-
-
-
+1. 字体系列属性：font-family，font-size
+2. 文本系列属性：text-indent，line-height，color
+3. 元素可见性：visibility
+4. 表格布局属性：border-style
+5. 列表布局属性：list-style list-style-type
+6. 光标属性：cursor
 
 
 
@@ -791,9 +803,28 @@ background-clip：裁剪背景图片。元素背景（背景图片或颜色）�
 
 
 
-## 8. 如何实现隐藏
+## 8. 元素的隐藏
 
-- `display: none` 从 DOM 中直接删除。
+- `display: none;`
+  1. DOM 结构：在 DOM 中，不占据正常流的空间；
+  2. 事件监听：**无法进行 DOM 事件监听；**
+  3. 性能：动态改变此属性时会引起重排重绘，性能较差；
+  4. 继承：不会被子元素继承，毕竟子类也不会被渲染（直接没，不存在继承问题了）；
+  5. `transition`：`transition` 不支持 display。
+- `visibility: hidden;`
+  1. DOM 结构：元素被隐藏，会被渲染不会消失，占据空间；
+  2. 事件监听：**无法进行 DOM 事件监听；**
+  3. 性能：动态改变此属性时会引起重绘，性能较高；
+  4. 继承：会被子元素继承，子元素可以通过设置 `visibility: visible`; 来取消隐藏；
+  5. `transition`：`visibility` 会立即显示，隐藏时会延时
+- `opacity: 0;`
+  1. DOM 结构：透明度为 100%，元素隐藏，占据空间；
+  2. 事件监听：可以进行 DOM 事件监听；
+  3. 性能：提升为合成层，不会触发重绘，性能较高；
+  4. 继承：会被子元素继承，子元素并不能通过 opacity: 1 来取消隐藏；
+  5. `transition`：`opacity` 可以延时显示和隐藏
+
+
 
 **文本的隐藏**
 
@@ -868,9 +899,9 @@ text-shadow：为文字添加阴影。阴影值由元素在X和Y方向的偏移�
 | height         | 盒子的高度              | 父容器实际高度 x 50%                           |      |
 | line-height    | 行间距，文字的高度      | 父容器实际高度 x 50%                           |      |
 | vertical-align | 垂直对齐的方式          | 当前 line-height x 50%                         |      |
-| width          |                         | 父容器实际宽度 x 50%                           |      |
+| width          | 盒子的宽度              | 父容器实际宽度 x 50%                           |      |
 | padding        | 内联元素的padding会断行 | 不论上下左右，都是：<br />父容器实际宽度 x 50% |      |
-| margin         | 可以为负值              |                                                |      |
+| margin         | 可以为负值              | --                                             |      |
 
 
 
@@ -920,7 +951,9 @@ ID选择符：`#myId`
 
 伪类和伪元素可用来修饰不在文档树中的部分。这样做通常是为了不想给页面添加额外的标记，但又想创建 / 选择一些元素。
 
-#### 4.1 伪类
+- **伪类** `:` 是 **选择元素**，**伪元素** `::` 是 **创建元素**。
+
+#### 4.1 伪类	
 
 通过伪类选择器，可以找到那些不存在 DOM 树中的信息，或者不能被常规 CSS 选择器获取到的信息。
 
@@ -986,12 +1019,12 @@ ID选择符：`#myId`
 
 伪元素用于创建一些 **不在文档树中的元素**，并为其添加样式。
 
-比如说，我们可以通过 :before 来在一个元素前增加一些文本，并为这些文本添加样式。虽然用户可以看到这些文本，但是这些文本实际上不在文档树中。
+比如说，我们可以通过 `:before` 来在一个元素前增加一些文本，并为这些文本添加样式。虽然用户可以看到这些文本，但是这些文本实际上不在文档树中。
 
 > 因此，伪类与伪元素的区别在于：有没有创建一个文档树之外的元素。
 
-- `::before`：在选中元素的内容（content） 的前面插入一个伪元素。
-- `::after`：在选中元素的内容（content） 的后面插入一个伪元素。
+- `::before`：在选中元素的 **内容（content）** 的前面插入一个伪元素。**（内部的开头添加一个子元素）**
+- `::after`：在选中元素的 **内容（content）** 的后面插入一个伪元素。**（内部的末尾添加一个子元素）**
 
 - `::first-letter` ：选择一段文本的第一个字符，如 `p::first-letter`。
 
@@ -1442,7 +1475,8 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
 | animation（动画）  | 用于设置动画属性，他是一个简写的属性，包含6个属性，比 `transition` 更强大。 |
 | transition（过渡） | 用于设置元素的样式过度，和 `animation` 有着类似的效果，但细节上有很大的不同 |
 | transform（变形）  | 可以把元素静态旋转、缩放、移动，和设置样式的动画并没有什么关系，<br />就相当于color一样用来设置元素的 “外表样式” |
-| translate（移动）  | translate只是transform的一个属性值，即移动。                 |
+| translate（移动）  | translate 只是 transform 的一个属性值，即移动。除此之外还有 `scale` 等 |
+| scale （缩放）     | transform 的一个属性值                                       |
 
 #### transition 过渡
 
