@@ -700,7 +700,64 @@ function JSONToStr(str) {
   res.book === demo.book // false
 ```
 
-方法三：终极办法
+方法三：解决栈溢出
+
+几个记忆要点：
+
+- 栈、根等等值为对象的定义，全部用 `const`
+- 遍历对象成员，用 `for..in..` + `Object.prototype.hasOwnProperty.call()`
+- 
+
+```js
+function cloneLoop(x) {
+  const root = {};
+
+  // 栈
+  const loopList = [
+    {
+      parent: root,
+      key: undefined,
+      data: x,
+    },
+  ];
+
+  while (loopList.length) {
+    // 深度优先，出栈
+    const node = loopList.pop();
+    const { parent, key, data } = node;
+
+// key  如果是undefined，表明当前节点直接在root中（根节点的子节点）；
+//      如果有值，表明这个值就是当前节点在父元素中的key（指针）
+// 初始化赋值目标，key 为 undefined 则直接成为父元素，否则添加这个 key 为父元素内的一个 key
+    let res;
+    if (typeof key === "undefined") {
+      res = parent;
+    } else {
+      res = parent[key] = {};
+    }
+
+    for (let k in data) {
+      if (data.hasOwnProperty(k)) {
+        if (typeof data[k] === "object") {
+          // 入栈
+          loopList.push({ parent: res, key: k, data: data[k]});
+        } else {
+          res[k] = data[k];
+        }
+      }
+    }
+  }
+  return root;
+}
+let newList = cloneLoop(list);
+
+```
+
+
+
+
+
+方法四：终极办法
 
 - 解决循环引用 + 栈溢出
 
