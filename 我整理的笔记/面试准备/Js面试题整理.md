@@ -515,7 +515,7 @@ const preorderTraversal = function(root) {
 ### 3.2 遍历 JSON 中查找 value
 
 ```js
-// 查找 301
+// 查找 200
 function findItems(list, targetValue){
     let res = [];
     traversal(res, list, targetValue);
@@ -594,9 +594,11 @@ console.log(res) 	// [{label: '财务部', value: 200}]
 
 
 
-## 4 深拷贝、浅拷贝
+## 4. 深拷贝、浅拷贝
 
-#### 浅拷贝
+https://juejin.cn/post/6844903692756336653#heading-4
+
+### 浅拷贝
 
 使用 `for...in` 和 `hasOwnProperty` 遍历：
 
@@ -627,9 +629,9 @@ a1.b === a2.b   // true
 
 
 
-#### 深拷贝
+### 深拷贝
 
-方法一：`JSON.parse()`
+#### 方法一：`JSON.parse()`
 
 ```js
 let obj2 = JSON.parse(JSON.stringify(obj));
@@ -667,7 +669,7 @@ function JSONToStr(str) {
 
 
 
-方法二：浅拷贝 + 递归
+#### 方法二：浅拷贝 + 递归
 
 - 效果和 JSON 的方法基本相同。
 
@@ -700,13 +702,26 @@ function JSONToStr(str) {
   res.book === demo.book // false
 ```
 
-方法三：解决栈溢出
+#### 方法三：解决栈溢出
 
 几个记忆要点：
 
 - 栈、根等等值为对象的定义，全部用 `const`
 - 遍历对象成员，用 `for..in..` + `Object.prototype.hasOwnProperty.call()`
-- 
+- 在（循环+入栈+复制）时，使用了两次 `if`，第一次判断 `hasOwnProperty`，第二次判断 `tyeof  "object"`。
+
+记忆结构：
+
+- **定义**（2）
+  - 根：`root={}`
+  - 栈：`loopList=[...]` <=== `{parent、key、data}`
+- **循环栈**（3）
+  - 定义（2）:出栈 (node) + 解构(parent、key、data)
+  - 创建 res  ===>  判断 `typeof key === "undefined"`，确定父节点。
+  - 遍历 data（2）
+    - 判断 `hasOwnProporty` 遍历对象的一环；
+    - 判断 `typeof data[k] === "object"` 是否为 `object`； ===> 出栈 + 复制
+- **返回**：`root`
 
 ```js
 function cloneLoop(x) {
@@ -750,20 +765,15 @@ function cloneLoop(x) {
   return root;
 }
 let newList = cloneLoop(list);
-
 ```
 
-
-
-
-
-方法四：终极办法
+#### 方法四：终极办法
 
 - 解决循环引用 + 栈溢出
 
-假如一个对象a，a下面的两个键值都引用同一个对象b，经过深拷贝后，a的两个键值会丢失引用关系，从而变成两个不同的对象，o(╯□╰)o
+假如一个对象a，a下面的两个键值都引用同一个对象b，经过深拷贝后，a的两个键值会丢失引用关系，从而变成两个不同的对象。
 
-```
+```js
 var b = {};
 var a = {a1: b, a2: b};
 
@@ -771,87 +781,140 @@ a.a1 === a.a2 // true
 
 var c = clone(a);
 c.a1 === c.a2 // false
-复制代码
 ```
 
 如果我们发现个新对象就把这个对象和他的拷贝存下来，每次拷贝对象前，都先看一下这个对象是不是已经拷贝过了，如果拷贝过了，就不需要拷贝了，直接用原来的，这样我们就能够保留引用关系。
 
-- 引入一个数组 `uniqueList` 用来存储已经拷贝的数组，每次循环遍历时，先判断对象是否在 `uniqueList `中了，如果在的话就不执行拷贝逻辑了；
-- `find` 是抽象的一个函数，其实就是遍历 `uniqueList`；
+- 引入一个数组 `uniqueList` 用来存储已经拷贝的对象，每次循环遍历时，先判断对象是否在 `uniqueList `中 ，如果在的话就不执行拷贝逻辑了，而是直接拿 `uniqueList` 中的这个对象；
+  - `uniqueList` 数组中，每个成员代表一个已经被拷贝过，并放到新对象上的节点。其内部又有两个成员：
+    - `source`：原对象中的这个节点，用来对比原对象中的其他节点，是否相同。
+    - `target`：新对象中的这个节点，如果 `source` 对比相同，则不执行新的拷贝，而是把这个 `target` 放到新对象上。
+- `find` 用来遍历 `uniqueList`，通过对比 `unique.source` 找是否有相同循环引用。
+
+是方法三的进一步优化，在 `=====` 之间的就是额外增加的部分
 
 ```js
-  // 保持引用关系
-  function cloneForce(x) {
+// 保持引用关系
+function cloneForce(x) {
     const uniqueList = []; // 用来去重
 
     let root = {};
 
     // 循环数组
     const loopList = [{
-      parent: root,
-      key: undefined,
-      data: x,
+        parent: root,
+        key: undefined,
+        data: x,
     }];
 
     while (loopList.length) {
-      // 深度优先
-      const node = loopList.pop();
-      const parent = node.parent;
-      const key = node.key;
-      const data = node.data;
+        // 深度优先
+        const node = loopList.pop();
+        const { parent, key, data } = node;
 
-      // 初始化赋值目标，key为undefined则拷贝到父元素，否则拷贝到子元素
-      let res = parent;
-      if (typeof key !== 'undefined') {
-        res = parent[key] = {};
-      }
-
-      // =============
-      // 数据已经存在
-      let uniqueData = find(uniqueList, data);
-      if (uniqueData) {
-        parent[key] = uniqueData.target;
-        continue; // 中断本次循环
-      }
-
-      // 数据不存在
-      // 保存源数据，在拷贝数据中对应的引用
-      uniqueList.push({
-        source: data,
-        target: res,
-      });
-      // =============
-
-      for (let k in data) {
-        if (data.hasOwnProperty(k)) {
-          if (typeof data[k] === 'object') {
-            // 下一次循环
-            loopList.push({
-              parent: res,
-              key: k,
-              data: data[k],
-            });
-          } else {
-            res[k] = data[k];
-          }
+        // 初始化res
+        let res = parent;
+        if (typeof key !== 'undefined') {
+            res = parent[key] = {};
         }
-      }
-    }
 
+        // ============= 判断是否已经存在当前节点的数据
+        let uniqueData = find(uniqueList, data);
+        // 数据已存在
+        if (uniqueData) {
+            parent[key] = uniqueData.target;
+            continue; // 复制结束，跳过本次while循环
+        }
+        // 数据不存在：保存源数据，在拷贝数据中对应的引用
+        uniqueList.push({ source: data, target: res });
+        // =============
+
+        for (let k in data) {
+            if (data.hasOwnProperty(k)) {
+                if (typeof data[k] === 'object') {
+                    // 下一次循环
+                    loopList.push({ parent: res, key: k, data: data[k] });
+                } else {
+                    res[k] = data[k];
+                }
+            }
+        }
+    }
     return root;
-  }
-
-  function find(arr, item) {
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i].source === item) {
-        return arr[i];
-      }
+}
+// ======== 查找重复 =========
+function find(arr, item) {
+    for (let unique of arr) {
+        // 找到重复，则直接复制 unique.target
+        if (unique.source === item)  return unique;
     }
-
     return null;
-  }
+}
+// ========
 
-  let y = cloneForce(list)
+let newList = cloneForce(list)
+```
+
+在代码中，如果数据不存在：
+
+- 保存源数据，在拷贝数据中对应的引用
+- source：保存原数据，target：保存复制后的数据。
+- 用原对象的数据（source）判断是否存在，用复制后的数据（target）赋值到新对象上。
+
+
+|          | JSON.parse   | 浅拷贝+递归  | cloneLoop | cloneForce   |
+| -------- | ------------ | ------------ | --------- | ------------ |
+| 难度     | ☆            | ☆☆           | ☆☆☆       | ☆☆☆☆         |
+| 兼容性   | ie6          | ie8          | ie6       | ie6          |
+| 循环引用 | 不支持       | 一层         | 一层      | 支持         |
+| 栈溢出   | 会           | 会           | 不会      | 不会         |
+| 保持引用 | 否           | 否           | 否        | 是           |
+| 适合场景 | 一般数据拷贝 | 一般数据拷贝 | 层级很多  | 保持引用关系 |
+
+
+
+### 5. 实现 Sleep
+
+sleep 函数可以使程序暂停执行，等到指定的时间后再重新执行，能起到延时的效果。
+
+在很多的编程语言里都提供了 Sleep 函数，如 C/C++ 中的 Sleep() 函数，linux 中的 sleep() 函数。
+
+**实际上就是异步编程的优缺点**
+
+#### 回调函数方式
+
+在 JavaScript 语言中，原生提供了 setTimeout() 方法来实现一段时间后执行某个任务，但这种写法需要提供回调函数，写法上很不优雅。
+
+```js
+setTimeout(console.log("go on.."), 1000)
+```
+
+- 回调地狱，不符合人的思维习惯；
+
+#### Async + Promise 方式
+
+- 实现间隔 1s 输出：`1，2，3`
+- `await` 实际上是 `promise` 的语法糖，把 `promise` 的 `.then()` 链条变成了符合直觉的同步形式。
+- `await` 必须在 `async` 环境下使用，所以通过 `void`  创建一个 `IIFE`
+
+```js
+// 一行代码：
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+
+// 意思是一样的：
+const sleep = (delay) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve(), delay);
+  });
+};
+
+void async () => {
+  console.log(1);
+  await sleep(1000);
+  console.log(2);
+  await sleep(1000);
+  console.log(3);
+}();
 ```
 
 
@@ -862,11 +925,7 @@ c.a1 === c.a2 // false
 
 # 积累的问题
 
-promise 手写实现一个 sleep
 
-当场用 vue 写一个 todoList 包括 **增删改查**，30分钟。
-
-深拷贝
 
 
 
