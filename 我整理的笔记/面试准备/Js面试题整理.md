@@ -217,18 +217,16 @@ Origin: https://www.mywebsite.com           // <- 浏览器自己加的
 
 // 快速排序 1
 function quickSort(arr) {
-    let left = 0,
-        right = arr.length - 1;
+    let left = 0, right = arr.length - 1;
     main(arr, left, right);
     return arr;
   
     function main(arr, left, right) {
         if (arr.length === 1) return;
-
         let index = partition(arr, left, right);
 
         if (left < index - 1) main(arr, left, index - 1);
-        if (index < right) main(arr, index, right);
+        if (index < right)    main(arr, index, right);
     }
 
     function partition(arr, left, right) {
@@ -299,19 +297,24 @@ function quickSort(array) {
 效率最低，原理最简单。
 
 ```js
-function distinct(arr) {
-    for (let i=0, len=arr.length; i<len; i++) {
-        for (let j=i+1; j<len; j++) {
-            if (arr[i] == arr[j]) {
-                arr.splice(j, 1);
-                // splice 会改变数组长度，所以要将数组长度 len 和下标 j 减一
-                len--;
-                j--;
-            }
-        }
+const distinct = (arr) => {
+  len = arr.length;
+  for (let i = 0; i < len; i++) {
+    for (let j = i + 1; j < len; j++) {
+      if (arr[i] == arr[j]) {
+        arr.splice(j, 1)
+        // splice 会改变数组长度，所以要将数组长度 len 和下标 j 减一
+        j--;
+        len--;
+      }
     }
-    return arr;
+  }
+  return arr
 }
+
+let arr = [1, 5, 2, 7, 3, 87, 2, 3, 5, 7, 9, 3, 2, 5, 7, 8, 4, 2, 4, 6]
+console.log(distinct(arr))
+//[1, 5, 2, 7, 3, 87, 9, 8, 4, 6]
 ```
 
 #### 2. filter + indexOf
@@ -525,7 +528,7 @@ function findItems(list, targetValue){
         for (let item of list) {
             const { value, children, label } = item;
 
-            if (value && value == targetValue)
+            if (value && value === targetValue)
                 res.push({ label, value });
 
             if (Array.isArray(children) && children.length)
@@ -606,15 +609,15 @@ https://juejin.cn/post/6844903692756336653#heading-4
 - `for...of` 常用于遍历数组，用 `in` 遍历数组会打乱数组顺序。不能遍历对象，对象默认没有 `iterable`
 
 ```js
-function shallowClone(obj) {
-    let res = {};
-    for(let i in obj){
-        if (obj.hasOwnProperty(i)) {
-            res[i] = obj[i];
-        }
+const shallowClone = (obj) => {
+  const newObj = {}
+  for (const key in obj) {
+    if (Object.hasOwnProperty.call(obj, key)) {
+      newObj[key] = obj[key];
     }
-    return res;
-}
+  }
+  return newObj
+}}
 
 let a1 = {b: {c: {}}};
 let a2 = shallowClone(a1)
@@ -640,55 +643,85 @@ let obj2 = JSON.parse(JSON.stringify(obj));
 问题：
 
 - 循环引用；
+- 共同引用（见方法三的阐述）；
 - 不能序列化：`undefined`、`symbol`、`function`，直接忽略。
+- 不可枚举的属性默认会被忽略
+- `NaN` 和 `Infinity` 格式的数值会被当做 `null`
+- 如果对象属性有 `toJSON` 方法，那么该方法就会替代默认的序列化行为
 - 栈溢出。
+
+```js
+// 循环引用问题
+let obj1 = {}; 
+let obj2 = { b: obj1 }; 
+obj1.a = obj2;
+JSON.stringify(obj1);
+/* VM5438:1 Uncaught TypeError: Converting circular structure to JSON
+    --> starting at object with constructor 'Object'
+    |     property 'a' -> object with constructor 'Object'
+    --- property 'b' closes the circle
+    at JSON.stringify (<anonymous>)
+    at <anonymous>:1:6 **/
+```
+
+
 
 解决 JSON 的循环引用问题：
 
 - 缓存中保存所有遇到的 `object`，每次添加一个 `object` 到 `cache` 中时，就判断 `cache` 中是否已经保存过该对象，如果保存过，则丢弃该对象。
 
 ```js
-function JSONToStr(str) {
-  var cache = [];
-  var str = JSON.stringify(dom, function (key, value) {
-    if (typeof value === "object" && value !== null) {
-      if (cache.indexOf(value) !== -1) {
+const toJSON = (obj) => {
+  let cache = [];
+
+  const res = JSON.parse(JSON.stringify(obj, (index, item) => {
+      if (typeof item === "object" && item !== null) {
+        if (cache.indexOf(item) !== -1) {
           // 说明缓存中已经有该值
           // 移除，或对这个值进行处理后再 push。
-        return;
+          return;
+        }
+        // 收集所有的值
+        cache.push(item);
       }
-      // 收集所有的值
-      cache.push(value);
-    }
-    return value;
-  });
+      return item;
+    })
+  );
   cache = null; // 清空变量，便于垃圾回收机制回收
-  return str;
-}
+  return res;
+};
+
+let b1 = {};
+let b2 = { a: b1 };
+b1.a = b2;
+
+let newObj = toJSON(b2);    // 可以正确使用
+let newObj = JSON.parse(JSON.stringify(b1));  // 这里会报错
 ```
 
-
+- 注意，`stringify` 中的回调函数，参数是（key， vale）这个顺序和数组的 API 中回调函数 （item， index）相反。
 
 #### 方法二：浅拷贝 + 递归
 
 - 效果和 JSON 的方法基本相同。
+- 有栈溢出的问题。
 
 当遍历到一个成员时，赋值前先进行类型判断，如果是 object，则递归调用函数。
 
 ```js
-  function shallowClone(obj) {
-    let res = {};
-    for (let i in obj) {
-      if (obj.hasOwnProperty(i)) {
-        if (Object.prototype.toString.call(obj[i]) === '[object Object]') {
-          res[i] = shallowClone(obj[i])
-        } else {
-          res[i] = obj[i]
-        }
+const shallowClone = (obj) => {
+  const res = []
+  for (const key in obj) {
+    if (Object.hasOwnProperty.call(obj, key)) {
+      if (Object.prototype.toString.call(obj[key]) === "[object Object]") {
+        res[key] = shallowClone(obj[key])
+      } else {
+        res[key] = obj[key]
       }
     }
-    return res;
   }
+  return res
+}
 
   let demo = {
     name: 'dayday',
@@ -699,10 +732,17 @@ function JSONToStr(str) {
   }
 
   let res = shallowClone(demo)
-  res.book === demo.book // false
+  res.book === demo.book // false，共同引用问题， JSON 方法也有
 ```
 
 #### 方法三：解决栈溢出
+
+破解递归爆栈的方法有两条路：
+
+- 消除尾递归，但在这个例子中貌似行不通，
+- 不用递归，改用循环，这里就是把递归改造为了 栈 + 循环遍历栈。
+
+
 
 几个记忆要点：
 
@@ -769,7 +809,7 @@ let newList = cloneLoop(list);
 
 #### 方法四：终极办法
 
-- 解决循环引用 + 栈溢出
+- 解决共同引用 + 栈溢出
 
 假如一个对象a，a下面的两个键值都引用同一个对象b，经过深拷贝后，a的两个键值会丢失引用关系，从而变成两个不同的对象。
 
@@ -789,7 +829,7 @@ c.a1 === c.a2 // false
   - `uniqueList` 数组中，每个成员代表一个已经被拷贝过，并放到新对象上的节点。其内部又有两个成员：
     - `source`：原对象中的这个节点，用来对比原对象中的其他节点，是否相同。
     - `target`：新对象中的这个节点，如果 `source` 对比相同，则不执行新的拷贝，而是把这个 `target` 放到新对象上。
-- `find` 用来遍历 `uniqueList`，通过对比 `unique.source` 找是否有相同循环引用。
+- `find` 用来遍历 `uniqueList`，通过对比 `unique.source` 找是否有相同共同引用。
 
 是方法三的进一步优化，在 `=====` 之间的就是额外增加的部分
 
@@ -813,10 +853,12 @@ function cloneForce(x) {
         const { parent, key, data } = node;
 
         // 初始化res
-        let res = parent;
-        if (typeof key !== 'undefined') {
+          let res;
+          if (typeof key == "undefined") {
+            res = parent;
+          } else {
             res = parent[key] = {};
-        }
+          }
 
         // ============= 判断是否已经存在当前节点的数据
         let uniqueData = find(uniqueList, data);
