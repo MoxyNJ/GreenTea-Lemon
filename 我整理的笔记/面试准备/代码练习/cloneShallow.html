@@ -1,0 +1,23 @@
+<script>
+  // 浅拷贝
+  const shallowClone = (obj) => {
+    const newObj = {}
+    for (const key in obj) {
+      if (Object.hasOwnProperty.call(obj, key)) {
+        newObj[key] = obj[key];
+      }
+    }
+    return newObj
+  }
+
+
+
+
+  let a1 = {
+    b: {
+      c: {}
+    }
+  };
+  let a2 = shallowClone(a1)
+  a1.b === a2.b // true
+</script>

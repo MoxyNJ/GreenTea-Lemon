@@ -1,0 +1,20 @@
+<script>
+  const distinct = (arr) => {
+    len = arr.length;
+    for (let i = 0; i < len; i++) {
+      for (let j = i + 1; j < len; j++) {
+        if (arr[i] == arr[j]) {
+          arr.splice(j, 1)
+          // splice 会改变数组长度，所以要将数组长度 len 和下标 j 减一
+          j--;
+          len--;
+        }
+      }
+    }
+    return arr
+  }
+
+  let arr = [1, 5, 2, 7, 3, 87, 2, 3, 5, 7, 9, 3, 2, 5, 7, 8, 4, 2, 4, 6]
+  console.log(distinct(arr))
+  //[1, 5, 2, 7, 3, 87, 9, 8, 4, 6]
+</script>

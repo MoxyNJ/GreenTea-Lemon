@@ -1,0 +1,37 @@
+<script>
+  const quickSort = (arr) => {
+    let left = 0,
+      right = arr.length - 1;
+    main(arr, left, right);
+    return arr;
+
+    // 划分数组
+    function main(arr, left, right) {
+      if (arr.length <= 1) return;
+      let index = partition(arr, left, right);
+
+      if (left < index - 1) main(arr, left, index - 1);
+      if (index < right) main(arr, index, right);
+    }
+
+    //  排序
+    function partition(arr, left, right) {
+      let piovt = arr[Math.floor((left + right) / 2)];
+
+      while (left <= right) {
+        while (arr[left] < piovt) left++;
+        while (piovt < arr[right]) right--;
+
+        if (left <= right) {
+          [arr[left], arr[right]] = [arr[right], arr[left]];
+          left++;
+          right--;
+        }
+      }
+      return left;
+    }
+  };
+
+  let arr = [5, 43, 7, 60, 5, 3, 21, 8, 1];
+  console.log(quickSort(arr));
+</script>

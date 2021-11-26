@@ -1,0 +1,18 @@
+<script>
+  function distinctFor(arr) {
+    let res = [];
+    let sortedArray = arr.concat().sort();
+    let seen;
+    for (let i = 0; i < sortedArray.length; i++) {
+      if (!i || seen !== sortedArray[i]) {
+        res.push(sortedArray[i])
+        seen = sortedArray[i]
+      }
+    }
+    return res
+  }
+
+  let arr = [1, 5, 2, 7, 3, 87, 2, 3, 5, 7, 9, 3, 2, 5, 7, 8, 4, 2, 4, 6]
+  console.log(distinctFor(arr))
+  //(10) [1, 2, 3, 4, 5, 6, 7, 8, 87, 9]
+</script>

@@ -1,0 +1,81 @@
+<script>
+  const list = [{
+      "value": 192,
+      "label": "技术部",
+      "children": [{
+          "value": 193,
+          "label": "软件组",
+          "children": [{
+              "value": 195,
+              "label": "软件一组"
+            },
+            {
+              "value": 196,
+              "label": "软件二组"
+            }
+          ]
+        },
+        {
+          "value": 198,
+          "label": "运维组"
+        }
+      ]
+    },
+    {
+      "value": 200,
+      "label": "财务部",
+      "children": [{
+          "value": 201,
+          "label": "会计"
+        },
+        {
+          "value": 203,
+          "label": "出纳"
+        }
+      ]
+    },
+    {
+      "value": 300,
+      "label": "人资部",
+      "children": [{
+          "value": 301,
+          "label": "行政"
+        },
+        {
+          "value": 302,
+          "label": "人资"
+        },
+        {
+          "value": 200,
+          "label": "啊哈！",
+        }
+      ]
+    }
+  ]
+
+  const findItem = (list, targetValue) => {
+    const res = [];
+    traversal(res, list, targetValue);
+    return res;
+
+    function traversal(res, list, targetValue) {
+      for (let item of list) {
+        const {
+          value,
+          label,
+          children
+        } = item
+
+        if (value && value === targetValue) res.push({
+          value,
+          label
+        })
+
+        if (Array.isArray(children) && children.length)
+          traversal(res, children, targetValue)
+      }
+    }
+  }
+
+  console.log(findItem(list, 200))
+</script>

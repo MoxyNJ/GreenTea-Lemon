@@ -1,0 +1,16 @@
+<script>
+  const preorderTraversal = (root) => {
+    const res = [];
+    traversal(root);
+    return res;
+
+    function traversal(root) {
+      if (root !== null) {
+        res.push(root.val);
+        traversal(root.left);
+        traversal(root.right);
+      }
+    }
+
+  }
+</script>

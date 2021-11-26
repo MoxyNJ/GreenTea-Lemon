@@ -1,0 +1,41 @@
+<script>
+  // 使用 stringify 方法深拷贝
+  let a1 = {
+    b: {
+      c: {},
+    },
+  };
+
+  let a2 = JSON.parse(JSON.stringify(a1));
+
+  // 解决循环引用
+  //    定义一个循环引用的数组 b2
+  let b1 = {};
+  let b2 = {
+    a: b1,
+  };
+  b1.a = b2;
+
+  const toJSON = (obj) => {
+    let cache = [];
+
+    const res = JSON.parse(
+      JSON.stringify(obj, (index, item) => {
+        if (typeof item === "object" && item !== null) {
+          if (cache.indexOf(item) !== -1) {
+            // 说明缓存中已经有该值
+            // 移除，或对这个值进行处理后再 push。
+            return;
+          }
+          // 收集所有的值
+          cache.push(item);
+        }
+        return item;
+      })
+    );
+    cache = null; // 清空变量，便于垃圾回收机制回收
+    return res;
+  };
+
+  let newObj = toJSON(b2); // 不会报错
+</script>

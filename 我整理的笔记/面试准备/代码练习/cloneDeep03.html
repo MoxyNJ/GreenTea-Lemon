@@ -1,0 +1,116 @@
+<script>
+  const list = [{
+      "value": 192,
+      "label": "技术部",
+      "children": [{
+          "value": 193,
+          "label": "软件组",
+          "children": [{
+              "value": 195,
+              "label": "软件一组"
+            },
+            {
+              "value": 196,
+              "label": "软件二组"
+            }
+          ]
+        },
+        {
+          "value": 198,
+          "label": "运维组"
+        }
+      ]
+    },
+    {
+      "value": 200,
+      "label": "财务部",
+      "children": [{
+          "value": 201,
+          "label": "会计"
+        },
+        {
+          "value": 203,
+          "label": "出纳"
+        }
+      ]
+    },
+    {
+      "value": 300,
+      "label": "人资部",
+      "children": [{
+          "value": 301,
+          "label": "行政"
+        },
+        {
+          "value": 302,
+          "label": "人资"
+        },
+        {
+          "value": 200,
+          "label": "啊哈！",
+        }
+      ]
+    }
+  ]
+
+  const demo = {
+    name: 'dayday',
+    book: {
+      title: 'Do you really Know JS',
+      price: "45"
+    }
+  }
+
+  const b1 = {};
+  const b2 = {
+    a: b1,
+  };
+  b1.a = b2;
+
+
+  const cloneDeep = (list) => {
+    const root = {}
+    const nodeList = [{
+      parent: root,
+      key: undefined,
+      data: list
+    }]
+
+    while (nodeList.length) {
+      const {
+        parent,
+        key,
+        data
+      } = nodeList.pop()
+
+      // 判断父结构：key
+      let res;
+      if (typeof key == "undefined") {
+        res = parent;
+      } else {
+        res = parent[key] = {};
+      }
+
+      for (const k in data) {
+        if (Object.hasOwnProperty.call(data, k)) {
+          if (Object.prototype.toString.call(k) === "[object Object]") {
+            nodeList.push({
+              parent: res,
+              key: k,
+              data: data[k]
+            })
+          } else {
+            res[k] = data[k]
+          }
+        }
+      }
+    }
+    return root
+  }
+
+
+  const newList = cloneDeep(list);
+  const newDemo = cloneDeep(demo);
+  // newDemo.book
+  const newB2 = cloneDeep(b2)
+</script>
