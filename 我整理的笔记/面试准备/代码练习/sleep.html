@@ -1,0 +1,12 @@
+<script>
+  const sleep = (delay) => new Promise(resolve => setTimeout(resolve, delay))
+
+
+  void(async () => {
+    console.log(1)
+    await sleep(1000)
+    console.log(2)
+    await sleep(1000)
+    console.log(3)
+  })()
+</script>
