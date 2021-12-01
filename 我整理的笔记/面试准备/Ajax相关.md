@@ -1265,6 +1265,7 @@ function __webpack_require__(moduleId){
 # 2. 配置开发环境 -- npm、包管理器
 
 -  创建一个工程：`npm init`
+- 也可以使用 `npm init -y`，直接生成了一个默认配置的 `package.json`，不需要一路回车。
 
 分析：`package.json` 版本信息文件
 
@@ -1334,7 +1335,43 @@ function __webpack_require__(moduleId){
 
 
 
-# 3. Webpack 4 实战
+执行 `npm install xxx -???`
+
+| npm install xxx + | [不写]   /  -s  /  --save     | -d  /  --save-dev             | -g  /  --global            |
+| ----------------- | ----------------------------- | ----------------------------- | -------------------------- |
+| 安装方式          | 项目默认安装                  | 项目默认安装                  | 操作系统全局安装           |
+| 安装位置          | node_modules 文件夹下         | node_modules 文件夹下         | AppDataAppData\Roaming\npm |
+| 模块引入          | dependencies 字段下           | devDependencies 字段下        | dependencies 字段下        |
+| 使用              | `./node_modules/.bin/webpack` | `./node_modules/.bin/webpack` | `webpack` 直接启动         |
+|                   |                               |                               |                            |
+
+
+
+webpack 各文件的作用？
+
+| 文件名                |                                                     |      |
+| --------------------- | --------------------------------------------------- | ---- |
+| `node_modules` 文件夹 | 项目引入的模块都放置在这里                          |      |
+| `dist` 文件夹         | 打包成功后，文件会放置在这里                        |      |
+| `dist/index.html`     | 打包后，html 入口文件                               |      |
+| `dist/main.js`        | 打包后，js 文件                                     |      |
+|                       |                                                     |      |
+| `src` 文件夹          | 编写的代码文件都放置在这里                          |      |
+| `src/App.jsx`         | React 包裹在最外层的组件                            |      |
+| `src/index.jsx`       | React 接入 html 的入口文件                          |      |
+| `src/index.html`      | html 入口文件                                       |      |
+|                       |                                                     |      |
+| `package.json`        | 默认的配置文件                                      |      |
+| `package-lock.json`   |                                                     |      |
+| `webpack.config.js`   | webpack 额外的配置文件，通常在这里调整 webpack 设置 |      |
+| `.babelrc`            | 调整 babel 的设置文件                               |      |
+|                       |                                                     |      |
+
+
+
+
+
+# 3. Webpack 4 核心特性
 
 ## 3.1 安装和入口
 
@@ -1357,7 +1394,11 @@ function __webpack_require__(moduleId){
 
 
 
-## 3.2 loader
+## 3.2 loader - 文件加载器
+
+`loader` 是一个文件维度的操作，通常文件的操作的包，就需要用 loader 加载。比如后面会讲到的 babel 就需要通过 loader 加载。
+
+
 
 接着上文的 webpack.config.js 文件
 
@@ -1383,6 +1424,234 @@ function __webpack_require__(moduleId){
 
 
 
+## 3.3 plugins - 插件
+
+节点维度的处理。
+
+`plugin` 通过事件监听机制，改变文件打包后的输出结果。
+
+- 比如，对资源进行压缩处理，让文件更快的从服务端传递给浏览器。从代码中去掉不需要的内容，如注释、换行、空格等等，减小整体体积。
+
+
+
+安装一个压缩的 plugin：`npm install uglifyjs-webpack-plugin --save-dev`
+
+安装后，就可以在 `webpack.config.js` 的 `plugin` 中引入并生效：
+
+1. 在文件的开头需要引入这个库：`const UglifyJSPlugin = require('uglifyjs-webpack-plugin')` 
+2. 在 `plugin` 字段中创建并引入这个库：
+
+![image-20211201120058877](Ajax%E7%9B%B8%E5%85%B3/image-20211201120058877.png)
+
+
+
+# 4. webpack 构建工程
+
+## 4.1 构建
+
+模拟一个 `react` 项目的构建过程：
+
+- `npm install react react-dom`
+- 安装 webpack 依赖，webpack 和 webpack 的命令行 cil工具。
+  - `npm install webpack webpack-cli -d`
+    - development 开发环境下安装，是 `--save-dev` 的简写。模块会写入到 `devDependencies ` 字段下，安装在项目的 `node_modules` 中。需要输入 `./node_modules/.bin/webpack` 命令使用 webpack。
+  - `npm install webpack webpack-cli -g`
+    - 安装在电脑操作系统的全局中，可以输入 `webpack` 命令直接启动。一般会安装到AppDataAppData\Roaming\npm目录下
+  - `npm install webpack webpack-cli`
+    - 默认，在生产环境下安装
+
+
+
+## 4.2 babel
+
+`babel` 可以把 ES6、Jsx 等形式的 js 文件，转化为 ES5 版本的 js 文件。通常使用 loader 引入。
+
+相关的常用库有 (5)：
+
+- `@babel/core`、`@babel/cil`、`@babel/preset-env`、`@babel/preset-react`、`babel-loader`
+
+
+
+- `npm install @babel/core @babel/cil -g`
+
+  - 安装 babel 的核心库 core 和命令行 cil 工具。
+
+- `npm install @babel/preset-env @babel/preset-react` 
+
+  - 安装 babel 的转换规则，这个包可以把高版本的 JS 代码转换为 低版本的 ES5；
+
+  - `preset-env` 可以把高版本 Js 代码转化为 ES5；
+
+  - `preset-react` 可以把 Jsx 格式的文件转化为 Js 文件；
+
+  - 安装好后，可以把包含 ES5 的代码 `test.js` ，通过在命令行运行 `babel test.js --presets=@babel/preset-env` 直接转化为  ES5 代码:
+
+    ```js
+    // test.js 文件
+    [1,2,3].map((item) => {
+        console.log(item)
+    })
+    ```
+
+    ![image-20211201122704381](Ajax%E7%9B%B8%E5%85%B3/image-20211201122704381.png)
+
+- `npm install babel-loader` 
+
+  - 通过 loader 的方式引入 babel，需要这个库的支持。
+
+
+
+**改进1：**可以在 `package.json` 中制定 babel 规则：
+
+![image-20211201122807296](Ajax%E7%9B%B8%E5%85%B3/image-20211201122807296.png)
+
+这样就不需要在输入 `babel test.js --presets=@babel/preset-env`  去寻找规则，直接 `babel test.js` 就可以了。
+
+**改进2：**直接创建一个独立的文件 `.babelrc` ，可以更方便的修改 babel 规则。
+
+- `babel` 会优先查找 `.babelrc` 这个文件，如果不存在就会遍历到 `package.json` 中去寻找。
+
+![image-20211201123112000](Ajax%E7%9B%B8%E5%85%B3/image-20211201123112000.png)
+
+
+
+在项目中引入 `babel`，通过文件操作层级的 `loader`。
+
+在 `webpack.config.js` 中自定义：
+
+![image-20211201123935562](Ajax%E7%9B%B8%E5%85%B3/image-20211201123935562.png)
+
+- test：通过正则，引入 .js 和 .jsx 格式文件。
+- exclude：排除在外的地址，不转换 node_modules 中的文件。
+- use：
+  - loader：加载方式使用 babel-loader，需要提前 npm 安装 `babel-loader`。
+
+```js
+module.exports = {
+  module:{
+    rules: [
+      {
+        test: /\.jsx?/,							// 需要转化 .js 和 .jsx 文件
+        exclude: /node_modules/,		// 排除 node_modules 地址的文件
+        use: {
+					loader: 'babel-loader',		// 使用babel-loader加载babel规则
+          options: {
+            babelrc: false,					// 告知babel，没有babelrc规则文件，babel规则都在这里找
+            presets: [							// 引入babel转化规则
+              require.resolve('@babel/preset-react'),		// 转化jsx语法
+              [require.resolve('@babel/preset-env', {module: false})] //转化高版本JS语法，
+            ],													//不转化module规则，因为webpack支持import,export规则
+            cacheDirecrtory: ture,			//需要添加缓存，默认是false，添加缓存后可以提升加载速度
+          }
+      	}
+      }
+    ]
+  }
+}
+```
+
+
+
+## 4.3 html-webpack-plugin
+
+插件的基本作用就是转化并生成 html 文件。
+
+- 为 html 文件中引入的外部资源如 script、link 动态添加每次 compile 后的 hash，防止引用缓存的外部文件问题；
+- 可以生成创建 html 入口文件，比如单页面可以生成一个 html 文件入口，配置 N 个 html-webpack-plugin 可以生成 N 个页面入口；
+
+安装：`npm install html-webpack-plugin -d`
+
+配置：在 `webpack.config.js` 中，
+
+1. 引入 `const HtmlWebPackPlugin = require('html-webpack-plugin')`
+
+2. 在 module 中配置：
+
+   ```js
+   const HtmlWebPackPlugin = require('html-webpack-plugin')
+   const path = require('path')   // 会把所有路径引入，并转化为绝对路径
+   
+   module.exports = {
+     module: {
+      // 上面 babel 相关设置在这里
+     },
+     plugins :[
+       new HTMLWebPackPlugin({														// 引入HTMLWebPackPlugin
+         template: path.resolve(__dirname, 'src/index.html'),    // 打包的文件地址
+         filename: 'index.html'					 // 文件打包完后在目标地址中的名字，通常与原文件名称相同
+       })
+     ]
+   }
+   ```
+
+   
+
+import 不想写后缀：
+
+`import ./text.js` node.js 中，默认可以不写 .js 文件后缀，在 webpack.consig.js 中可以配置更多的文件：
+
+```js
+module.exports = {
+  resolve: {
+    extensions: ['.wasm', '.mjs', '.js', '.jsx', '.json']
+  }
+}
+```
+
+指定 jsx 的入口文件：
+
+```js
+module.exports = {
+  entry: path.resolve(__dirname, 'src/index.jsx')
+}
+```
+
+
+
+## 4.4 wepack-dev-server
+
+webpack-dev-server 是一个小型的node.js Express 服务器。 简单来说，webpack-dev-server就是一个小型的静态文件服务器。使用它，可以为 webpack 打包生成的资源文件提供Web服务。
+
+1.  webpack-dev-server 有两种模式支持自动刷新——iframe模式和inline模式。
+   - 在 iframe 模式下：页面是嵌套在一个 iframe 内，在代码发生改动的时候，这个 iframe 会重新加载；
+   - 在 inline 模式下：一个小型的 webpack-dev-server 客户端会作为入口文件打包，这个客户端会在后端代码改变的时候动态刷新页面。
+2. webpac-dev-server 支持 Hot Module Replacement，即模块热替换，在前端代码变动的时候无需整个刷新页面，只把变化的部分替换掉。使用 HMR 功能也有两种方式：命令行方式和 Node.js API。
+
+
+
+使用 HMR 热替换，`webpack.config.js`：
+
+1. 引入 `webpack`
+
+```js
+const webpack = require('webpack')
+module.exports = {
+  // ... 其他文件
+  plygins:[
+    // ... 其他文件
+    ,
+    new webpack.HotModuleReplacementPlugin()
+  ],
+    devServer: {
+      hot: true;
+    }
+}
+```
+
+2. 对需要热更新的文件添加配置，在 `index.jsx` 入口文件，添加：
+
+```js
+import App from "./App"
+
+if(module.hot) {      // 如果发现module中有hot属性，表明已经设置了热替换，则引入热替换功能
+  module.hot.accept( error => {
+      if(error) console.log("热替换出BUG了")
+    })
+}
+```
+
+3. `webpack-dev-server --open` 启动服务，查看是否有效果。
+   - 在 `scripts` 中，可以配置命令行提升代码效率，不需要再输入一长串的命令了，只需要 `npm run start`：
 
 
 
@@ -1394,6 +1663,11 @@ function __webpack_require__(moduleId){
 
 
 
+### 区分： loader 和 plugin
+
+loader 是文件维度的操作，比如使用 babel 把所有的 js 文件都进行转化，
+
+plugin 是节点维度的操作，比如 index.html 所谓入口文件，需要引入全部的 js  库等等。
 
 
 
