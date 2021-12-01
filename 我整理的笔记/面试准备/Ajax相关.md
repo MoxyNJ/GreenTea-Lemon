@@ -1087,6 +1087,8 @@ getLyric(idx).then( res => {
 
 [Webpack 官网](webpackjs.com./api/)
 
+[掘金 - 分析 webpack 原理](https://juejin.cn/post/7023242274876162084)
+
 一个现代 JavaScript 应用程序的静态模块打包器
 
 1. 默认：只对 js 进行处理，其他类型文件需要配置 loader 或者插件进行处理。
@@ -1384,11 +1386,22 @@ function __webpack_require__(moduleId){
 
 #### 问题三：区分： loader 和 plugin
 
-loader 是文件维度的操作，比如使用 babel 把所有的 js 文件都进行转化，
+loader 是文件维度的操作，将 Webpack 不认识的、多种多样的格式内容转化为认识的、低版本的内容。
 
-plugin 是节点维度的操作，比如 index.html 所谓入口文件，需要引入全部的 js  库等等。
+- 比如使用 babel 把所有的 js 文件都进行转化，`babel-loader`
+- CSS 相关的引入：`css-loader`、`sass-loader`、`sass-loader`
+  - `style-loader` 通过动态添加 `style` 标签的方式，引入样式到节点上。
+  - `postcss `、`postcss-loader`、`postcss-preset-env` 自动添加CSS3属性前缀
+- 导入图片和使用地址：`url-loader`、`file-loader`
+- 解析 `.vue` 文件：vue-loader
 
 
+
+plugin 是节点维度的操作，比如 index.html 所谓入口文件，需要引入全部的 js  库等等。插件（Plugin）可以贯穿 Webpack 打包的生命周期，执行不同的任务
+
+- 使用 `html-webpack-plugin`，把打包好的 js 和 css 文件自动引入 HTML 中。
+- 使用 `clean-webpack-plugin`，在每次打包前，清空上次打包遗留的历史文件。
+- 
 
 
 
@@ -1720,6 +1733,24 @@ module.exports = {
 执行后，可以通过 `webpack-bundle-analyzer` 查看哪些文件体积大，然后针对性的优化。
 
 ![image-20211201162815017](Ajax%E7%9B%B8%E5%85%B3/image-20211201162815017.png)
+
+
+
+WebPack 5 自带。
+
+内部本身就自带 js 压缩功能，他内置了 terser-webpack-plugin 插件，我们不用再下载安装。而且在 mode=“production” 的时候会自动开启 js 压缩功能。
+
+> 如果你要在开发环境使用，就用下面：
+
+```js
+  // webpack.config.js中
+  module.exports = {
+     optimization: {
+       usedExports: true, //只导出被使用的模块
+       minimize : true // 启动压缩
+     }
+  }
+```
 
 
 
