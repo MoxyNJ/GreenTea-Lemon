@@ -377,29 +377,1025 @@ Promise based HTTP client for  the browser and node.js.
 
 - `yarn add axios`
 
-# 1.1 基本使用
-
-`axios()` 发送请求。
-
-`axios.request()` 发送请求。
-
-`axios.post(url, data, config)`：URL地址、请求体、可选参数。
 
 
+# 1 特性
 
-
-
-
-
+- 从浏览器中创建 [XMLHttpRequests](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)
+- 从 node.js 创建 [http](http://nodejs.org/api/http.html) 请求
+- 支持 [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) API
+- 拦截请求和响应
+- 转换请求数据和响应数据
+- 取消请求
+- 自动转换 JSON 数据
+- 客户端支持防御 [XSRF](http://en.wikipedia.org/wiki/Cross-site_request_forgery)
 
 
 
+## 1.1 API
+
+![Axios系统学习笔记原理图](Ajax%E7%9B%B8%E5%85%B3/Axios%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E5%8E%9F%E7%90%86%E5%9B%BE.png)
 
 
+
+| 基本方法                            | 作用                                     |
+| :---------------------------------- | ---------------------------------------- |
+| `axios(config)`                     | 通用/最本质的发任意类型请求的方式        |
+| `axios(url[, config])`              | 可以只指定 url 发 get 请求               |
+| **基本方法的别名**                  |                                          |
+| `axios.request(config)`             | 等同于 `axios(config)`                   |
+| `axios.get(url[, config])`          | 发 get 请求                              |
+| `axios.delete(url[, config])`       | 发 delete 请求                           |
+| `axios.post(url[, data, config])`   | 发 post 请求（`data` 请求体）            |
+| `axios.put(url[, data, config])`    | 发 put 请求（`data` 请求体）             |
+|                                     |                                          |
+| axios.head(url[, config])           |                                          |
+| axios.options(url[, config])        |                                          |
+| axios.patch(url[, data[, config]])  |                                          |
+|                                     |                                          |
+| **额外配置**                        |                                          |
+| `axios.defaults.xxx`                | 请求的默认全局配置                       |
+| `axios.interceptors.request.use()`  | 添加请求拦截器                           |
+| `axios.interceptors.response.use()` | 添加响应拦截器                           |
+| **创建 axios 实例**                 |                                          |
+| `axios.create([config])`            | 创建一个新的 axios (它没有下面的功能)    |
+| **取消请求**                        |                                          |
+| `axios.CancelToken()`               | 用于创建取消请求的错误对象               |
+| `axios.Cancel()`                    | 用于创建取消请求的 token 对象            |
+| `axios.isCancel()`                  | 是否是一个取消请求的错误                 |
+| **并发调用 axios**                  |                                          |
+| `axios.all(promises)`               | 用于批量执行多个异步请求                 |
+| `axios.spread(callback)`            | 用来指定接收所有成功数据的回调函数的方法 |
+
+
+
+## 1.2 基本方法
+
+##### `axios(config)`
+
+- 根据 `method` 属性值的不同，可以发送 get、post、delete、put 各种请求。
+- 效果和 `axios.get()`、`axios.post()`、`axios.delete()`、`axios.put()` 相同。
+
+```js
+// 发送 POST 请求
+axios({
+  method: 'post',
+  url: '/user/12345',
+  data: {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  }
+});
+
+// 发送 GET 请求
+axios({
+  method:'get',
+  url:'http://bit.ly/2mTM3nY',
+})
+```
+
+##### `axios(url[, config])` 默认发送 GET 请求
+
+```js
+axios('/user/12345');
+```
+
+
+
+##### `axios.get()` 和 `axios.post()`
+
+GET 请求：
+
+```js
+// 为给定 ID 的 user 创建请求
+axios.get('/user?ID=12345')
+    .then(response  => {
+    console.log(response);
+})
+
+// 上面的请求也可以这样做
+axios.get('/user', {
+    params: {
+        ID: 12345
+    }
+}).then(response => {
+    console.log(response);
+})
+```
+
+POST 请求：
+
+```js
+axios.post('/user', {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+})
+    .then(response => {
+    console.log(response);
+})
+```
+
+
+
+##### `axios.all()` 和 `axios.spread()`
+
+并发执行：
+
+```js
+const getUserAccount = () => {
+  return axios.get('/user/12345');
+}
+
+const getUserPermissions = () => {
+  return axios.get('/user/12345/permissions');
+}
+
+axios.all([getUserAccount(), getUserPermissions()])
+  .then(axios.spread((acct, perms) => {
+    // 两个请求现在都执行完成
+  }));
+```
+
+
+
+## 1.3 config 配置
+
+- [axios 中文文档](http://www.axios-js.com/zh-cn/docs/index.html#axios-head-url-config)
+
+只有 `url` 是必需的。如果没有指定 `method`，请求将默认使用 `get` 方法。
+
+以下是常用的配置请求：
+
+```js
+{
+   // 用于请求的服务器 URL
+  url: '/user',
+
+  // 创建请求时使用的方法
+  method: 'get', // default
+      
+  // 请求头
+  headers: {'X-Requested-With': 'XMLHttpRequest'},
+
+  // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL。
+  // URL == baseURL + url
+  baseURL: 'https://some-domain.com/api/',
+  
+  // 跟在 URL 后面的参数
+  params: {
+    ID: 12345
+  },
+      
+  // 指定请求超时的毫秒数(0 表示无超时时间)，ICU会自动中断请求
+  timeout: 1000,
+
+  // 服务器响应的数据类型：arraybuffer, blob, document, json, text, stream
+  responseType: 'json', // default
+}
+```
+
+
+
+以下是一般常见的配置
+
+```js
+{
+  // 请求体数据，只适用于 'PUT', 'POST', 和 'PATCH'
+  // 在没有设置 `transformRequest` 时，必须是以下类型之一：
+  // - string, plain object, ArrayBuffer, ArrayBufferView, URLSearchParams
+  // - 浏览器专属：FormData, File, Blob
+  // -  Node专属： Stream
+  data: {
+    firstName: 'Fred'
+  },
+
+//【请求拦截器】、【响应拦截器】
+  // 允许在向服务器发送前，修改请求数据，用 PUT, POST 和 PATCH 方法中
+  // 后面数组中的函数必须返回一个字符串，或 ArrayBuffer，或 Stream
+  transformRequest: [function (data, headers) {
+    // 对 data 进行任意转换处理
+    return data;
+  }],
+
+  // 数据在传递给 then/catch 前，修改响应数据
+  transformResponse: [function (data) {
+    // 对 data 进行任意转换处理
+    return data;
+  }],
+      
+      
+  // 跨域请求时是否需要使用凭证
+  withCredentials: false, // default
+
+   // `xsrfCookieName` 是用作 xsrf token 的值的cookie的名称
+  xsrfCookieName: 'XSRF-TOKEN', // default
+
+  // `xsrfHeaderName` is the name of the http header that carries the xsrf token value
+  xsrfHeaderName: 'X-XSRF-TOKEN', // default
+
+  // 'proxy' 定义代理服务器的主机名称和端口
+  // `auth` 表示 HTTP 基础验证应当用于连接代理，并提供凭据
+  // 这将会设置一个 `Proxy-Authorization` 头，覆写掉已有的通过使用 `header` 设置的自定义 `Proxy-Authorization` 头。
+  proxy: {
+    host: '127.0.0.1',
+    port: 9000,
+    auth: {
+      username: 'mikeymike',
+      password: 'rapunz3l'
+    }
+  },
+
+  // `cancelToken` 指定用于取消请求的 cancel token
+  cancelToken: new CancelToken(function (cancel) {
+  })
+}
+```
+
+
+
+## 1.4 response 响应结果：
+
+![image-20211129215622526](Ajax%E7%9B%B8%E5%85%B3/image-20211129215622526.png)
+
+axios 请求响应的结果，包含一下信息：
+
+```js
+{
+  status: 200, 			// 响应状态码
+  statusText: 'OK',		// 响应字符串
+  headers: {},			// 响应头
+  data: {},    			// 响应体：默认会自动进行 JSON 解析
+
+  config: {},           // 发送请求时的配置信息（请求类型、请求URL、请求体等等）
+  request: {}           // XMLHttpRequest 实例对象
+}
+```
+
+```js
+axios.get('/user/12345')
+  .then(function(response) {
+    console.log(response.data);
+    console.log(response.status);
+    console.log(response.statusText);
+    console.log(response.headers);
+    console.log(response.config);
+  });
+```
+
+
+
+## 1.5 默认配置
+
+如果同一个 axios 实例，定义了多个 axios 请求，且这些请求有相同的地方，比如他们的 baseURL 都是发送给同一个域名端口，比如他们的超时时间都定义为统一的 3000。这时便可以对这一系列 axios 请求进行默认配置定义，避免了每一个 axios 请求都需要再重新定义一次，增加了重复代码。
+
+**默认配置的优先级顺序**
+
+- `config` 的优先级是最高的：`config` 参数配置 > `defaults` 默认属性  >  `lib/defaults.js` 库的默认值。
+
+
+
+全局的 axios 默认值，使用 `dafaults` 属性值配置。
+
+```js
+axios.defaults.method = 'GET'
+axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.params= {id:100};  // URL中传递的参数
+axios.defaults.timeout = 3000;
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+```
+
+
+
+自定义实例默认值
+
+```js
+// 创建实例时，进行默认配置
+const instance = axios.create({
+  baseURL: 'https://api.example.com'
+});
+
+// 创建实例后，进行默认配置
+instance.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+```
+
+
+
+## 1.6 创建实例
+
+##### `axios.create([config])`
+
+可以自由创建不同的 axios 实例，从而设置 `defaults` 默认配置参数等等不会相互干涉。
+
+当项目较大，后端提供的端口有不同的服务器时，可以根据服务器的不同分别创建对应的 axios 实例，提高效率。
+
+```js
+const instance = axios.create({
+  baseURL: 'https://some-domain.com/api/',
+  timeout: 1000,
+  headers: {'X-Custom-Header': 'foobar'}
+});
+```
+
+`instance` 实例化对象功能和 `axios` 几乎是差不多的（后面会区分），可以使用的 API：
+
+- 发送请求的各种方法；
+- 默认配置 `defaults` 属性，拦截器 `interceptors` 属性。
+
+```js
+axios.prototype.request(config)
+
+axios.prototype.get(url[, config])
+axios.prototype.put(url[, data[, config]])
+axios.prototype.delete(url[, config])
+axios.prototype.post(url[, data[, config]])
+axios.prototype.patch(url[, data[, config]])
+
+axios.prototype.head(url[, config])
+axios.prototype.options(url[, config])
+```
+
+- 但是没有 `cancel()` 、`all()`、`CancelToken()` 的这些方法。
+
+
+
+## 1.7 拦截器
+
+拦截器就是一些函数，分为请求拦截器和响应拦截器。
+
+在发送请求时，会调用请求拦截器，对所有发送的请求进行最后的处理；
+
+- 常常在这里进行合理性判断，取消请求，修改 config 参数等等；
+
+在接收响应时，会调用响应拦截器，对所有接收的响应进行初次的处理；
+
+- 通常在这里对数据进行预处理，比如统一对失败的请求进行结果统计；对响应数据进行格式化处理。
+
+```js
+// 添加请求拦截器 (config, error )
+axios.interceptors.request.use(config => {
+    console.log("请求拦截器 成功")   	// 在发送请求之前做些什么
+    return config;
+  }, error => {
+	console.log("请求拦截器 失败")		// 对请求错误做些什么
+    return Promise.reject(error);
+  });
+
+// 添加响应拦截器 (response, error)
+axios.interceptors.response.use(response => {
+    console.log("响应拦截器 成功")   	// 对响应数据做点什么
+    return response;
+  }, error => {
+    console.log("响应拦截器 失败")   	// 对响应错误做点什么
+    return Promise.reject(error);
+  });
+```
+
+- 内部使用 promise 实现的；
+- 使用 `axios.interceptors.request.use` 和 `axios. interceptors.response.use` 方法。
+- 请求拦截器的参数是（config，error），config 表示请求的配置参数；
+- 响应拦截器的参数是（response，error），response 表示响应的全部结果；
+
+
+
+拦截器的 Pomise 顺序：
+
+```js
+// 添加请求拦截器 (config, error )
+axios.interceptors.request.use(config => {
+    console.log("请求拦截器 成功")
+	throw '参数出了问题'   // 这里让拦截器把请求状态调整为失败
+  }, error => {
+	console.log("请求拦截器 失败")
+    return Promise.reject(error);
+  });
+
+// 添加响应拦截器 (response, error)
+axios.interceptors.response.use(response => {
+    console.log("响应拦截器 成功")  
+    return response;
+  }, error => {
+    console.log("响应拦截器 失败")   
+    return Promise.reject(error);
+  });
+
+// 发送请求
+axios({
+    method: 'GET',
+    url: 'http://localhost:3000/posts'
+}).then(response => {
+    console.log(response)
+}).catch(error =>{
+    console.log(error)
+})
+```
+
+此时的执行顺序：
+
+1. axios 发送请求，`.then()` 等待 `promise`  决议；
+2. Request interceptors 请求拦截器执行，
+   - 输出：`请求拦截器 成功`  ；
+   - throw 参数出了问题，保存在 error 中，然后 promise reject 继续失败决议；
+3. Response interceptors 响应拦截器执行，
+   - 输出：`响应拦截器 失败`，然后 promise reject 继续失败决议；
+4. axios 请求的 `.then()` 接收到失败的 promise。
+   - 输出：`参数出了问题`
+
+
+
+拦截器的 Promise 顺序：
+
+```js
+// Promise
+// 设置请求拦截器  config 配置对象
+axios.interceptors.request.use(function (config) {
+    console.log('请求拦截器 成功 - 1号');
+    //修改 config 中的参数
+    config.params = {
+        a: 100
+    };
+
+    return config;
+}, function (error) {
+    console.log('请求拦截器 失败 - 1号');
+    return Promise.reject(error);
+});
+
+axios.interceptors.request.use(function (config) {
+    console.log('请求拦截器 成功 - 2号');
+    //修改 config 中的参数
+    config.timeout = 2000;
+    return config;
+}, function (error) {
+    console.log('请求拦截器 失败 - 2号');
+    return Promise.reject(error);
+});
+
+// 设置响应拦截器
+axios.interceptors.response.use(function (response) {
+    console.log('响应拦截器 成功 1号');
+    return response.data;
+    // return response;
+}, function (error) {
+    console.log('响应拦截器 失败 1号')
+    return Promise.reject(error);
+});
+
+axios.interceptors.response.use(function (response) {
+    console.log('响应拦截器 成功 2号')
+    return response;
+}, function (error) {
+    console.log('响应拦截器 失败 2号')
+    return Promise.reject(error);
+});
+
+//发送请求
+axios({
+    method: 'GET',
+    url: 'http://localhost:3000/posts'
+}).then(response => {
+    console.log('自定义回调处理成功的结果');
+    console.log(response);
+});
+```
+
+- 流程: 请求拦截器2 => 请求拦截器1 => 发ajax请求 => 响应拦截器1 => 响应拦截器 2 => 请求的回调
+
+
+
+## 1.8 取消请求
+
+```js
+axios({
+    method: 'GET',
+    url: 'http://localhost:3000/posts',
+    // 1. 添加配置对象属性
+    cancelToken: new axios.CancelToken((c) => {  
+    })
+})
+
+let cancel // 用于保存取消请求的函数
+const getProducts = () => {
+  axios({
+    url: 'http://localhost:4000/products1',
+    cancelToken: new axios.CancelToken( c => { 
+      // c 是用于取消当前请求的函数,保存取消函数,用于之后可能需要取消当前请求
+      cancel = c;
+    })
+  }).then(
+    response => {
+      cancel = null
+      console.log('请求1成功了', response.data)
+    },
+    error => {
+      cancel = null
+      console.log('请求1失败了', error.message, error) 
+      // 请求1失败了 强制取消请求 Cancel {message: "强制取消请求"}
+    }
+  )
+}
+
+// 执行取消请求的函数
+const cancelReq = () => {
+  // alert('取消请求')
+  if (typeof cancel === 'function'){
+    cancel('强制取消请求')
+  } else {
+    console.log('没有可取消的请求')
+  }
+}
+```
+
+- 在 `axios` 中设置了 `cancelToken` 属性，然后把其中的回调函数 `cancel` 放到外部环境中。
+- 当希望该请求取消时，调用 `cancel` 方法即可。
+- 在请求完成、或失败后，要及时清空 `cancel` 的引用。
+
+可以配合节流和防抖进行复习：
+
+- 节流：技能
+
+- 防抖：回城
+
+
+
+# 2 Axios 封装
+
+- https://juejin.cn/post/6968630178163458084#heading-13
+
+- https://juejin.cn/post/6999932338566070308
+
+- https://juejin.cn/post/6847009771606769677
+
+看一下 react 是如何封装的
+
+
+
+大致分为三个阶段：
+
+**1、请求之前**
+
+一般的接口都会有鉴权认证（token），因此在接口的请求头里面，我们需要带上token值以通过服务器的鉴权认证。
+
+- 但是如果每次请求的时候再去添加，会大大的加大工作量，而且很容易出错。使用 axios 提供了拦截器机制，在请求的拦截器中可以添加token。
+
+```js
+// 请求拦截
+axios.interceptors.request.use((config) => {
+  //....省略代码
+  config.headers.x_access_token = token
+  return config
+}, function (error) {
+  return Promise.reject(error)
+})
+```
+
+**2、响应之后**
+
+请求接口，并不是每一次请求都会成功。那么当接口请求失败的时候的统一处理：
+
+- 可以获取到服务器返回的状态码，然后根据状态码进行相对应的操作。
+
+```js
+// 响应拦截
+axios.interceptors.response.use(function (response) {
+  if (response.data.code === 401 ) { //
+    //用户 token 失效，清空用户信息
+    sessionStorage.user = ''
+    sessionStorage.token = ''
+    window.location.href = '/';//返回登录页
+    //接口 Promise 返回错误状态，错误信息 msg
+    return Promise.reject(msg)
+  }
+  if(response.status!==200||response.data.code!==200){
+    // 接口请求失败，具体根据实际情况判断
+    message.error(msg);//提示错误信息
+    return Promise.reject(msg)//接口Promise返回错误状态
+  }
+  return response
+}, function (error) {
+  if (axios.isCancel(error)) {
+    requestList.length = 0
+    throw new axios.Cancel('cancel request')
+  } else {
+    message.error('网络请求失败,请重试')
+  }
+  return Promise.reject(error)
+})
+```
+
+**3、使用axios**
+
+我在网易云音乐项目中的封装：
+
+`config.js`
+
+```js
+const devBaseURL = "http://123.207.32.32:9001";
+const proBaseURL = "http://123.207.32.32:9001";
+
+export const BASE_URL = process.env.NODE_ENV === "development" ? devBaseURL : proBaseURL;
+export const TIMEOUT = 5000;
+```
+
+`request.js`
+
+```js
+import axios from "axios";
+import { BASE_URL, TIMEOUT } from "./config";
+
+const instance = axios.create({
+  baseURL: BASE_URL,
+  timeout: TIMEOUT,
+});
+
+instance.interceptors.request.use(
+  (config) => {
+    // 1.发送网络请求时, 在界面的中间位置显示Loading的组件
+    // 2.某一些请求要求用户必须携带token, 如果没有携带, 那么取消请求，并直接跳转到登录页面s [shi]
+    // 3.params/data序列化的操作
+    return config;
+  },
+  (err) => {
+    return 0;
+  }
+);
+
+instance.interceptors.response.use(
+  (res) => {
+    return res.data;
+  },
+  (err) => {
+    // 判断HTTP状态码，然后进行对应的操作
+    if (err && err.response) {
+      switch (err.response.status) {
+        case 400:
+          console.log("请求错误");
+          break;
+        case 401:
+          console.log("未授权访问");
+          break;
+        default:
+          console.log("其他错误信息");
+      }
+    }
+    return err;
+  }
+);
+
+export default instance;
+```
+
+`player.js`
+
+```js
+import request from "./request";
+export function getSongDetail(ids) {
+  return request({
+    url: "/song/detail",
+    params: {
+      ids,
+    },
+  });
+}
+
+export function getLyric(id) {
+  return request({
+    url: "/lyric",
+    params: {
+      id,
+    },
+  });
+}
+```
+
+调用：
+
+```js
+getSongDetail(idx).then( res => {
+    console.log(res)
+})
+
+getLyric(idx).then( res => {
+    console.log(res)
+})
+```
 
 
 
 # PartⅢ Webpack
+
+# 1. 定义
+
+[Webpack 官网](webpackjs.com./api/)
+
+一个现代 JavaScript 应用程序的静态模块打包器
+
+1. 默认：只对 js 进行处理，其他类型文件需要配置 loader 或者插件进行处理。
+2. 打包：将各个依赖文件进行梳理打包，形成一个 JS 依赖文件。
+
+
+
+## 1.2 webpack 产生的背景
+
+首先，为什么打包？因为：
+
+1. 各个依赖文件的关系难以梳理，耦合程度较高，代码难以维护。
+2. 把所有依赖包都打包成为一个js文件（bundle.js）文件，会有效降低文件请求次数，一定程度提升性能。
+3. 逻辑多、文件多，项目复杂度提高
+
+为什么要用webpack？因为：
+
+1. webpack 除提供上述功能外，还充当了“翻译官”的角色，例如将 TS、ES6 翻译为低版本的语法，将less、sass 翻译为 css 等功能。
+2. 强大而灵活，plugin 可插拔，按需加载。
+
+
+
+重点：
+
+1. 理解前端模块化，各种模块化方式是如何实现的；
+2. 理解 Webpack 打包的核心思路；
+3. 理解 Webpack 中的 ‘关键人物’；
+
+
+
+## 1.3 前端模块化
+
+早起模块化的实现方法：
+
+不同的 module（moduleA.js， moduleB.js，moduleC.js） 会放在不同的 js 文件中。但是如果把所有的 js 文件通过 `script` 标签引入同一个 HTML 文件中时，这些 js 文件都会绑定到全局作用域中。这就导致了如果在不同的 js 文件中不小心使用了相同的变量名，就会发生命名冲突和值的覆盖。
+
+为了避免这种命名空间的冲突，会采用模块化封装，下面是一个早期的封装方式，采用立即执行函数 IIFE 和 闭包实现：
+
+```js
+// 定义模块内的模块作用域
+(function(window){
+    var name = "susan"
+    var sex = "female"
+    functioon tell(){
+        console.log("im ", this.name)
+    }
+    window.susanModule = {tell}
+})(window)
+```
+
+最终这个 susanModule 绑定在了 window 全局对象中，在 node 环境中是 global 对象。
+
+封装的好处就是，该暴露的数值可以暴露，想隐藏的数值也隐藏。
+
+- 这里的例子中 name  和 sex 的变量就变得无法修改，而只能通过 tell function 去访问，达到了对数据的封装，提升安全性。
+
+
+
+### 模块化的优点
+
+- 模块化的封装（该暴露的暴露，该隐藏的隐藏）
+- 重用性（不同的网页可以通用相同的模块）
+- 解除耦合（不同的模块之间不会相互关联影响）
+
+
+
+## 1.4 模块化方案进化史
+
+随着模块化优势体现，开发者更倾向于使用模块化协同开发项目，于是在发展过程中形成了很多规范：AMD、COMMONJS、ES6 MODULE
+
+
+
+### 1.4.1 AMD
+
+Asynchronous Module Definition（异步模块定义）
+定义最早，目前很少使用。
+
+```js
+// 求和模块，参数依次是：当前模块名、依赖的模块、模块内容
+define("getSum", ["math"], function(math){
+	return function (a,b){
+    	log("sum:"+ math.sum(a, b))
+    }
+})
+```
+### 1.4.2 COMMONJS
+
+2009年出的规范，原本是为服务端的规范，后来 nodejs 采用 commonjs 模块化规范
+
+- 模块必须显示的引入
+
+```js
+// 通过require函数来引用
+const math = require("./math");
+
+// 通过exports将其导出
+exports.getSum = function(a,b){
+	return a + b;
+}
+```
+
+
+
+### 1.4.3 ES6 MODULE
+
+目前使用最多的便是这个，JavaScript 提供了原生支持的模块打包方式，使用 `import` 和 `export`。
+
+```js
+// 通过import函数来引用
+import math from "./math";
+
+// 通过export将其导出
+export function sum(a, b){
+	return a + b;
+}
+```
+
+
+## 1.5 Webpack 的打包机制
+
+根据 `import` 引入等关键字，将依赖文件打包成一个文件。
+
+
+
+### 1.5.1 输出文件
+
+输出文件的大体结构：
+
+```js
+(function(module) {
+	var installedModules = {};
+    function __webpack_require__(moduleId){
+    	// SOME CODE
+    }
+    // 。。。
+    return __webpack_require__(0); // entry file
+})([ /* modules array */])
+```
+
+上述结构中的核心方法：
+
+```js
+function __webpack_require__(moduleId){
+	// check if module is in cache
+    if(installedModules[moduleId]){
+    	return installedModules[moduleId].exports;
+    }
+    // create a new module (and put into cache)
+    var module = installedModules[moduleId] = {
+    	i: moduleId,
+        l: false,
+        exports: {}
+    };
+    // exe the module func
+    modules[moduleId].call{
+    	module.exports,
+        module,
+        module.exports,
+        __webpack_require__
+    };
+    // flag the module as loaded
+    module.l = true;
+    // return the exxports of the module
+    return module.exports;
+}
+```
+### 1.5.2 Webpack打包过程
+
+1. 从入口文件开始，分析整个应用的依赖树
+2. 将每个依赖模块包装起来，放到一个数组中等待调用
+3. 实现模块加载的方法，并把它放到模块执行的环境中，确保模块间可以互相调用
+4. 把执行入口文件的逻辑放在一个函数表达式中，并立即执行这个函数
+
+
+
+# 2. 配置开发环境 -- npm、包管理器
+
+-  创建一个工程：`npm init`
+
+分析：`package.json` 版本信息文件
+
+![image-20211201103612904](Ajax%E7%9B%B8%E5%85%B3/image-20211201103612904.png)
+
+- 运行自定义命令：`npm run test`，就可以运行 `test` 后面命令的值，类似一个快捷键。这里就执行了后面的 `echo..` 这个命令。
+
+
+
+安装时的命令：
+
+- `npm config set registry https://registry.npm.taobao.org` 下载包的地址调整为淘宝镜像
+- `npm install loadash --save`
+  - `--save`，npm5xx 以上可省略。下载好包后，还会把这个包放到 `package.json` 的 `dependencies` 字段下保存：`"loadash: "^1.0.0`。
+  - `--save-dev`，指定当前环境是开发环境。会把这个包放到 `package.json` 的 `devDependencies` 字段下保存：`"loadash: "^1.0.0`。
+  - `--only=prod`，`--only=dev` 指定这个包安装在生产环境下 / 开发环境下。如果不指定，则默认会安装在 `node_modules` 中。在较大的工程项目中会实现环境区分， 比如只安装 `dependencies` 提升安装速度。
+- `npm` 安装 `webpack-cli`，`webpack-dev-server`。
+  - 事实上，在 `node_modules` 中项目已经装好了这些依赖，不需要在重新 `npm` 安装后才能运行 `webpack-dev-server` ，可以直接：`./node_modules/.bin/webpack-dev-server` 运行该依赖。
+
+
+
+
+
+
+
+![image-20211201105853475](Ajax%E7%9B%B8%E5%85%B3/image-20211201105853475.png)
+
+主要有两种依赖：
+
+1. `dependencies` 生产环境下的依赖。通常项目迁移到别处时，重现安装依赖会默认 `dependencies` 中的依赖，这里放和项目习惯的功能模块。
+2.  `devDependencies`  开发环境下的依赖。 通常反正构建工具、质量检测工具。
+
+
+
+语义化版本：
+
+在 `dependencies` 和 `devDependencies`  中的依赖，可以使用语义化版本号。重新安装依赖 `npm install` 后，会实现自动更新小版本或中版本，在不该动大版本的情况下，不需要用户手动修改版本号，就可以尽可能的使最新的版本。
+
+- `^version`：会自动更新中版本和小版本；
+  - `^1.0.1`  ==> `1.x.x`
+- `~version`：会自动更新小版本；
+  - `~1.0.1` ===> `1.0.x`
+- `version`：不更新，只安装规定的版本。
+
+
+
+`package.json` 中的 `"scripts"` 字段
+
+```json
+"scripts" : {
+    "test": "echo \"Error: no test specifed\" && exit 1",
+    "dev" : 
+}
+```
+
+`dev`：运行 `npm run dev` 可以原地启动一个 webpack 开发服务器。
+
+`build`：运行 `npm run build` 可以对代码格式做校验，对文件进行打包。
+
+
+
+`npm install` 的过程：
+
+1. 寻找包版本信息文件 (package.json)，依照它来进行安装；
+2. 查找 `package.json` 中的依赖，并检查项目中其他的版本信息文件；
+3. 如果发现了新包，就更新版本信息文件； 
+
+
+
+# 3. Webpack 4 实战
+
+## 3.1 安装和入口
+
+入口文件： `src/index.js` 当运行 `webpack ` 进行打包后，会把 `index` 入口文件中引入的全部模块打包起来，放到 `dist/main.js` 中。
+
+如果想修改入口文件，就需要自定义配置，通常会在根目录一个定义文件 `webpack.config.js` 来修改和定义配置：
+
+![image-20211201111848287](Ajax%E7%9B%B8%E5%85%B3/image-20211201111848287.png)
+
+- `entry` ：工程资源的入口，俗称入口文件，可以理解为依赖树的根，可以有多个入口，每个入口都会有一个对应的打包结果： `./app.js`。
+- `output` ：打包结果，俗称出口文件：`dist/bundule.js`。
+  - `path` ：必须是绝对路径，所以这里用到了 `path.join()` 校验地址；
+  - `filename`：打包结果的文件名。
+
+
+
+`webpack-dev-server`：监听工程文件的改动，可以自动打包文件，刷新浏览器。
+
+- `port`，修改默认的服务器地址，：`localhost:8080`
+
+
+
+## 3.2 loader
+
+接着上文的 webpack.config.js 文件
+
+![image-20211201115208378](Ajax%E7%9B%B8%E5%85%B3/image-20211201115208378.png)
+
+可以让 webpack 打包和引入 css、less、scss、png 等各种模块；
+
+`npm install css-loader --save-dev`，安装可以引入 css 的 loader。
+
+在 `webpack.config.js` 使用 `loader`。
+
+- `module` 下的 `rules` 中配置。
+  - `test`：`.css` 处理 `.css` 文件。
+  - `use`：这个文件需要被哪些 loader 来处理；
+    - `style-loader`：自动生成一个样式 style 标签，加载该样式；
+    - `css-loader`：让  js 可以解析  `import sytle.css`  这个代码；
+
+**注意，loader 的实际配置顺序是从下往上的，和书写的方式相反。**
+
+- 所以我们想优先加载的配置，要放在末尾。这里的顺序是固定的，即，先加载 `css-loader` 再加载 `style-loader`。
+
+生效后，可以解析 js 代码中的 `import sytle.css` 这类文件了。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -413,15 +1409,21 @@ Promise based HTTP client for  the browser and node.js.
 
 
 
+各位面试官下午好，很荣幸能有机会参加贵公司的面试。我叫侯林捷，目前是一个研二的在校学生，就读于中北大学的机电工程的机械专业，我本科专业是计算机的数字媒体技术。
+
+我对新知识总是抱有十足的热情，在本科阶段，我学习了数字媒体类相关知识，如人机交互、UI 及网页设计、Blender 动画制作、Adobe 公司 的 photoShop、illustrator、premiere Pro 等相关媒体软件；也学习过计算机网络、操作系统、C、Java、Python、SQL server数据库等计算机的相关知识。
+
+在接下来学习中，我发现前端工程师非常适合我：它需要不断学习更新的知识、需要有扎实的计算机功底，或许还需要对美学及 UI 设计等有少许的了解。所以在去年8月，我开始了对前端知识的探索，先后学习了《响应式 Web 设计》、《你不知道的Js》和《精通CSS》等书籍。同时配合网络课程、参考文档和技术文章来进行补充，这让我对前端的知识掌握的更加全面。
 
 
 
+我做事执着，喜欢坚持。在本科四年时间，学习成绩一直是年级的第一名，多次获得奖学金、三好学生等称号。我也懂得团队协作，在本科时期我曾担任年级长、学生会部门部长等职务，亲自策划并组织活动数场，协调各团队分工合作。和乐于助人，和同学关系融洽，获得优秀共青团干部等荣誉。
 
 
 
+设计：Sktech
 
-
-
+复读：执着
 
 
 
