@@ -1094,6 +1094,23 @@ getLyric(idx).then( res => {
 
 
 
+从历史看来，前端正在经历蓬勃发展：
+
+- 更方便的实现 html，出现 jsx
+- 更好用的实现 css，出现 sass less
+- 更好的模块化开发，出现 AMD，commonJs，ES6
+- 把各种新方案应用到支持较旧的浏览器中，出现 babel
+- 因为文件格式越来越多样，转化方式越来越多，出现了对打包方式、打包速度等优化的需求。
+- Webpack 应运而生，是一个模块打包的解决方案，也是一个融合前端新技术的平台；
+
+只要在 Webpack 中简单配置，就可以使用 jsx、TypeScript、babel 等各种各样的功能，所以，Webpack 是：
+
+- 是前端发展的产物：
+- 模块化打包方案；
+- 工程化方案。
+
+
+
 ## 1.2 webpack 产生的背景
 
 首先，为什么打包？因为：
@@ -1287,10 +1304,6 @@ function __webpack_require__(moduleId){
 
 
 
-
-
-
-
 ![image-20211201105853475](Ajax%E7%9B%B8%E5%85%B3/image-20211201105853475.png)
 
 主要有两种依赖：
@@ -1335,7 +1348,7 @@ function __webpack_require__(moduleId){
 
 
 
-执行 `npm install xxx -???`
+#### 问题一：执行 `npm install xxx -???`
 
 | npm install xxx + | [不写]   /  -s  /  --save     | -d  /  --save-dev             | -g  /  --global            |
 | ----------------- | ----------------------------- | ----------------------------- | -------------------------- |
@@ -1347,7 +1360,7 @@ function __webpack_require__(moduleId){
 
 
 
-webpack 各文件的作用？
+#### 问题二：webpack 各文件的作用？
 
 | 文件名                |                                                     |      |
 | --------------------- | --------------------------------------------------- | ---- |
@@ -1366,6 +1379,14 @@ webpack 各文件的作用？
 | `webpack.config.js`   | webpack 额外的配置文件，通常在这里调整 webpack 设置 |      |
 | `.babelrc`            | 调整 babel 的设置文件                               |      |
 |                       |                                                     |      |
+
+
+
+#### 问题三：区分： loader 和 plugin
+
+loader 是文件维度的操作，比如使用 babel 把所有的 js 文件都进行转化，
+
+plugin 是节点维度的操作，比如 index.html 所谓入口文件，需要引入全部的 js  库等等。
 
 
 
@@ -1655,6 +1676,100 @@ if(module.hot) {      // 如果发现module中有hot属性，表明已经设置�
 
 
 
+# 5. webpack 性能优化
+
+1. 打包结果优化
+
+2. 构建过程优化
+
+3. Tree-Shaking
+
+
+
+## 5.1 打包体积优化
+
+webpack 自带的压缩方式
+
+1. 安装 `npm install webpack-bundle-analyzer` 可视化 webpack 分析器，打包过程中会出现分析后的页面
+2. 在 webpack.config.js 中，开头引入`const TerserPlugin = require('terser-webpack-plugin')`
+3. 配置：
+
+```js
+const TerserPlugin = require('terser-webpack-plugin')
+
+module.exports = {
+  optimization: {
+    minimizer: [new TerserPlugin({
+      cache: true,   // 使用缓存，加快构建速度
+      parallel： true,   // 开启多线程，提高打包速度
+      terserOptions: {
+      compress: {			// 	移除无用代码：断点、控制台输出等等
+      unsed: true,
+      drop_debugger: true, 
+      drop_console: true,
+      dead_code: true
+    }
+    }
+    })]
+  }
+}
+```
+
+
+
+执行后，可以通过 `webpack-bundle-analyzer` 查看哪些文件体积大，然后针对性的优化。
+
+![image-20211201162815017](Ajax%E7%9B%B8%E5%85%B3/image-20211201162815017.png)
+
+
+
+## 5.2 打包速度优化
+
+思路一，减少干活的量：从文件体积上减小。删掉体积大的，用不上的文件，不去打包，比如：
+
+```js
+module:{
+  rules: [
+    {
+      exclude: /node_loader/,
+    }
+  ]
+}
+```
+
+
+
+思路二，增加干活的人：采用多线程打包，可以根据cpu数量构建线程池，有两种常见的库：
+
+- HappyPack
+
+- thread-loader 
+
+
+
+思路三，提前干活：预编译一些不常变化的模块。
+
+
+
+思路四，缓存：虽然时效性会差，但上次编译过的模块，如果没有修改，应该依然可用。
+
+
+
+思路五，使用更好的库，比如
+
+- `fast-sass-loader`，快速的处理 sass 文件，比 `sass-loader` 速度更快。
+
+
+
+
+
+
+
+## 5.3 Tree-Shaking
+
+webpack 自带的优化方法，顾名思义，摇晃树把不好的树叶都晃下来，这里的实现原理是把文件中的无用代码全部消除。
+
+- 作用：例如定义了一个 util，里面很多公用的方法，但是很多方法没有用到，那么在 dev 环境打包时候，输出文件中就可以看到很多没用到的方法声明，但是在 product 生产环境打包时候，输出文件中就没有这些方法，消除掉这部分没用的代码。
 
 
 
@@ -1663,19 +1778,6 @@ if(module.hot) {      // 如果发现module中有hot属性，表明已经设置�
 
 
 
-### 区分： loader 和 plugin
-
-loader 是文件维度的操作，比如使用 babel 把所有的 js 文件都进行转化，
-
-plugin 是节点维度的操作，比如 index.html 所谓入口文件，需要引入全部的 js  库等等。
-
-
-
-
-
-
-
-# PartⅣ npm / yarn
 
 
 
