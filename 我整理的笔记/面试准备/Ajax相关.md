@@ -276,7 +276,7 @@ xhr.abort()
 
 JSONP 是什么
 
-- JSONP (JSON with Padding)，是一个非官方的跨域解决方案，只支持get 请求。
+- JSONP (JSON with Padding)，是一个非官方的跨域解决方案，只支持 get 请求。
 
 JSONP 怎么工作的？
 
@@ -545,6 +545,11 @@ axios.all([getUserAccount(), getUserPermissions()])
   params: {
     ID: 12345
   },
+  
+  // 请求体数据，只适用于 'PUT', 'POST', 和 'PATCH'
+  data: {
+    firstName: 'Fred'
+  },
       
   // 指定请求超时的毫秒数(0 表示无超时时间)，ICU会自动中断请求
   timeout: 1000,
@@ -560,15 +565,6 @@ axios.all([getUserAccount(), getUserPermissions()])
 
 ```js
 {
-  // 请求体数据，只适用于 'PUT', 'POST', 和 'PATCH'
-  // 在没有设置 `transformRequest` 时，必须是以下类型之一：
-  // - string, plain object, ArrayBuffer, ArrayBufferView, URLSearchParams
-  // - 浏览器专属：FormData, File, Blob
-  // -  Node专属： Stream
-  data: {
-    firstName: 'Fred'
-  },
-
 //【请求拦截器】、【响应拦截器】
   // 允许在向服务器发送前，修改请求数据，用 PUT, POST 和 PATCH 方法中
   // 后面数组中的函数必须返回一个字符串，或 ArrayBuffer，或 Stream
@@ -986,7 +982,7 @@ axios.interceptors.response.use(function (response) {
 
 我在网易云音乐项目中的封装：
 
-`config.js`
+`config.js` 保存一些常量。
 
 ```js
 const devBaseURL = "http://123.207.32.32:9001";
@@ -996,7 +992,7 @@ export const BASE_URL = process.env.NODE_ENV === "development" ? devBaseURL : pr
 export const TIMEOUT = 5000;
 ```
 
-`request.js`
+`request.js` 请求之前 + 响应之后
 
 ```js
 import axios from "axios";
@@ -1044,7 +1040,7 @@ instance.interceptors.response.use(
 export default instance;
 ```
 
-`player.js`
+`player.js` 的                                                                                                                                                                                                                 
 
 ```js
 import request from "./request";
@@ -1091,7 +1087,7 @@ getLyric(idx).then( res => {
 
 一个现代 JavaScript 应用程序的静态模块打包器
 
-1. 默认：只对 js 进行处理，其他类型文件需要配置 loader 或者插件进行处理。
+1. 默认：只对 js 进行处理，其他类型文件	需要配置 loader 或者插件进行处理。
 2. 打包：将各个依赖文件进行梳理打包，形成一个 JS 依赖文件。
 
 
@@ -1400,8 +1396,10 @@ loader 是文件维度的操作，将 Webpack 不认识的、多种多样的格�
 plugin 是节点维度的操作，比如 index.html 所谓入口文件，需要引入全部的 js  库等等。插件（Plugin）可以贯穿 Webpack 打包的生命周期，执行不同的任务
 
 - 使用 `html-webpack-plugin`，把打包好的 js 和 css 文件自动引入 HTML 中。
+
 - 使用 `clean-webpack-plugin`，在每次打包前，清空上次打包遗留的历史文件。
-- 
+
+  
 
 
 
@@ -1792,47 +1790,11 @@ module:{
 
 
 
-
-
-
-
 ## 5.3 Tree-Shaking
 
 webpack 自带的优化方法，顾名思义，摇晃树把不好的树叶都晃下来，这里的实现原理是把文件中的无用代码全部消除。
 
 - 作用：例如定义了一个 util，里面很多公用的方法，但是很多方法没有用到，那么在 dev 环境打包时候，输出文件中就可以看到很多没用到的方法声明，但是在 product 生产环境打包时候，输出文件中就没有这些方法，消除掉这部分没用的代码。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-各位面试官下午好，很荣幸能有机会参加贵公司的面试。我叫侯林捷，目前是一个研二的在校学生，就读于中北大学的机电工程的机械专业，我本科专业是计算机的数字媒体技术。
-
-我对新知识总是抱有十足的热情，在本科阶段，我学习了数字媒体类相关知识，如人机交互、UI 及网页设计、Blender 动画制作、Adobe 公司 的 photoShop、illustrator、premiere Pro 等相关媒体软件；也学习过计算机网络、操作系统、C、Java、Python、SQL server数据库等计算机的相关知识。
-
-在接下来学习中，我发现前端工程师非常适合我：它需要不断学习更新的知识、需要有扎实的计算机功底，或许还需要对美学及 UI 设计等有少许的了解。所以在去年8月，我开始了对前端知识的探索，先后学习了《响应式 Web 设计》、《你不知道的Js》和《精通CSS》等书籍。同时配合网络课程、参考文档和技术文章来进行补充，这让我对前端的知识掌握的更加全面。
-
-
-
-我做事执着，喜欢坚持。在本科四年时间，学习成绩一直是年级的第一名，多次获得奖学金、三好学生等称号。我也懂得团队协作，在本科时期我曾担任年级长、学生会部门部长等职务，亲自策划并组织活动数场，协调各团队分工合作。和乐于助人，和同学关系融洽，获得优秀共青团干部等荣誉。
-
-
-
-设计：Sktech
-
-复读：执着
-
-
 
 
 
