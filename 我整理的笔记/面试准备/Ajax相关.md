@@ -1389,7 +1389,7 @@ loader 是文件维度的操作，将 Webpack 不认识的、多种多样的格�
   - `style-loader` 通过动态添加 `style` 标签的方式，引入样式到节点上。
   - `postcss `、`postcss-loader`、`postcss-preset-env` 自动添加CSS3属性前缀
 - 导入图片和使用地址：`url-loader`、`file-loader`
-- 解析 `.vue` 文件：vue-loader
+- 解析 `.vue` 文件：`vue-loader`
 
 
 
