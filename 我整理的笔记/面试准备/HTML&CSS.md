@@ -141,7 +141,7 @@
   - 表格相关：`table-cells`、`table-captions`、`table`、`inline-table`
   - `flex` 和 `grid`：fiex item、grid cell。
 
-- `overflow` 非 visible 元素。overflow：hidden、scroll、auto、inherit。
+- `overflow` 非 visible 元素。overflow：hidden、scroll、auto。
   - `overflow` 属性是当内容移除元素边框时的处理方式。
 
 
@@ -280,7 +280,7 @@ ch：是阿拉伯字母 0 的宽度。等宽字体。
 
 CSS3 的新特性，与视图窗口有关
 
-- `vw`、`vh`： 相对于视图窗口的宽度，相对于视图窗口高度。
+- `vw`、`vh`： 相对于视图窗口的宽度，相对于视图窗口的高度。
 - `%`：大部分相对于祖先元素，也有相对于自身的情况比如（border-radius、translate等)，计算复杂。
 
 | 单位 | 含义                                 |

@@ -151,11 +151,7 @@ http://wang.com
 
 - 允许浏览器向跨源服务器，发出 `XMLHttpRequest` 请求，从而克服了 `AJAX` 只能同源使用的限制。
 
-
-
-
-
-
+服务器的响应请求中设置：`"Access-Control-Allow-Origin" = *`
 
 实现 `CORS` 通信需要浏览器和服务器都支持。
 
