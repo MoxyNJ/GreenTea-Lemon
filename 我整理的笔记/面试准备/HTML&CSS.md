@@ -1210,8 +1210,6 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
 
 ### 14.1 三栏布局（3）
 
-好文章，复习时候看看：[圣杯布局与双飞翼布局 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/58355168)
-
 #### 两列定宽,一列自适应
 
 ![image.png](HTML&CSS/1620a136d1ea53c5tplv-t2oaga2asx-watermark.awebp)
@@ -1265,61 +1263,99 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
 
 #### 「 重要‼️」两侧定宽, 中间自适应
 
+好文章，复习时候看看：[圣杯布局与双飞翼布局 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/58355168)
+
+双飞翼是淘宝UE对圣杯布局的改进，两者都是中间自适应，两边固定的结构。不同的是解决中间位置的 center 如何让出左右两侧的距离。
+
+-   双飞翼办法：
+-   圣杯办法：在 left center right 的最外层包裹的 container 下手：调整它的 margin，空出左右两侧的位置；
+-   双飞翼：在 center 内部包裹一层 inner，所有元素放到 inner 。调整 inner 的 margin，空出左右两侧的位置；
+    -   双飞翼不需要对 container 进行调整，每个模块的逻辑得到了进一步的区分。
+
+
+
+**为什么 `margin-left: -100%` 会让 left 栏目向上移动？**
+
+1.   三个 float 元素的顺序依次是： center、left、right，他们都是向左做浮动；
+2.   三个左浮动的元素会依次从左向右排开，如果一行的位置不够，则后面的元素会移动到下一行的左边，**这个特性和 inline 一样**
+3.   因为 center 的宽度设定为 `width:100%` 占满了包含块的全部宽度，所以 left 就自然移动到了下一行；
+4.   而 `margin-left` 有两条应用规则：
+     -   对于父子关系，`margin-left` 的宽度是父元素的左边界和子元素的左边界之间的距离；
+     -   对于兄弟关系，`margin-left` 的宽度是前一个元素右边界和后一个元素左边界的距离；
+5.   当我们设定 `margin-left: -xx%` 给 left 栏时，left 会向左做移动。**这个特性和 inline 一样**，如果一直左移动，当上一行能放下这个 left 元素时，就会移动到上一行。
+6.   所以，设定 `margin-left: -100%` 时，left 元素会向左移动包含块的宽度的距离，正好移动到 center 和 left 的左边界重合。
+
+-   需要注意的是，当两个元素之间的 margin 为负时，就会发生层叠上下文的 z 轴覆盖问题。
+
+在 float 元素中调整 `margin-left` 和 `margin-right` 不只是会单纯的左右移动，如果上下空间足够，就会和 inline 的正常流那样，顺势向上一行或者下一行移动。
+
+-   而相对定位中的 `left` 和 `right` 不会发生折行问题，即使会把元素移出屏幕，就会单纯的只向左 / 右移动。
+
 ##### 双飞翼布局方法
 
-![image.png](HTML&CSS/1620a136d1cc24f8tplv-t2oaga2asx-watermark.awebp)
+![截屏2021-12-05 上午1.03.31](HTML&CSS/截屏2021-12-05 上午1.03.31.png)
 
 ```html
-<body>
-<div id="header"></div>
-<!--中间栏需要放在前面-->
-<div id="parent">
-    <div id="center">
-        <div id="center_inbox">中间自适应</div>
-        <hr>  <!--方便观察原理-->
-    </div>
-    <div id="left">左列定宽</div>
-    <div id="right">右列定宽</div>
-</div>
-<div id="footer"></div>
-</body>
+<!DOCTYPE html>
+<html lang="en">
 
-<style>
-#header {
-    height: 60px;
-    background-color: #ccc;
-}
-#left {
-    float: left;
-    width: 100px;
-    height: 500px;
-    margin-left: -100%; /*调整#left的位置,值等于自身宽度*/
-    background-color: #f00;
-}
-#center {
-    height: 500px;
-    float: left;
-    width: 100%;
-    background-color: #eeff2b;
-}
-#center_inbox{
-    height: 480px;
-    border: 1px solid #000;
-    margin: 0 220px 0 120px;  /*关键!!!左右边界等于左右盒子的宽度,多出来的为盒子间隔*/
-}
-#right {
-    float: left;
-    width: 200px;
-    height: 500px;
-    margin-left: -200px;  /*使right到指定的位置,值等于自身宽度*/
-    background-color: #0f0;
-}
-#footer {
-    clear: both;  /*注意清除浮动!!*/
-    height: 60px;
-    background-color: #ccc;
-}
-</style>
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style>
+    .header,
+    .footer {
+      height: 100px;
+      background-color: rgb(195, 239, 255);
+    }
+    .main {
+      width: 100%;
+      height: 500px;
+    }
+    .inner {
+      margin: 0 215px 0 115px;
+    }
+    .center {
+      float: left;
+      width: 100%;
+      height: 100%;
+      background-color: rgb(255, 195, 195);
+    }
+    .left {
+      float: left;
+      position: relative;
+      margin-left: -100%;
+      width: 100px;
+      height: 100%;
+      background-color: rgb(238, 206, 125);
+    }
+    .right {
+      float: left;
+      position: relative;
+      margin-left: -200px;
+      width: 200px;
+      height: 100%;
+      background-color: rgb(195, 255, 227);
+    }
+    /*给 container 加上 clearfix 类*/
+    .clearfix::after {
+      clear: both;
+      display: block;
+      content: "";
+    }
+  </style>
+
+<body>
+  <div class="header"></div>
+  <div class="main">
+    <div class="center clearfix">
+      <div class="inner">中间自适应</div>
+    </div>
+    <div class="left">左边固定100px，margin 15px</div>
+    <div class="right">右边固定200px，margin 15px</div>
+  </div>
+  <div class="footer"></div>
+</body>
 ```
 
 ##### 圣杯布局方法
@@ -1360,12 +1396,19 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
       height: 100%;
       background-color: rgb(204, 179, 255);
     }
+  
+  /*给 container 加上 clearfix 类*/
+  .clearfix::after{
+  clear: both;
+  display: block;
+  content: "";
+  }
 </style>
 
 <body>
   <div class="main">
     <div class="header"></div>
-    <div class="container">
+    <div class="container clearfix"> 
       <div class="center">中间自适应</div>
       <div class="left">左列定宽</div>
       <div class="right">右列定宽</div>
@@ -1375,24 +1418,7 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
 </body>
 ```
 
--   为什么 `margin-left: -100%` 会让 left 栏目向上移动？
-    1.   三个 float 元素的顺序依次是： center、left、right，他们都是向左做浮动；
-    2.   三个左浮动的元素会依次从左向右排开，如果一行的位置不够，则后面的元素会移动到下一行的左边，**这个特性和 inline 一样**
-    3.   因为 center 的宽度设定为 `width:100%` 占满了包含块的全部宽度，所以 left 就自然移动到了下一行；
-    4.   而 `margin-left` 有两条应用规则：
-         -   对于父子关系，`margin-left` 的宽度是父元素的左边界和子元素的左边界之间的距离；
-         -   对于兄弟关系，`margin-left` 的宽度是前一个元素右边界和后一个元素左边界的距离；
-    5.   当我们设定 `margin-left: -xx%` 给 left 栏时，left 会向左做移动。**这个特性和 inline 一样**，如果一直左移动，当上一行能放下这个 left 元素时，就会移动到上一行。
-    6.   所以，设定 `margin-left: -100%` 时，left 元素会向左移动包含块的宽度的距离，正好移动到 center 和 left 的左边界重合。
--   需要注意的是，当两个元素之间的 margin 为负时，就会发生层叠上下文的 z 轴覆盖问题。
-
-在 float 元素中调整 `margin-left` 和 `margin-right` 不只是会单纯的左右移动，如果上下空间足够，就会和 inline 的正常流那样，顺势向上一行或者下一行移动。
-
--   而相对定位中的 `left` 和 `right` 不会发生折行问题，即使会把元素移出屏幕，就会单纯的只向左 / 右移动。
-
-
-
--   父容器 `parent` 需要利用 `margin` 空出 left 和 right 的总宽度。这样 `center` 只会撑满包含块的 content 宽度，让出了 left 和 right 的空间。
+父容器 `parent` 需要利用 `margin` 空出 left 和 right 的总宽度。这样 `center` 只会撑满包含块的 content 宽度，让出了 left 和 right 的空间。
 
 
 

@@ -8,7 +8,7 @@
     .header,
     .footer {
       height: 100px;
-      background-color: rgb(255, 195, 195);
+      background-color: rgb(195, 239, 255);
     }
 
     .main {
@@ -16,10 +16,40 @@
       height: 500px;
     }
 
+    .inner {
+      margin: 0 215px 0 115px;
+    }
+
     .center {
+      float: left;
       width: 100%;
       height: 100%;
       background-color: rgb(255, 195, 195);
+    }
+
+    .left {
+      float: left;
+      position: relative;
+      margin-left: -100%;
+      width: 100px;
+      height: 100%;
+      background-color: rgb(238, 206, 125);
+    }
+
+    .right {
+      float: left;
+      position: relative;
+      margin-left: -200px;
+      width: 200px;
+      height: 100%;
+      background-color: rgb(195, 255, 227);
+    }
+
+    /*给 container 加上 clearfix 类*/
+    .clearfix::after {
+      clear: both;
+      display: block;
+      content: "";
     }
   </style>
 </head>
@@ -27,9 +57,11 @@
 <body>
   <div class="header"></div>
   <div class="main">
-    <div class="center"></div>
-    <div class="left"></div>
-    <div class="right"></div>
+    <div class="center clearfix">
+      <div class="inner">中间自适应</div>
+    </div>
+    <div class="left">左边固定100px，margin 15px</div>
+    <div class="right">右边固定200px，margin 15px</div>
   </div>
   <div class="footer"></div>
 </body>

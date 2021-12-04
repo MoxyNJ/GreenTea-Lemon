@@ -55,6 +55,13 @@
       height: 100px;
       background-color: rgb(255, 172, 172);
     }
+
+    /*给 container 加上 clearfix 类*/
+    .clearfix::after {
+      clear: both;
+      display: block;
+      content: "";
+    }
   </style>
 
 </head>
