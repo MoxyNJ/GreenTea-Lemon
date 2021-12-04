@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Document</title>
+  <style>
+    .main {
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      height: 100px;
+      background-color: rgb(255, 172, 172);
+    }
+
+    .container {
+      position: relative;
+      height: 600px;
+    }
+
+    .center {
+      float: left;
+      width: 100%;
+
+      border: 1px solid black;
+      background-color: rgb(255, 255, 179);
+    }
+
+    .left {
+      float: left;
+      margin-left: -50%;
+
+      border: 1px solid black;
+      background-color: rgb(179, 255, 254);
+    }
+
+    .right {
+      float: left;
+
+      border: 1px solid black;
+      background-color: rgb(204, 179, 255);
+    }
+
+    .footer {
+      height: 100px;
+      background-color: rgb(255, 172, 172);
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="main">
+    <div class="header"></div>
+    <div class="container">
+      <div class="center">中间自适应</div>
+      <div class="left">左列定宽</div>
+      <div class="right">右列定宽</div>
+    </div>
+    <div class="footer"></div>
+  </div>
+</body>
+
+</html>

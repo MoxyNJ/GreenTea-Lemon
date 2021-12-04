@@ -1333,15 +1333,15 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
     background-color: #ccc;
 }
 #parent {
-    box-sizing: border-box;
+    box-sizing: border-box;   /* content + padding + border*/
     height: 500px;
     padding: 0 215px 0 115px;  /*为了使#center摆正,左右padding分别等于左右盒子的宽,可以结合左右盒子相对定位的left调整间距*/
 }
 #left {
-    margin-left: -100%;  /*使#left上去一行*/
-    position: relative;
-    left: -115px;  /*相对定位调整#left的位置,正值大于或等于自身宽度*/
     float: left;
+    position: relative;
+  	margin-left: -100%;  /*使#left上去一行，%是相对包含块的宽度， -负数则表示向左移动*/
+    left: -115px;  /*相对定位调整#left的位置,正值大于或等于自身宽度*/
     width: 100px;
     height: 500px;
     background-color: #f00;
@@ -1349,19 +1349,19 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
 }
 #center {
     float: left;
+  	box-sizing: border-box;
     width: 100%;  /*由于#parent的padding,达到自适应的目的*/
     height: 500px;
-    box-sizing: border-box;
     border: 1px solid #000;
     background-color: #eeff2b;
 }
 #right {
+    float: left;
     position: relative;
     left: 215px; /*相对定位调整#right的位置,大于或等于自身宽度*/
     width: 200px;
     height: 500px;
     margin-left: -200px;  /*使#right上去一行*/
-    float: left;
     background-color: #0f0;
     opacity: 0.5;
 }
