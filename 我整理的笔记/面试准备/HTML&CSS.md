@@ -1210,6 +1210,8 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
 
 ### 14.1 三栏布局（3）
 
+好文章，复习时候看看：[圣杯布局与双飞翼布局 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/58355168)
+
 #### 两列定宽,一列自适应
 
 ![image.png](HTML&CSS/1620a136d1ea53c5tplv-t2oaga2asx-watermark.awebp)
@@ -1261,7 +1263,7 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
 }
 ```
 
-#### 两侧定宽, 中间自适应
+#### 「 重要‼️」两侧定宽, 中间自适应
 
 ##### 双飞翼布局方法
 
@@ -1293,7 +1295,6 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
     height: 500px;
     margin-left: -100%; /*调整#left的位置,值等于自身宽度*/
     background-color: #f00;
-    opacity: 0.5;
 }
 #center {
     height: 500px;
@@ -1312,7 +1313,6 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
     height: 500px;
     margin-left: -200px;  /*使right到指定的位置,值等于自身宽度*/
     background-color: #0f0;
-    opacity: 0.5;
 }
 #footer {
     clear: both;  /*注意清除浮动!!*/
@@ -1324,66 +1324,77 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
 
 ##### 圣杯布局方法
 
-![image.png](HTML&CSS/1620a136f3b3a4aatplv-t2oaga2asx-watermark.awebp)
+![截屏2021-12-05 上午12.13.27](HTML&CSS/截屏2021-12-05 上午12.13.27.png)
 
 ```html
 <style>
-#header{
-    height: 60px;
-    background-color: #ccc;
-}
-#parent {
-    box-sizing: border-box;   /* content + padding + border*/
-    height: 500px;
-    padding: 0 215px 0 115px;  /*为了使#center摆正,左右padding分别等于左右盒子的宽,可以结合左右盒子相对定位的left调整间距*/
-}
-#left {
-    float: left;
-    position: relative;
-  	margin-left: -100%;  /*使#left上去一行，%是相对包含块的宽度， -负数则表示向左移动*/
-    left: -115px;  /*相对定位调整#left的位置,正值大于或等于自身宽度*/
-    width: 100px;
-    height: 500px;
-    background-color: #f00;
-    opacity: 0.5;
-}
-#center {
-    float: left;
-  	box-sizing: border-box;
-    width: 100%;  /*由于#parent的padding,达到自适应的目的*/
-    height: 500px;
-    border: 1px solid #000;
-    background-color: #eeff2b;
-}
-#right {
-    float: left;
-    position: relative;
-    left: 215px; /*相对定位调整#right的位置,大于或等于自身宽度*/
-    width: 200px;
-    height: 500px;
-    margin-left: -200px;  /*使#right上去一行*/
-    background-color: #0f0;
-    opacity: 0.5;
-}
-#footer{
-    height: 60px;
-    background-color: #ccc;
-}
+    .header, .footer {
+      height: 100px;
+      background-color: rgb(255, 172, 172);
+    }
+    .container {
+      margin: 0 215px 0 115px;
+      height: 600px;
+    }
+    .center {
+      float: left;
+      width: 100%;
+      height: 100%;
+      background-color: rgb(255, 255, 179);
+    }
+    .left {
+      float: left;
+      position: relative;
+      left: -115px;
+      margin-left: -100%;
+      width: 100px;
+      height: 100%;
+      background-color: rgb(179, 255, 254);
+    }
+    .right {
+      float: left;
+      position: relative;
+      left: 230px;
+      margin-left: -215px;
+      width: 200px;
+      height: 100%;
+      background-color: rgb(204, 179, 255);
+    }
 </style>
 
 <body>
-<div id="header"></div>
-<div id="parent">
-    <!--#center需要放在前面-->
-    <div id="center">中间自适应
-        <hr>
+  <div class="main">
+    <div class="header"></div>
+    <div class="container">
+      <div class="center">中间自适应</div>
+      <div class="left">左列定宽</div>
+      <div class="right">右列定宽</div>
     </div>
-    <div id="left">左列定宽</div>
-    <div id="right">右列定宽</div>
-</div>
-<div id="footer"></div>
+    <div class="footer"></div>
+  </div>
 </body>
 ```
+
+-   为什么 `margin-left: -100%` 会让 left 栏目向上移动？
+    1.   三个 float 元素的顺序依次是： center、left、right，他们都是向左做浮动；
+    2.   三个左浮动的元素会依次从左向右排开，如果一行的位置不够，则后面的元素会移动到下一行的左边，**这个特性和 inline 一样**
+    3.   因为 center 的宽度设定为 `width:100%` 占满了包含块的全部宽度，所以 left 就自然移动到了下一行；
+    4.   而 `margin-left` 有两条应用规则：
+         -   对于父子关系，`margin-left` 的宽度是父元素的左边界和子元素的左边界之间的距离；
+         -   对于兄弟关系，`margin-left` 的宽度是前一个元素右边界和后一个元素左边界的距离；
+    5.   当我们设定 `margin-left: -xx%` 给 left 栏时，left 会向左做移动。**这个特性和 inline 一样**，如果一直左移动，当上一行能放下这个 left 元素时，就会移动到上一行。
+    6.   所以，设定 `margin-left: -100%` 时，left 元素会向左移动包含块的宽度的距离，正好移动到 center 和 left 的左边界重合。
+-   需要注意的是，当两个元素之间的 margin 为负时，就会发生层叠上下文的 z 轴覆盖问题。
+
+在 float 元素中调整 `margin-left` 和 `margin-right` 不只是会单纯的左右移动，如果上下空间足够，就会和 inline 的正常流那样，顺势向上一行或者下一行移动。
+
+-   而相对定位中的 `left` 和 `right` 不会发生折行问题，即使会把元素移出屏幕，就会单纯的只向左 / 右移动。
+
+
+
+-   父容器 `parent` 需要利用 `margin` 空出 left 和 right 的总宽度。这样 `center` 只会撑满包含块的 content 宽度，让出了 left 和 right 的空间。
+
+
 
 **使用 `flex` 实现**
 
