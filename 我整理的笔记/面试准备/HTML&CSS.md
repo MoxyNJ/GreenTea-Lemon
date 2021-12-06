@@ -1,5 +1,3 @@
-# 整理问题
-
 # 正常流
 
 ## 1. 盒模型
@@ -138,8 +136,8 @@
 - `position` 脱离正常流元素。`fixed`、`absolute` 固定定位、绝对定位的元素。
 - `display` 创建包含块元素：
   - 内联块和列表：`inline-block`、`list-item`
-  - 表格相关：`table-cells`、`table-captions`、`table`、`inline-table`
-  - `flex` 和 `grid`：fiex item、grid cell。
+  - 表格相关：`table-cells`、`table-captions`、`table`、`inline-table`；
+  - `flex` 和 `grid` 相关：fiex item、grid cell。
 
 - `overflow` 非 visible 元素。overflow：hidden、scroll、auto。
   - `overflow` 属性是当内容移除元素边框时的处理方式。
@@ -183,12 +181,14 @@
 
 1. `box1` 设置为浮动，脱离了当前正常流，移动到当前位置的左边。
 2. `container` 内失去了 `box1` 的占位，所以高度参考 `box2`，出现了高度坍塌。
+   -  `box1` 的包含块不是 `container`，而是根元素 `html`。`container` 自然无法包裹脱离正常流的 `box1`。
 
 #### 解决方式一：BFC
 
 `container` 设置 `overflow：auto` 其内部创建了一个 BFC，根据规则 BFC 的高度计算需要参考 `float` 元素，所以元素会被撑开。
 
 - 只要让 `container` 成为 `box1` 的包含块即可撑开 `container` 的高度。
+- 因为 `container` 创建了一个 BFC，此时 `box1` 的包含块就是 `container` 了，所以 `container` 自然被 `box1` 撑开
 
 ![image-20211123170431340](HTML&CSS/image-20211123170431340.png)
 
@@ -197,7 +197,7 @@
 `clear` 清除浮动，会让被清除浮动的元素移动到浮动元素的下方。那么我们通过 CSS 创建一个内容为空的伪元素，然后让他清除浮动，就可以解决这个问题：
 
 - 注意这个伪元素必须设置为 `block`，否则变成内联了，无法撑开。
-- `::after` 会为选中元素的内容的后面，添加一个 新元素。在这里其实是对 `container` 容器内添加了一个子元素。
+- `::after` 会为选中元素的 **内容的最后** ，添加一个 新元素。在这里其实是对 `container` 容器内 **添加了一个子元素** 。
 
 ```css
 .container::after {
@@ -248,11 +248,15 @@
 
 
 
+相对字符长度：
+
 ex：是字符 x 高度，与 font-size 对应。font-size 值越大，则 ex 就越大；
 
-em：是传统 m 的宽度，也是汉字的高度。即一个字模的宽度。根据不同的英文字体，宽度会发生变化。但中文通常一个汉字正好是一个 m 的宽度和高度。font-size 是按照父元素字符尺寸来计算。
+em：是传统 m 的宽度，也是汉字的高度。即一个字模的宽度。根据不同的英文字体，宽度会发生变化。但中文通常一个汉字正好是一个 m 的宽度和高度。
 
-rem：root em。1 rem 和根字符大小一样，font-size 都按照根字符来计算。
+- font-size 是按照父元素字符尺寸来计算。
+
+rem：root 的 em。1 rem 和根字符大小一样，font-size 都按照根字符来计算。
 
 ch：是阿拉伯字母 0 的宽度。等宽字体。
 
@@ -1151,7 +1155,7 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
 
 ### 14.1 两栏布局（3）
 
-![img](HTML&CSS/1620a136d179e360tplv-t2oaga2asx-watermark.awebp)
+![image-20211206094123883](HTML&CSS/image-20211206094123883.png)
 
 利用 `float` + `margin` 实现
 
@@ -1172,20 +1176,20 @@ CSS2 中的伪元素和伪类都使用 1 个冒号，在 CSS3 中，为了区分
 利用 `float` + `overflow` 实现
 
 ```css
-#left {
-    background-color: #f00;
+.left {
     float: left;
     width: 100px;
+    background-color: #f00;
 }
-#right {
-    background-color: #0f0;
+.right {
     overflow: hidden; /*触发bfc达到自适应*/
+    background-color: #0f0;
 }
 ```
 
 从整体来看，`left` 和 `right` 被一个 `body` 包裹，`left` 是左浮动。所以这两个盒子会并排放在一起；
 
-从各自来看，`left` 和 `right` 内部都是一个 BFC，所以内容相互不影响。而右侧的 right 设置 `width: 100%` 把剩余空间都吃掉了。
+从各自来看，`left` 和 `right` 内部都是一个 BFC，都脱离了正常流，所以内容相互不影响。
 
 优缺点：
 
