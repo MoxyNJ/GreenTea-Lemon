@@ -489,19 +489,19 @@ flex item（6）：
 
 三栏布局（圣杯布局）：左右固定，中间自适应。
 
-- 左边：宽度固定，设置左浮动；右边宽度固定，设置右浮动；中间宽度 ：`width:100%`设置左浮动。
+- 中间宽度 ：`width:100%` 设置左浮动。左边：宽度固定，设置左浮动；右边宽度固定，设置右浮动；
 
-双飞翼布局：
+双飞翼布局：是国内淘宝UE对圣杯布局的优化。把 margin 的设定从 contaienr 放到了 center 中，center 的内容通过 inner 额外包裹。
 
 
 
 实现水平、垂直居中的方式：
 
 1.  `text-align:center` 仅行内元素有效
-2. `vertical-align`
+2. `vertical-align` 多行居中
 3. 将行内元素的 `line-height` 和 `height` 设置为相同（水平居中）
-4. 绝对定位。父元素设置 `position:reletive`。子元素设置 `position:absolute`，然后使用 `top:50%;left:50%`，把左上角对齐父容器的一半，最后使用 `margin-top` 和 `margin-left` 为子元素的一半 ，实现居中对齐。
-5. `transform: translateX(-50%) translateY(-50%);`上面的绝对定位方法只要将 `margin` 改为 `transform` 就可以实现 **宽度和高度未知** 的居中，兼容性不好。
+4. 绝对定位。父元素设置 `position:reletive`。子元素设置 `position:absolute`，然后使用 `top:50%; left:50%`，把左上角对齐父容器的一半，最后使用 `margin-top` 和 `margin-left` 为子元素的一半 ，实现居中对齐。
+5. `transform: translateX(-50%) translateY(-50%);`上面的绝对定位方法只要将 `margin` left 和 top 改为 `50%` 就可以实现 **宽度和高度未知** 的居中，兼容性不好。
 
 
 
@@ -698,8 +698,8 @@ background-clip：裁剪背景图片。元素背景（背景图片或颜色）�
 ```css
 .son {
     position: absolute;
-    top: 50%;
-    transform: translate( 0, -50%);
+    top: 50%;    /* 移动包含块height的50% */ 
+    transform: translate( 0, -50%);   /* 移动自身height的50% */
 }
 ```
 
@@ -814,20 +814,20 @@ background-clip：裁剪背景图片。元素背景（背景图片或颜色）�
 - `display: none;`
   1. DOM 结构：在 DOM 中，不占据正常流的空间；
   2. 事件监听：**无法进行 DOM 事件监听；**
-  3. 性能：动态改变此属性时会引起重排重绘，性能较差；
+  3. 性能：动态改变此属性时会 **引起重排重绘**，性能较差；
   4. 继承：不会被子元素继承，毕竟子类也不会被渲染（直接没，不存在继承问题了）；
-  5. `transition`：`transition` 不支持 display。
+  5. `transition`：`transition` 不支持 `display`。
 - `visibility: hidden;`
   1. DOM 结构：元素被隐藏，会被渲染不会消失，占据空间；
   2. 事件监听：**无法进行 DOM 事件监听；**
-  3. 性能：动态改变此属性时会引起重绘，性能较高；
+  3. 性能：动态改变此属性时会 **引起重绘**，性能较高；
   4. 继承：会被子元素继承，子元素可以通过设置 `visibility: visible`; 来取消隐藏；
   5. `transition`：`visibility` 会立即显示，隐藏时会延时
 - `opacity: 0;`
   1. DOM 结构：透明度为 100%，元素隐藏，占据空间；
   2. 事件监听：可以进行 DOM 事件监听；
-  3. 性能：提升为合成层，不会触发重绘，性能较高；
-  4. 继承：会被子元素继承，子元素并不能通过 opacity: 1 来取消隐藏；
+  3. 性能：提升为合成层，**不会触发重绘**，性能较高；
+  4. 继承：会被子元素继承，子元素并不能通过 `opacity: 1` 来取消隐藏；
   5. `transition`：`opacity` 可以延时显示和隐藏
 
 
@@ -933,7 +933,7 @@ ID选择符：`#myId`
 
 #### 2 高级选择符
 
-子选择符：`>` ，如 `#nav > li`  只选择了 id 为 nav 的 li 元素，只选择直接后代，也就是子后代，**多个元素**。
+子选择符：`>` ，如 `#nav > li`  选择了 id 为 nav 的 li 元素的直接后代，也就是子后代，**多个元素**。
 
 相邻同辈选择符：`+`，如 `h2 + p` 只选择了 h2 元素 **后面** 的、拥有 **共同父元素** 的 **一个元素** p。
 
@@ -997,7 +997,7 @@ ID选择符：`#myId`
 
 - `nth-last-child(3)` ：选择列表中的倒数第 3 个标签
 
-`:nth-of-type(n)`：匹配指定类型的第 N 个子元素，**与元素类型有关**。可以插入含n的表达式，来选中同类型元素。
+`:nth-of-type(n)`：匹配指定类型的第 N 个子元素，**与元素类型有关**。可以插入含 n 的表达式，来选中同类型元素。
 
 - 如 `.myDiv p:nth-of-type(3)`：匹配 class 值为 myDiv 内的第 3 个 p 元素。
 
