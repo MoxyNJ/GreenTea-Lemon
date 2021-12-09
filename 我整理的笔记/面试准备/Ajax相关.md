@@ -4,7 +4,7 @@
 
 ## 1.1 Ajax 简介
 
-AJAX 全称为Asynchronous JavaScript And XML，就是异步的 JS 和XML。
+AJAX 全称为 Asynchronous JavaScript And XML，就是异步的 JS 和 XML。
 
 通过 AJAX 可以在浏览器中向服务器发送异步请求，最大的优势：**无刷新获取数据**。AJAX 不是新的编程语言，而是一种将现有的标准组合在一起使用的新方式。
 
