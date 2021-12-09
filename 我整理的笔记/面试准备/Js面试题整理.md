@@ -77,11 +77,15 @@ var a = [];
 var b = {};
 b.__proto__ = Array.prototype;
 
+// 方式一
 a.constructor === Array; 			// true，通过原型链访问构造函数来判断
 
+
+// 方式二
 a instanceof Array; 				// true, instanceof 基于原型链判断，可判断引用类型，
 Array.prototype.isPrototypeOf(a); 	// true，isPrototypeOf 基于原型链判断，a 的原型链上是否有 Array.prototype
 
+// 方式三
 Object.getPrototypeOf(a) === Array.prototype;  	// true，获取原型链，判断是否是 Array.prototype
 a.__proto__ === Array.prototype 				// true，获取原型链，判断是否是 Array.prototype
 ```
