@@ -26,11 +26,72 @@
 
 - 想要在事件监听的回调函数位置，额外传递一些参数信息，就需要用高阶函数。
 
+不使用高阶函数：
 
+```jsx
+class Login extends React.Component{
+  state = { username:'', password:''}
+
+  //保存表单数据到状态中
+  saveFormData = (dataType,event) => {
+    this.setState({[dataType]:event.target.value})
+  }
+
+  //表单提交的回调
+  handleSubmit = (event) => {
+    event.preventDefault() //阻止表单提交
+    const {username,password} = this.state
+    alert(`你输入的用户名是：${username}, 你输入的密码是：${password}`)
+  }
+  render(){	
+    return(
+      <form onSubmit={this.handleSubmit}>
+        用户名：<input onChange={event => this.saveFormData('username', event)} type="text" name="username"/>
+        密  码：<input onChange={event => this.saveFormData('password', event)} type="password" name="password"/>
+        <button>登录</button>
+      </form>
+    )
+  }
+}
+ReactDOM.render(<Login/>,document.getElementById('test'))
+```
+
+使用高阶函数（柯里化）：
+
+```jsx
+// ... ...
+//保存表单数据到状态中
+saveFormData = (dataType)=>{
+  return (event)=>{
+    this.setState({[dataType]:event.target.value})
+  }
+}
+// ...
+render(){
+  return(
+    <form onSubmit={this.handleSubmit}>
+      用户名：<input onChange={this.saveFormData('username')} type="text" name="username"/>
+      密  码：<input onChange={this.saveFormData('password')} type="password" name="password"/>
+      <button>登录</button>
+    </form>
+  )
+}
+// ... ...
+```
 
 ### 柯里化
 
-当调用函数后，返回的仍然是一个函数调用，就这样层层嵌套，直到最后一层函数调用会返回一个确切的值。像这样多次接收参数，最后在最后一层函数的 `return` 位置统一处理，就是函数的柯里化。
+当调用函数后，返回的仍然是一个函数调用，就这样层层嵌套，直到最后一层函数调用会返回一个确切的值。像这样多次接收参数，在最后一层函数的 `return` 位置统一处理，就是函数的柯里化。
+
+```js
+const sum = (a) => {
+  return (b) => {
+    return (c) => {
+      return a+b+c;
+    }
+  }
+}
+```
 
 
 
@@ -46,6 +107,9 @@
 
 ## context - provider
 
+-   缺点1：context 是一个全局变量，当组件庞大复杂的时候，全局命名空间会变得繁杂，变量的来源和去向不清楚。
+-   缺点2：如果没有及时的在卸载组件时取消订阅，有可能会造成内存泄露。
+
 消息订阅与发布机制
 
 1. 先订阅，再发布（理解：有一种隔空对话的感觉）
@@ -53,18 +117,21 @@
 3. 要在组件的 `componentWillUnmount` 中取消订阅
 
 ```jsx
-const constext = React.createContext('light');
+// 	创建一个全局的上下文组件。
+const context = React.createContext('light');
 
+// 父，传递给 Toolbar，然后传递给 ThemedButton
 class App extends React.Component {
   render() {
     return (
-      <constext.Provider value="dark">
+      <context.Provider value="dark">
         <Toolbar />
-      </ThemeContext.Provider>
+      </context.Provider>
     );
   }
 }
 
+// 中间组件
 function Toolbar() {
   return (
     <div>
@@ -72,9 +139,10 @@ function Toolbar() {
     </div>
   );
 }
-
+ 
+// 子，收到了祖父传递的值。
 class ThemedButton extends React.Component {
-  static constext = ThemeContext;
+  static context = ThemeContext;
   render() {
     return <Button theme={this.context} />;
   }
@@ -84,6 +152,8 @@ class ThemedButton extends React.Component {
 
 
 ## redux
+
+使用 redux 管理组件间的数据，达到完全可控。
 
 
 
@@ -296,9 +366,9 @@ class ThemedButton extends React.Component {
 
 **情况1：**
 
-若对数据进行：**逆序添加、逆序删除等破坏顺序操作**，就会导致产生没有必要的真实 DOM 更新。
+若对数据进行：**逆序添加、逆序删除等破坏顺序操作（从 index = 0 开始操作）**，就会导致产生没有必要的真实 DOM 更新。
 
-这是因为如果破坏了顺序，虽然新旧虚拟 DOM 中拥有相同 index 名称的节点，但是其内容因为顺讯被破坏了关系，已经完全不一样了，这导致所有内容需要全部重新渲染。
+这是因为如果破坏了顺序，虽然新旧虚拟 DOM 中拥有相同 index 名称的节点，但是其内容因为循序被破坏了的关系，已经完全不一样了，这导致所有内容需要 **全部重新渲染** 。
 
 - 最终结果：界面效果没问题, 但效率低。
 
@@ -308,7 +378,9 @@ class ThemedButton extends React.Component {
 
 如果结构中还包含输入类的 DOM：会产生错误 DOM 更新。
 
-- 最终结果：界面会发生问题。
+Diff 算法是一个节点一个节点的展开比较的。
+
+- 最终结果：界面会发生问题，错位。
 
 
 
@@ -340,7 +412,7 @@ src ---- 源码文件夹
    - 触发 `ReactDOM.render()` 渲染 App 组件；
      - 引入 App 组件时，就会把相应的 CSS、JS 代码全部引入。
 
-2. 在 `index.js` 文件执行后，React 通过 webpack 的配置文件，找到 `src` 下的 `index.html`：
+2. 在 `index.js` 文件执行后，React 通过 webpack 的配置文件，找到 `public` 下的 `index.html`：
    - 依次执行 `index.html` 中的程序，
 3. 最终，渲染出 `index.html` 的页面。
 
@@ -361,9 +433,9 @@ src ---- 源码文件夹
 
 ### 什么是路由?
 
-1. 一个路由就是一个映射关系 (key / value)：
-   - key 是一个路径，如`"/serch/users"`；
-   - value 可能是 function（后端） 或 component（前端）。
+一个路由就是一个映射关系 (key / value)：
+- key 是一个路径，如`"/serch/users"`；
+- value 可能是 function（后端） 或 component（前端）。
 
 
 
@@ -433,7 +505,7 @@ HashHistory 是利用 hash值（锚点跳转），兼容性更强， `#` 锚点�
 
 
 
-**路由组件的props**
+**路由组件的 props**
 
 传递 props 和 **很多路由相关信息** 给路由组件，子路由组件的 `this.props` 有：
 
