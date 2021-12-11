@@ -515,7 +515,7 @@ HashHistory 是利用 hash值（锚点跳转），兼容性更强， `#` 锚点�
 - 还有很多，不常用
 
 ```jsx
-// this.props中的三大属性：
+// this.props 中的三大属性：
 history:
     go: ƒ go(n)
     goBack: ƒ goBack()
@@ -613,7 +613,7 @@ imprt Switch form 'react-router-dom'
 
 我们希望当用户输入默认网址时，才会展示 Home 组件。这就需要对主页地址 `/` 设置 exact。在设置了精确匹配后，之后地址栏输入完全一致的主页地址，才会展示 Home 组件。
 
-- 如果不设置 `exact`，地址 `/about` 会首先匹配到 `path="/"`，然后展示 Home。`<Switch>` 中只要匹配一次成功，就会停止匹配。所以不论地址输入哪一个网页，都会匹配到 Home 组件。
+- 如果不设置 `exact`，地址 `/about` 会首先匹配到 `path="/"`，然后展示 Home。如果是用 switch，就不会再展示 About 组件了。`<Switch>` 中只要匹配一次成功，就会停止匹配。所以不论地址输入哪一个网页，都会匹配到 Home 组件。
 
 
 
@@ -621,8 +621,9 @@ imprt Switch form 'react-router-dom'
 
 ```jsx
 // 开启严格匹配
-<Route exact={true} path="/home/a/b" component={Home} />
-<Route exact path="/home/a/b" component={Home} />
+<Route exact={true} path="/home" component={Home} />
+// 或
+<Route exact path="/home" component={Home} />
 ```
 
 当我们注册路由时，`exact` 属性置为 true，就会开启精准匹配。必须所有地址完全一致，才可以匹配成功。
@@ -637,13 +638,13 @@ imprt Switch form 'react-router-dom'
 
 ```jsx
 // 开头需要引入 Redirect 组件
-import {Route,Switch,Redirect} from 'react-router-dom'
+import {Route, Switch, Redirect} from 'react-router-dom'
 
 {/* 注册路由 */}
 <Switch>
-    <Route path="/about" component={About}/>
-    <Route path="/home" component={Home}/>
-    <Redirect to="/about"/>
+    <Route path="/about" component={About} />
+    <Route path="/home" component={Home} />
+    <Redirect to="/about" />
 </Switch>
 ```
 
@@ -655,7 +656,7 @@ import {Route,Switch,Redirect} from 'react-router-dom'
 
 使用频率：`params` > `search` > `state`
 
-#### 1 params 参数
+#### 1 match.params 参数
 
 - 父组件：
   - 路由链接 (携带参数)：`<Link to='/demo/test/${msgObj.name}/${msgObj.age}'}>详情</Link>`
@@ -685,7 +686,7 @@ import {Route,Switch,Redirect} from 'react-router-dom'
 #### 3 state 参数
 
 - 父组件：
-  - 路由链接(携带参数)：`<Link to={{pathname:'/demo/test',state:{name:'tom',age:18}}}>详情</Link>`
+  - 路由链接(携带参数)：`<Link to={{pathname:'/demo/test', state:{name:'tom',age:18}}}>详情</Link>`
   - 注册路由(无需声明，正常注册即可)：`<Route path="/demo/test" component={Test}/>`
 
 - 子组件：
@@ -714,9 +715,9 @@ import {Route,Switch,Redirect} from 'react-router-dom'
 ## 6 BrowserRouter 与 HashRouter 的区别总结：
 
 1. 底层原理不一样：
-   - BrowserRouter：使用的是 H5 的 history API，不兼容 IE9 及以下版本。
+   - BrowserRouter：使用的是 H5 的 history API，只兼容 IE10 以上版本。
    - HashRouter：使用的是 URL 的哈希值，兼容性更好。
-2. `path`表现形式不一样
+2. `path` 表现形式不一样
    - BrowserRouter 的路径中没有 `#`，例如：`localhost:3000/demo/test`;
    - HashRouter 的路径包含 `#`，例如：`localhost:3000/#/demo/test`；
 3. 刷新后对路由 `state` 参数的影响
@@ -732,9 +733,10 @@ import {Route,Switch,Redirect} from 'react-router-dom'
 
 ## 7 react-router-config
 
-通过配置正 config 形成路由映射关系的数组。
+通过配置 config 形成路由映射关系的数组。
 
-然后在 jsx 中调用 `renderRoutes(routes)` 实现路由。
+-   导航区正常使用 `NavLink`；
+-   跳转区调用 `renderRoutes(routes)` 实现路由；
 
 ![image-20211112134804049](react%E5%A4%8D%E4%B9%A0/image-20211112134804049.png)
 
@@ -819,13 +821,12 @@ store：存储数据 state，提供派发方法 dispatch
    - 从 Central Store 出发，redux 中只会定义一个 store 用来存储整个项目中的数据。
 
 2. **Subscription**。 
-
    - 在这个 Component 的 `componentDidMount()` 组件加载完毕的回调中，添加 `store.subscribe()`  订阅。也就是一旦 store 中的数据发生变化，就会调用这个监听函数。
-
+   
    - 当用户发生对数据修改的行为（点击按钮、输入表单等等），就会触发 `Dispatches`，Store 中的数据就会发生改变，进而我们设定的 subscribe 订阅监听就会被触发。
    - 在 Subscription 中添加 `this.setState()` ，把 store 中变化的数据，更新到这个 Component 组件中的 state 。
    - 此时 React 会更新组件的 state，并触发 `render()` 去重新渲染页面，呈现新数据。
-
+   
 3. **Component**。
    - 通过在组件的 `componentDidMount()` 中订阅  `this.setState()` ，就会让这个组件自身的 state 随着 store 中的 state 变化而保持最新。也就是说，store 中会保存全部需要共享的数据，组件会额外的保存一份 store 中自己需要的数据。
 
@@ -847,6 +848,13 @@ store：存储数据 state，提供派发方法 dispatch
 ## 7.4 react-redux
 
 利用 react-redux 实现了将 redux 进入 react。
+
+-   在 react hook 中，使用 `useSelector` 获取 redux 中想要的 state，同时设定了监听。一旦 state 发生更新，就会更新所有使用了 `useSelector` 获取该值的组件。
+    -   注意：state 只要有一个值发生更新，就会导致所有 useSeleoctor 更新。解决，使用 `shallowEqual`。
+
+
+
+
 
 ![img](react%E5%A4%8D%E4%B9%A0/95e279721bec4ec4a9f3314a470d2f9ctplv-k3u1fbpfcp-watermark.awebp)
 
@@ -921,6 +929,26 @@ store：存储数据 state，提供派发方法 dispatch
 
 对函数式组件扩展了功能，可以让函数式组件也拥有 class 组件的各种方法。
 
+```jsx
+const [currentPage, setCurrentPage] = useState(1);
+
+const { topAlbums, total } = useSelector(
+  (state) => ({
+    topAlbums: state.getIn(["album", "topAlbums"]),
+    total: state.getIn(["album", "topTotal"]),
+  }),
+  shallowEqual
+);
+const dispatch = useDispatch();
+
+useEffect(() => {
+  dispatch(getTopAlbumsAction(1));
+  dispatch(changeTopAreaAction());
+}, [dispatch]);
+```
+
+
+
 
 
 ## 9.1 class 组件缺点
@@ -943,6 +971,8 @@ Class 组件存在问题：
   
 
 #### useState
+
+创建一个 state ，提供了 state 值 count，和更新 state 的方法 setCount。
 
 ```js
 const [count, setCount] = useState(0);
@@ -1608,6 +1638,21 @@ recommend 组件中，有非常多的数据：
 
 
 
+-   `useSelector`：获取 state 中该组件需要的值。内部
+-   `shallowEqual`：会对比更新后的 state 中，当前组件使用的值，是否发生了变化。如果新的 state 中，使用的值和原有 state 中的值相同，就不会引起该组件的重新 render。这个比较是浅对比。
+
+```js
+// ---- 性能优化
+// ---- connect的mapStateToProps会把state和组件形成依赖，进而如果依赖的数据没有改变，这个组件也不会被重新渲染，节约开销
+// ---- 但是使用useSelector如果只传入第一个参数，就不会有这种浅对比，只要有state发生变化，就会重新渲染组件。
+// ---- useSelector使用的是“===”来比较，但是每次返回的有state的对象，都是新创建的，所以一定不相等，一定会重新渲染。
+// ---- 解决方案：shallowEqual的引入
+// ---- 直接传入 shallowEqual 为第二个参数即可。
+// ---- 理论上，只要使用 useSelector，就需要传入 shallowEqual，除非希望一旦state变化，组件要重新渲染的时候不传入。
+```
+
+
+
 ### 实现水平居中：
 
 ![image-20211029144024466](react%E5%A4%8D%E4%B9%A0/image-20211029144024466.png)
@@ -1644,9 +1689,17 @@ transform: translateX(-50%);
 
 
 
+# 10 项目中遇到的最大问题
+
+因为经验的不足，前期出现流程化的不严谨性缺失。就会导致后期在补救时，代码出现不规范的冗余、内存泄漏等问题；
 
 
 
+歌词的解析，以及歌词的显示。
+
+-   遇到未知知识，如何学习？
+-   如何把别人的知识，融入到自己的业务逻辑中？
+-   记录，并提出今后可优化的部分。
 
 
 
