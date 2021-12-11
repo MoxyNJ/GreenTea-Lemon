@@ -1380,29 +1380,6 @@ function __webpack_require__(moduleId){
 
 
 
-#### 问题三：区分： loader 和 plugin
-
-loader 是文件维度的操作，将 Webpack 不认识的、多种多样的格式内容转化为认识的、低版本的内容。
-
-- 比如使用 babel 把所有的 js 文件都进行转化，`babel-loader`
-- CSS 相关的引入：`css-loader`、`sass-loader`、`sass-loader`
-  - `style-loader` 通过动态添加 `style` 标签的方式，引入样式到节点上。
-  - `postcss `、`postcss-loader`、`postcss-preset-env` 自动添加CSS3属性前缀
-- 导入图片和使用地址：`url-loader`、`file-loader`
-- 解析 `.vue` 文件：`vue-loader`
-
-
-
-plugin 是节点维度的操作，比如 index.html 所谓入口文件，需要引入全部的 js  库等等。插件（Plugin）可以贯穿 Webpack 打包的生命周期，执行不同的任务
-
-- 使用 `html-webpack-plugin`，把打包好的 js 和 css 文件自动引入 HTML 中。
-
-- 使用 `clean-webpack-plugin`，在每次打包前，清空上次打包遗留的历史文件。
-
-  
-
-
-
 # 3. Webpack 核心特性
 
 ## 3.1 安装和入口
@@ -1766,25 +1743,17 @@ module:{
 }
 ```
 
-
-
 思路二，增加干活的人：采用多线程打包，可以根据cpu数量构建线程池，有两种常见的库：
 
-- HappyPack
+- `HappyPack`
 
-- thread-loader 
-
-
+- `thread-loader`
 
 思路三，提前干活：预编译一些不常变化的模块。
 
-
-
 思路四，缓存：虽然时效性会差，但上次编译过的模块，如果没有修改，应该依然可用。
 
-
-
-思路五，使用更好的库，比如
+思路五，使用更好的库，比如：
 
 - `fast-sass-loader`，快速的处理 sass 文件，比 `sass-loader` 速度更快。
 
@@ -1804,7 +1773,10 @@ webpack 自带的优化方法，顾名思义，摇晃树把不好的树叶都晃
 
 plugin 是节点纬度的操作。某一个事件节点，会触发特定的 plugin。
 
--   Webpack 运行的生命周期中会广播出许多事件（钩子），Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果。plugin 是一个扩展器，在 webpack 打包的过程中，基于事件驱动的机制，监听 webpack 打包过程中的某些节点，从而通过回调函数执行广泛的任务。
+-   从机制上来说，plugin 基于 **事件监听** 实现。
+    -   Webpack 运行的生命周期中会广播出许多事件（钩子），Plugin 可以 **监听事件**，在合适的时机通过 Webpack 提供的 API 改变输出结果。
+-   从结果上来说，plugin 是一个 **扩展器 / 拦截器**。
+    -   webpack 打包的是基于事件驱动的，plugin 通过监听 webpack 打包过程中的某些节点，从而通过 **回调函数** 执行各种任务。
 
 
 
@@ -1812,83 +1784,33 @@ plugin 是节点纬度的操作。某一个事件节点，会触发特定的 plu
 
 loader 是文件纬度的操作。通过 loader 可以将各种格式的文件转化为浏览器可识别的格式。
 
--   它是 **文件加载器**。它能够加载资源文件，并对这些文件进行一些处理，诸如编译、压缩等
+它具有三个特点：文件加载器、一个函数、单一职责。
 
--   它只是 **一个函数**，仅仅是一个封装的 JavaScript 模块。它接收模块代码的内容，然后返回代码内容转化后的结果，并且一个文件还可以链式的经过多个`loader`转化（如` scss-loader => css-loader => style-loader`）。
+-   它是 **文件加载器**。它能够加载资源文件，并对这些文件进行一些处理，诸如编译、压缩等。
 
--   一个 `Loader` 的 **职责是单一的**，只需要完成一种转化。如果一个源文件需要经历多步转化才能正常使用，就通过多个`Loader`去转化。
+-   它只是 **一个函数**，是一个封装的 JavaScript 模块。它接收其他代码，然后返回将其转化后的结果，并且一个文件还可以链式的经过多个 `loader` 转化（如 ` scss-loader => css-loader => style-loader` ）。
 
+-   一个 `Loader` 的 **职责是单一的**，只需要完成一种转化。如果一个源文件需要经历多步转化才能正常使用，就通过多个 `Loader` 去转化。
 
 
 
+## 6.3 区分： loader 和 plugin
 
+loader 是文件维度的操作，将 Webpack 不认识的、多种多样的格式内容转化为认识的、低版本的内容。
 
+- 比如使用 babel 把所有的 js 文件都进行转化，`babel-loader`
+- CSS 相关的引入：`css-loader`、`sass-loader`、`sass-loader`
+    - `style-loader` 通过动态添加 `style` 标签的方式，引入样式到节点上。
+    - `postcss `、`postcss-loader`、`postcss-preset-env` 自动添加CSS3属性前缀
+- 导入图片和使用地址：`url-loader`、`file-loader`
+- 解析 `.vue` 文件：`vue-loader`
 
 
 
+plugin 是节点维度的操作，比如 `index.html` 所谓入口文件，需要引入全部的 js  库等等。插件（Plugin）可以贯穿 Webpack 打包的生命周期，执行不同的任务
 
+- 使用 `html-webpack-plugin`，把打包好的 js 和 css 文件自动引入 HTML 中。
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- 使用 `clean-webpack-plugin`，在每次打包前，清空上次打包遗留的历史文件。
 
 
