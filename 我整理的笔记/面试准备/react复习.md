@@ -962,7 +962,7 @@ Class 组件存在问题：
 
 ## 9.2 hooks
 
-### 三个基本 hooks + 六个扩张 hooks
+### 三个基本 hooks + 六个扩展 hooks
 
 - useState、useEffect、createContext
 
@@ -994,13 +994,13 @@ const [count, setCount] = useState(0);
 
 
 
-如果末尾添加一个空白的依赖数组 `[]`，只在第一次加载组件时执行，卸载组件时执行。
+如果末尾添加一个空白的依赖数组 `[]`，只在第一次加载组件时执行回调，卸载组件时执行 return。
 
 重新渲染：相当于：`componentDidMount`
 
 
 
-如果依赖中添加了变量，则如果变量值发生改变，就会重新定义 `useEffect` 中的回调函数。
+如果依赖中添加了变量依赖，则如果变量值发生改变，就会重新定义 `useEffect` 中的回调函数。
 
 ```jsx
 //在函数组件中使用 hooks
@@ -1037,7 +1037,7 @@ useEffect(()=>{
 
 ### useReducer
 
-1. useReducer 是 useState hooks 的扩展。在逻辑相对复杂的情况下，可以用 reducer 的 switch 进行判断。
+1. useReducer 是 useState hooks 的扩展。在逻辑相对复杂的情况下，可以用 reducer 的 switch 进行判断，通过 dispatch 达到对同一个 state 有不同的更新方法。
 2. 如果多个组件均有一个相同的判断方式（可以用同一个 switch 判断），那么单独定义一个 reducer 纯函数，然后不同的组件 import 引入这个 reducer 即可。
 
 使用1：在一个组件中使用 reducer：
@@ -1059,8 +1059,8 @@ function reducer(state, action) {
 }
 
 export default function Home() {
- // 3 创建一个 Reducer，输入两个参数：一个reducer方法，一个数据对象，
- // 	useReducer 会返回两个结构：
+    // 3 创建一个 Reducer，输入两个参数：一个reducer方法，一个数据对象，
+    // 	useReducer 会返回两个结构：
     // 		1. 存放数据的 state 对象，保存的就是 {counter:0}，
     //		2. 触发 action 的方法，dispatch，使用 dispatch 来操作 state。
   const [state, dispatch] = useReducer(reducer, { counter: 0 });
@@ -1140,6 +1140,8 @@ export default function About() {
 
 ###  useCallback
 
+需要配合 `PureComponent` 使用。PureComponent 实现了如果子组件的 props 和 state 没有变化，就不会随着父组件重新渲染而重新渲染。
+
 - 实际目的是为了性能优化。用于 **子组件需要向父组件传递信息，所以通过调用父组件 props 传递的回调函数来实现** 时使用。
 - 换句话说，就是缓存了父组件传递给子组件的一个【回调方法】。
 
@@ -1153,7 +1155,7 @@ export default function About() {
 
 
 
-useCallBack 的使用：
+useCallBack 的使用，在父组件定义回调函数是包裹：
 
 ```jsx
 const increment2 = useCallback(() => {
@@ -1173,7 +1175,7 @@ useCallback 有性能优化：
 
 useCallback 在什么时候使用？
 
-场景：父组件有一个回调函数，传递给他的子组件。当父组件发生渲染，及时子组件的 state 没有发生改变。但是 `props` 中的 “这个回调函数” 因为父组件的重新渲染而被重定义了，也就是说重新渲染后的回调函数虽然和之前的回调函数长得一模一样，但是地址不同了，这时候子组件依然要进行重新渲染。
+场景：父组件有一个回调函数，传递给他的子组件。当父组件发生渲染，即使子组件的 state 没有发生改变。但是 `props` 中的 “这个回调函数” 因为父组件的重新渲染而被重定义了，也就是说重新渲染后的回调函数虽然和之前的回调函数长得一模一样，但是地址不同了，这时候子组件依然要进行重新渲染。
 
 所以：当父组件给子组件传递一个回调函数时，父组件可以把这个回调函数用 `useCallBack` 包裹一下，防止子组件因为这个回调函数而频繁渲染。
 
@@ -1199,7 +1201,7 @@ useCallback 在什么时候使用？
 
 ### 3.4 useMemo
 
-![image-20211025142143471](coderwhy-react01/image-20211025142143471.png)
+![image-20211025142143471-16366968314207](react复习/image-20211025142143471-16366968314207.png)
 
 使用方式：
 
@@ -1217,7 +1219,7 @@ useCallback 在什么时候使用？
 
 #### **使用场景一：复杂计算**
 
-**只有当创建行为本身会产生高昂的开销（比如计算上千次才会生成变量值），才有必要使用`useMemo`，当然这种场景少之又少。**
+**只有当创建行为本身会产生高昂的开销（比如计算上千次才会生成变量值），才有必要使用 `useMemo`，当然这种场景少之又少。**
 
 ```jsx
 import React, { useState } from "react";
@@ -1294,8 +1296,9 @@ export default function MemoHookDemo012() {
 ```jsx
 import React, { useState, memo } from "react";
 
-const HYInfo = memo((props) => {
-  console.log("HYInfo重新渲染");
+// 子
+const LJInfo = memo((props) => {
+  console.log("LJInfo重新渲染");
   return (
     <div>
       <h2>姓名：{props.info.name}</h2>
@@ -1304,6 +1307,7 @@ const HYInfo = memo((props) => {
   );
 });
 
+// 父
 export default function MemoHookDemo021() {
   console.log("MemoHookDemo02渲染");
   const info = { name: "Moxy", age: 18 };
@@ -1318,9 +1322,9 @@ export default function MemoHookDemo021() {
 }
 ```
 
-即使子组件有 `memo()` 嵌套，当点击 `button` 后，父组件重新渲染，子组件也会重新渲染。
+即使子组件有 `memo()` 嵌套，当点击 `button` 后，父组件的 show 更新，导致了父组建重新渲染，导致了 info 也更新，导致了子组建重新渲染。
 
-- 可以通过把 `info` 局部变量转化为 useS`t`ate 保存，解决这个问题。
+- 可以通过把 `info` 局部变量转化为 useState 保存，解决这个问题。
 
 ![image-20211025171537955](react%E5%A4%8D%E4%B9%A0/image-20211025171537955.png)
 
@@ -1336,7 +1340,7 @@ export default function MemoHookDemo021() {
 子组件 `HYInfo` 有：
 
 1. 子组件通过 `memo()` 包裹。
-2. 通过 `props` 接收到父组件传递过来的 `name` 和 `age`，然后显示在页面上。
+2. 通过 `props` 接收到父组件传递过来的 `info` 里面保存了 `name` 和 `age`，然后显示在页面上。
 
 
 
@@ -1351,8 +1355,8 @@ export default function MemoHookDemo021() {
 ```jsx
 import React, { useState, memo } from "react";
 
-const HYInfo = memo((props) => {
-  console.log("HYInfo重新渲染");
+const LJInfo = memo((props) => {
+  console.log("LJInfo重新渲染");
   return (
     <div>
       <h2>姓名：{props.info.name}</h2>
@@ -1363,7 +1367,7 @@ const HYInfo = memo((props) => {
 
 export default function MemoHookDemo021() {
   console.log("MemoHookDemo02渲染");
-  const info = { name: "Moxy", age: 18 };
+  const info = useMemo(()=>{ name: "Moxy", age: 18 }, []);
   const [show, setShow] = useState(true);
 
   return (
@@ -1479,7 +1483,7 @@ useLayoutEffect 的执行流程：
 
 - useCallback 、useMemo 是 Hook，在组件内部使用，以提升加载性能。
 - 而 memo 在组件的外部使用，通常把一个函数子组件包裹在 `memo()` 中。
-  - memo 仅用在函数子组件，而对象子组件是用 PureComponent。
+  - memo 仅用在函数子组件，而对象子组件是用 PureComponent，效果相同。
   - memo 的作用原理是，当父组件重新渲染后，memo 会浅对比父组件渲染前后，子组件的 state 和 props 是否发生变化（对象就是对比地址值是否相同，数值就仅对比数值）。
 
 
@@ -1490,7 +1494,7 @@ useLayoutEffect 的执行流程：
 
 - useCallback 缓存了父组件传递给子组件的一个【**回调方法**】。缓存的是一个 **函数**。
 
-- useMemo 缓存了一个【变量】，缓存的是一个 **值**。可以用于组件内部缓存值，也可以用于子组件缓存父组件传递的值。
+- useMemo 缓存了一个【局部变量】，缓存的是一个 **值**。可以用于组件内部缓存值，也可以用于父组件缓存传递给子组件的值。
 
 - 换句话说，useCallback 的返回值是一个函数，useMemo 返回的是任意值（数字、对象、函数）。useMemo 可以实现一个 useCallback。
 
@@ -1511,7 +1515,7 @@ useLayoutEffect 的执行流程：
 
 相同的是：
 
--  `useCallback` 和 `useMemo` 的触发时机相同，如果传递的第二个参数中，有变量发生变化，就会执行回调函数。
+-  `useCallback` 和 `useMemo` 的触发时机相同，如果传递的第二个数组参数中，有依赖的变量发生变化，就会执行回调函数。
 
 
 
@@ -1523,7 +1527,7 @@ useLayoutEffect 的执行流程：
 
 
 
-`PureComponent` 组件创建了默认的 `shouldComponentUpdate` 行为。
+❗️❗️**`PureComponent` 组件创建了默认的 `shouldComponentUpdate` 行为。**
 
 这个默认的 `shouldComponentUpdate` 行为会一一比较 `props` 和 `state` 中所有的属性，只有当其中任意一项发生改变时，才会进行重绘。
 
@@ -1577,8 +1581,6 @@ function useLoggingLife(name) {
 # 10 项目补充知识点
 
 ### axios 封装
-
-
 
 ### AntDesign
 
@@ -1638,7 +1640,7 @@ recommend 组件中，有非常多的数据：
 
 
 
--   `useSelector`：获取 state 中该组件需要的值。内部
+-   `useSelector`：获取 state 中该组件需要的值。一旦 redux 中的值发生变化，就会调用 useSelector 导致所有组件全部重新渲染。
 -   `shallowEqual`：会对比更新后的 state 中，当前组件使用的值，是否发生了变化。如果新的 state 中，使用的值和原有 state 中的值相同，就不会引起该组件的重新 render。这个比较是浅对比。
 
 ```js
