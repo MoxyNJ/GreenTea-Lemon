@@ -1035,6 +1035,18 @@ useEffect(()=>{
 
 
 
+如何使用context
+
+-   首先要引入 React 内置的 React Context API 📦
+-   然后创建 `provider`，提供数据的组件通过 provider 把数据传输出去。
+-   最后创建  `consumer ` ，使用数据的组件，通过 `consumer` 获得数据。使用 usecontext hook 可以不用创建 `consumer`
+
+当 Provider 的 `value` 值发生变化时，它内部的所有消费组件都会重新渲染。Provider 及其内部 consumer 组件都不受制于 `shouldComponentUpdate` 函数，因此当 consumer 组件在其祖先组件退出更新的情况下也能更新。
+
+链接：https://juejin.cn/post/6989054367064129573
+
+
+
 ### useReducer
 
 1. useReducer 是 useState hooks 的扩展。在逻辑相对复杂的情况下，可以用 reducer 的 switch 进行判断，通过 dispatch 达到对同一个 state 有不同的更新方法。
