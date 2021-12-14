@@ -660,7 +660,7 @@ import {Route,Switch,Redirect} from 'react-router-dom'
 
 ## 7 react-router-config
 
-通过配置正 config 形成路由映射关系的数组。
+通过配置 config 形成路由映射关系的数组。
 
 然后在 jsx 中调用 `renderRoutes(routes)` 实现路由。
 
