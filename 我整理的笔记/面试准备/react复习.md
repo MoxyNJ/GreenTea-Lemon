@@ -352,7 +352,7 @@ class ThemedButton extends React.Component {
 
 ![在这里插入图片描述](react%E5%A4%8D%E4%B9%A0/96b5367055a04b8fbbb1e11363883f31tplv-k3u1fbpfcp-watermark.awebp)
 
-### 1 虚拟DOM中key的作用
+### 1 虚拟 DOM 中 key 的作用
 
 - 简单的说: key是虚拟DOM对象的标识, 在更新显示时key起着极其重要的作用。
 - 详细的说: 当状态中的数据发生变化时，react会根据【新数据】生成【新的虚拟DOM】, 随后React进行【新虚拟DOM】与【旧虚拟DOM】的diff比较，比较规则如下：
