@@ -849,10 +849,8 @@ store：存储数据 state，提供派发方法 dispatch
 
 利用 react-redux 实现了将 redux 进入 react。
 
--   在 react hook 中，使用 `useSelector` 获取 redux 中想要的 state，同时设定了监听。一旦 state 发生更新，就会更新所有使用了 `useSelector` 获取该值的组件。
+-   在 react hook 中，使用 `useSelector` 获取 redux 中想要的 state，同时设定了监听。一旦 state 发生更新，就会更新所有使用了 `useSelector`  获取该值的组件。
     -   注意：state 只要有一个值发生更新，就会导致所有 useSeleoctor 更新。解决，使用 `shallowEqual`。
-
-
 
 
 
@@ -892,8 +890,6 @@ store：存储数据 state，提供派发方法 dispatch
 
 1. 条目非常多，可能有上千行，reducer 非常长；
 2. 对数据的操作有明显的类别，如异步网络申请数据、本地数据、不同的组件数据等。
-
-
 
 # 8 单向数据流
 
