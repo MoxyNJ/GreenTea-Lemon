@@ -1,4 +1,4 @@
-React Hooks 系列知识
+### React Hooks 系列知识
 
 useRef 的作用
 
@@ -241,6 +241,99 @@ export default useThrottle
 ```
 
 ![img](React知识补充.assets/17089f7c45af40bc~tplv-t2oaga2asx-watermark.awebp)
+
+
+
+### HOC 高阶组件
+
+> 好文：
+>
+> - [掘金：「react进阶」一文吃透React高阶组件(HOC) —— 我不是外星人](https://juejin.cn/post/ 6940422320427106335)
+
+学习 HOC，高阶组件，明白了 HOC 具有以下几个特点：
+
+- **高阶组件不是组件，它是一个将某个组件转换成另一个组件的纯函数。**
+- HOC 主要作用是实现 **代码复用** 和 **逻辑抽象**：对 `state` 和 `props` 进行抽象和操作（如多个组件有共同的 state 和 props 逻辑）、对组件进行细化（如添加生命周期）、实现渲染劫持（如鉴权后再渲染组件）等。在实际的业务场景中合理的使用高阶组件，可以提高开发效率和提升代码的可维护性。
+- HOC 被大量 `React.js` 相关的第三方库所使用，如 `React-Redux`的 `connect` 方法、`React-Loadable` 等。
+- 高阶组件有两种实现方式，分别是正向代理和反向继承。
+  - 它可以看作是装饰器模式在 `React` 中的实现：在不修改原组件的情况下实现组件功能的增强。
+
+
+
+HOC 从实现方式上，有 **正向代理** 和 **反相继承** 两种模式；
+
+HOC 从基本功能上，可以对 WrappedComponent 的 props、state、refs 和 生命周期等进行 拦截 / 删改 / 增强；
+
+所以，对 HOC 的整体把控，应当从 HOC 的两种模式对 WrappedComponent 的 props、state、refs 和生命周期如何进行拦截；拦截方式各有什么特点来入手。
+
+
+
+正向代理 Props Proxy
+
+总结：通过正向代理模式，HOC 有且仅有 Wrapped Component 的 props 可以直接获取 ，其余的 state、refs 等无法直接得到。
+
+```tsx
+function HOC(WrappedComponent) {
+  const newProps = { type: 'HOC' };
+  return <WrappedComponent {...props} {...newProps}/>;
+} 
+```
+
+- 正向代理只可以拦截 Wrapped Component 的 props；而 state、refs、生命周期都无法拦截。
+- HOC 拦截了 WrappedComponent。注意正向代理的 **Proxy** 单词，这其实就相当于对组件的一次拦截，在拦截后，可以对 WrappedComponent 进行适当的修改，最后再渲染。所以，正向代理可以直接拦截 WrappedComponent 的 props，进行删改后再重新返回给 Wrapped Component。
+
+- state、refs：HOC 对它们的拦截可以变相实现：在 HOC 中定义回调函数，Wrapped Component 中通过调用回调函数，把 state、setState、refs 的传递给 HOC。
+- 生命周期：在 HOC 中定义生命周期时，相当于直接重写了 Wrapped Component 的生命周期。
+
+
+
+反相继承 Inheritance Inversion
+
+总结：通过反相继承 HOC 继承了 WrappedComponent，形成了父子关系。所以 HOC 继承且可获取 Wrapped Component 的 props、state、refs。
+
+- HOC 继承了 WrappedComponent，这种结构可以理解为 HOC 是 WrappedComponent 的一个子组件。
+
+- 反相继承中 Wrapped Component 是父，HOC 是子。所以 HOC 可以顺利继承到 Wrapped Component 中的 props、state、refs、生命周期等等可继承的东西，然后进行修改。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
