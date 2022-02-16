@@ -2,6 +2,10 @@
 
 ### redux
 
+> 好文：
+>
+> - [掘金：Redux + React-router 的入门📖和配置👩🏾‍💻教程](https://juejin.cn/post/6844903998139400200)
+
 数据管理工具、状态 state 管理工具、数据存储工具、组件间数据交流工具；
 
 项目在 cofigStore 中，对 redux 进行了配置，先放在这里：
@@ -41,8 +45,20 @@ combineReducers：如果 reducer 太长，可以拆分开多个子 reducer；然
 applyMiddleware：用于把所有的 middleware 进行整合。对 store 存储数据前，进行拦截，比如在此进行异步请求，用 axios 从服务器获取数据；利用 redux-thunk 从服务器获取数据；利用 connected-react-router 把 route 信息同步到 redux 中等等
 
 - createSagaMiddleware：用于生成 sagaMiddleware 的函数；
-
 - routerMiddleware：用于生成 routerMiddleware 的函数，需要传入 history 对象，来监听浏览器的 history。
+- 还有很多，比如我们可以利用中间件来进行日志记录（`redux-logger`）、创建崩溃报告（自己写`crashReporter`）、调用异步接口（`redux-saga`）或者路由（`connected-react-router`）等操作。
+
+
+
+redux 的三大原则：
+
+- 整个应用的 `state` 都被存储在一棵 object tree 中，并且 object tree 只存在于唯一的 `store` 中。
+
+- `state` 是只读的，`state` 的变化会导致视图（view）的变化。用户接触不到 `state`，只能接触到视图，唯一改变 `state` 的方式则是在视图中触发 `action`。`action` 是一个用于描述已发生事件的普通对象。
+
+- 使用 `reducers` 来执行 `state` 的更新。 `reducers` 是一个纯函数，它接受 `action` 和当前  `state` 作为参数，通过计算返回一个新的新的 `state` 存储在 `store` 中从而实现视图的更新。
+
+  
 
 
 
@@ -50,7 +66,53 @@ applyMiddleware：用于把所有的 middleware 进行整合。对 store 存储�
 
 将 redux 引入到 react 中，使 react 可以利用 redux 来管理部分数据。
 
-引用：react-redux 提供 `Provider` 组件通过 context 的方式向应用注入 store，然后组件使用 `connect` 高阶方法获取并监听 store，然后根据 store state 和组件自身的 props 计算得到新的 props，注入该组件，并且可以通过监听 store，比较计算出的新 props 判断是否需要更新组件。
+引用1：react-redux 提供 `Provider` 组件通过 context 的方式向应用注入 store，然后组件使用 `connect` 高阶方法获取并监听 store，然后根据 store state 和组件自身的 props 计算得到新的 props，注入该组件，并且可以通过监听 store，比较计算出的新 props 判断是否需要更新组件。
+
+
+
+引用2:
+
+`react-redux` 将所有组件分成 UI 组件和容器组件两大类：
+
+-  UI 组件：只负责 UI 的呈现，不含有状态（`this.state`），所有数据都由 `this.props` 提供，且不使用任何 `redux` 的 API。
+- 容器组件：负责管理数据和业务逻辑，含有状态（`this.state`），可使用 `redux` 的 API。
+- `react-redux` 规定，所有的 UI 组件都由用户提供，容器组件则是由 `react-redux` 自动生成。也就是说，用户负责视觉层，状态管理则是全部交给 `react-redux`。
+
+简而言之，容器组件作为 UI 组件的父组件，负责与外部进行通信，将数据通过 `props` 传给 UI 组件渲染出视图。
+
+
+
+- `react-redux` 提供了 `connect` 方法，用于将 UI 组件生成容器组件：
+
+```tsx
+import { connect } from 'react-redux'
+class Dashboard extends React.Component {
+    ...
+    // 组件内部可以获取 this.props.loading 的值
+}
+
+const mapStateToProps = (state) => {
+  return { loading: state.loading }
+}
+
+const mapDispatchToProp = () => {}
+
+// 将通过 connect 方法自动生成的容器组件导出
+export default connect(
+  mapStateToProps, 		// 可选
+  mapDispatchToProps, // 可选
+)(Dashboard)
+```
+
+
+
+
+
+
+
+
+
+
 
 ```tsx
 render(
@@ -445,7 +507,119 @@ Root.ts / `renderRouteConfig()` 函数
 
 
 
+```tsx
+//========== history.ts ==========
+import createHistory from 'history/createBrowserHistory';
 
+const history = createHistory({ basename: '/asset/web' });
+export default history;
+  
+
+
+//========== routeConfig.ts ==========
+// 整理所有的 route，
+export default routes;
+
+
+
+========== rootReducer.ts ==========
+// 整理所有的 reducer
+import { combineReducers } from 'redux';
+import { connectRouter } from 'connected-react-router';
+import history from './history';
+
+export const reducerMap = {
+	router: connectRouter(history),   // 路由在这里
+	home: homeReducer,
+  common: commonReducer,
+  ...
+}
+export default combineReducers(reducerMap);
+
+
+
+//========== configStore.ts ==========
+import { createStore, applyMiddleware, compose, StoreEnhancerStoreCreator } from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import { routerMiddleware } from 'connected-react-router';
+
+import rootReducer from './rootReducer';
+import rootSaga from './rootSaga';
+import history from './history';
+
+// 合并 saga 和 router 中间件
+const sagaMiddleware = createSagaMiddleware();
+const middlewares = [sagaMiddleware, routerMiddleware(history)];
+
+// 合并开发者工具中间件
+let devToolsExtension: undefined | StoreEnhancerStoreCreator;
+if (process.env.NODE_ENV === 'development') {
+  const { createLogger } = require('redux-logger');
+
+  const logger = createLogger({ collapsed: true });
+  middlewares.push(logger);
+
+  if (window.__REDUX_DEVTOOLS_EXTENSION__) {
+    devToolsExtension = window.__REDUX_DEVTOOLS_EXTENSION__();
+  }
+}
+
+export type TRootState = ReturnType<typeof configureStore>;
+
+// 定义 store，
+// createStore 需三个参数：rootReducer、initialState、applyMiddleware(...middlewares)
+export default function configureStore<S extends {}>(initialState: S) {
+  const mids = applyMiddleware(...middlewares);
+  const store = createStore(
+    rootReducer,
+    initialState,
+    devToolsExtension? 
+    	compose(
+        mids,
+        devToolsExtension
+      )
+      : mids
+  );
+
+  sagaMiddleware.run(rootSaga);
+
+  /* istanbul ignore if  */
+  if (module.hot) {
+    module.hot.accept('./rootReducer', () => {
+      const nextRootReducer = require('./rootReducer').default;
+      store.replaceReducer(nextRootReducer);
+    });
+  }
+  return store;
+}
+
+// ========== history.ts ==========
+
+```
+
+
+
+精简的范例
+
+```tsx
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { Provider } from 'react-redux'
+import { ConnectedRouter } from 'connected-react-router'
+import App from './App'
+import rootSaga from './model/sagas';
+import { store, history } from './store/configureStore';
+
+ReactDOM.render(
+  <Provider store={store}>
+    <ConnectedRouter history={history}>
+      {/* <App /> */} 
+      {renderRouteConfig(this.props.routeConfig, '/')}
+    </ConnectedRouter>
+  </Provider>,
+  document.getElementById('root'),
+);
+```
 
 
 

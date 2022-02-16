@@ -250,6 +250,12 @@ export default useThrottle
 >
 > - [掘金：「react进阶」一文吃透React高阶组件(HOC) —— 我不是外星人](https://juejin.cn/post/ 6940422320427106335)
 
+组件间信息的传递，就是通过 props 的；
+
+- HOC 和 WrappedComponent 的信息传递，也是通过 props。所以，HOC 的state 的传递，是把回调函数通过 props 传递过去来实现。
+
+
+
 学习 HOC，高阶组件，明白了 HOC 具有以下几个特点：
 
 - **高阶组件不是组件，它是一个将某个组件转换成另一个组件的纯函数。**
