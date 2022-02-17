@@ -1,3 +1,307 @@
+### React 组件
+
+1. React 类组件和函数组件，本质区别：
+
+   对于类组件来说，底层只需要实例化一次，实例中保存了组件的 state 等状态。对于每一次更新只需要调用 render 方法以及对应的生命周期就可以了。但是在函数组件中，每一次更新都是一次新的函数执行，一次函数组件的更新，里面的变量会重新声明。
+
+2.  React 组件本质——UI + update + 常规的类和函数 = React 组件
+
+
+
+### React 组件间的通信方式
+
+React 一共有 5 种主流的通信方式：
+
+1. props 和 callback 方式
+2. ref 方式。
+3. React-redux 或 React-mobx 状态管理方式。
+4. context 上下文方式。
+5. event bus 事件总线。
+
+这里主要讲一下第1种和第5种，其余的会在对应章节详细解读。
+
+**① props 和 callback 方式**
+
+props 和 callback 可以作为 React 组件最基本的通信方式，父组件可以通过 props 将信息传递给子组件，子组件可以通过执行 props 中的回调函数 callback 来触发父组件的方法，实现父与子的消息通讯。
+
+父组件 -> 通过自身 state 改变，重新渲染，传递 props -> 通知子组件
+
+子组件 -> 通过调用父组件 props 方法 -> 通知父组件。
+
+```js
+/* 子组件 */
+function Son(props){
+    const {  fatherSay , sayFather  } = props
+    return <div className='son' >
+         我是子组件
+        <div> 父组件对我说：{ fatherSay } </div>
+        <input placeholder="我对父组件说" onChange={ (e)=>sayFather(e.target.value) }   />
+    </div>
+}
+/* 父组件 */
+function Father(){
+    const [ childSay , setChildSay ] = useState('')
+    const [ fatherSay , setFatherSay ] = useState('')
+    return <div className="box father" >
+        我是父组件
+       <div> 子组件对我说：{ childSay } </div>
+       <input placeholder="我对子组件说" onChange={ (e)=>setFatherSay(e.target.value) }   />
+       <Son fatherSay={fatherSay}  sayFather={ setChildSay }  />
+    </div>
+}
+```
+
+**效果**
+
+<img src="React知识补充.assets/9bdc968db3d54515b32c623944091c55~tplv-k3u1fbpfcp-watermark.awebp" alt="comp0.gif" style="zoom:50%;" />
+
+**⑤event bus事件总线**
+
+当然利用 eventBus 也可以实现组件通信，但是在 React 中并不提倡用这种方式，我还是更提倡用 props 方式通信。如果说非要用 eventBus，我觉得它更适合用 React 做基础构建的小程序，比如 Taro。接下来将上述 demo 通过 eventBus 方式进行改造。
+
+```js
+import { BusService } from './eventBus'
+/* event Bus  */
+function Son(){
+    const [ fatherSay , setFatherSay ] = useState('')
+    React.useEffect(()=>{ 
+        BusService.on('fatherSay',(value)=>{  /* 事件绑定 , 给父组件绑定事件 */
+            setFatherSay(value)
+       })
+       return function(){  BusService.off('fatherSay') /* 解绑事件 */ }
+    },[])
+    return <div className='son' >
+         我是子组件
+        <div> 父组件对我说：{ fatherSay } </div>
+        <input placeholder="我对父组件说" onChange={ (e)=> BusService.emit('childSay',e.target.value)  }   />
+    </div>
+}
+/* 父组件 */
+function Father(){
+    const [ childSay , setChildSay ] = useState('')
+    React.useEffect(()=>{    /* 事件绑定 , 给子组件绑定事件 */
+        BusService.on('childSay',(value)=>{
+             setChildSay(value)
+        })
+        return function(){  BusService.off('childSay') /* 解绑事件 */ }
+    },[])
+    return <div className="box father" >
+        我是父组件
+       <div> 子组件对我说：{ childSay } </div>
+       <input placeholder="我对子组件说" onChange={ (e)=> BusService.emit('fatherSay',e.target.value) }   />
+       <Son  />
+    </div>
+}
+```
+
+这样做不仅达到了和使用 props 同样的效果，还能跨层级，不会受到 React 父子组件层级的影响。但是为什么很多人都不推荐这种方式呢？因为它有一些致命缺点。
+
+- 需要手动绑定和解绑。
+- 对于小型项目还好，但是对于中大型项目，这种方式的组件通信，会造成牵一发动全身的影响，而且后期难以维护，组件之间的状态也是未知的。
+- 一定程度上违背了 React 数据流向原则。
+
+
+
+### React 组件的强化方式
+
+**①类组件继承**
+
+对于类组件的强化，首先想到的是继承方式，之前开发的开源项目 react-keepalive-router 就是通过继承 React-Router 中的 Switch 和 Router ，来达到缓存页面的功能的。因为 React 中类组件，有良好的继承属性，所以可以针对一些基础组件，首先实现一部分基础功能，再针对项目要求进行有方向的**改造**、**强化**、**添加额外功能**。
+
+基础组件：
+
+```js
+/* 人类 */
+class Person extends React.Component{
+    constructor(props){
+        super(props)
+        console.log('hello , i am person')
+    }
+    componentDidMount(){ console.log(1111)  }
+    eat(){    /* 吃饭 */ }
+    sleep(){  /* 睡觉 */  }
+    ddd(){   console.log('打豆豆')  /* 打豆豆 */ }
+    render(){
+        return <div>
+            大家好，我是一个person
+        </div>
+    }
+}
+/* 程序员 */
+class Programmer extends Person{
+    constructor(props){
+        super(props)
+        console.log('hello , i am Programmer too')
+    }
+    componentDidMount(){  console.log(this)  }
+    code(){ /* 敲代码 */ }
+    render(){
+        return <div style={ { marginTop:'50px' } } >
+            { super.render() } { /* 让 Person 中的 render 执行 */ }
+            我还是一个程序员！    { /* 添加自己的内容 */ }
+        </div>
+    }
+}
+export default Programmer
+```
+
+效果：
+
+![comp1.jpg](React知识补充.assets/e0e33a65fdce428294b6432ac8050f54~tplv-k3u1fbpfcp-watermark.awebp)
+
+我们从上面不难发现这个继承增强效果很优秀。它的优势如下：
+
+1. 可以控制父类 render，还可以添加一些其他的渲染内容；
+2. 可以共享父类方法，还可以添加额外的方法和属性。
+
+但是也有值得注意的地方，就是 state 和生命周期会被继承后的组件修改。像上述 demo 中，Person 组件中的 componentDidMount 生命周期将不会被执行。
+
+**②函数组件自定义 Hooks**
+
+在自定义 hooks 章节，会详细介绍自定义 hooks 的原理和编写。
+
+**③HOC高阶组件**
+
+在 HOC 章节，会详细介绍高阶组件 HOC 。
+
+
+
+### React state 相关知识
+
+#### 类式组件 `setState()` 方法：
+
+**基本用法**
+
+```js
+setState(obj,callback)
+```
+
+- 第一个参数：当 obj 为一个对象，则为即将合并的 state ；如果 obj 是一个函数，那么当前组件的 state 和 props 将作为参数，返回值用于合并新的 state。
+- 第二个参数 callback ：callback 为一个函数，函数执行上下文中可以获取当前 setState 更新后的最新 state 的值，可以作为依赖 state 变化的副作用函数，可以用来做一些基于 DOM 的操作。
+
+```js
+/* 第一个参数为function类型 */
+this.setState((state,props)=>{
+    return { number:1 } 
+})
+/* 第一个参数为object类型 */
+this.setState({ number:1 },()=>{
+    console.log(this.state.number) //获取最新的number
+})
+```
+
+假如一次事件中触发一次如上 setState ，在 React 底层主要做了那些事呢？
+
+- 首先，setState 会产生当前更新的优先级（老版本用 expirationTime ，新版本用 lane ）。
+- 接下来 React 会从 fiber Root 根部 fiber 向下调和子节点，调和阶段将对比发生更新的地方，更新对比 expirationTime ，找到发生更新的组件，合并 state，然后触发 render 函数，得到新的 UI 视图层，完成 render 阶段。
+- 接下来到 commit 阶段，commit 阶段，替换真实 DOM ，完成此次更新流程。
+- 此时仍然在 commit 阶段，会执行 setState 中 callback 函数,如上的`()=>{ console.log(this.state.number) }`，到此为止完成了一次 setState 全过程。
+
+**更新的流程图如下：**
+
+<img src="React知识补充.assets/5d5e25a4ed464547bdd0e7c3a44d0ccc~tplv-k3u1fbpfcp-watermark.awebp" alt="02.jpg" style="zoom:50%;" />
+
+请记住一个主要任务的先后顺序，这对于弄清渲染过程可能会有帮助：
+
+- render 阶段 render 函数执行 -> commit 阶段真实 DOM 替换 -> setState 回调函数执行 callback 。
+
+
+
+##### 一道题：
+
+在 React 事件执行之前通过 `isBatchingEventUpdates=true` 打开开关，开启事件批量更新，当该事件结束，再通过 `isBatchingEventUpdates = false;` 关闭开关，然后在 scheduleUpdateOnFiber 中根据这个开关来确定是否进行批量更新。
+
+举一个例子，如下组件中这么写：
+
+```jsx
+export default class index extends React.Component{
+    state = { number:0 }
+    handleClick = () => {
+      this.setState({ number:this.state.number + 1 },()=>{   
+        console.log( 'callback1', this.state.number)
+      })
+      console.log(this.state.number)
+
+      this.setState({ number:this.state.number + 1 },()=>{   
+        console.log( 'callback2', this.state.number)  
+      })
+      console.log(this.state.number)
+
+      this.setState({ number:this.state.number + 1 },()=>{   
+        console.log( 'callback3', this.state.number)  
+      })
+      console.log(this.state.number)
+    }
+    render(){
+        return <div>
+            { this.state.number }
+            <button onClick={ this.handleClick }>number++</button>
+        </div>
+    }
+} 
+```
+
+点击打印：**0, 0, 0, callback1 1 ,callback2 1 ,callback3 1**
+
+如上代码，在整个 React 上下文执行栈中会变成这样：
+
+<img src="React知识补充.assets/478aef991b4146c898095b83fe3dc0e7~tplv-k3u1fbpfcp-watermark.awebp" alt="03.jpg" style="zoom: 40%;" />
+
+那么，为什么异步操作里面的批量更新规则会被打破呢？比如用 promise 或者 setTimeout 在 handleClick 中这么写：
+
+```jsx
+// 外部用 setTimeout 包裹
+setTimeout(()=>{
+  this.setState({ number:this.state.number + 1 },()=>{   
+    console.log( 'callback1', this.state.number)  
+  })
+  console.log(this.state.number)
+
+  this.setState({ number:this.state.number + 1 },()=>{    
+    console.log( 'callback2', this.state.number)  
+  })
+  console.log(this.state.number)
+
+  this.setState({ number:this.state.number + 1 },()=>{   
+    console.log( 'callback3', this.state.number)  
+  })
+  console.log(this.state.number)
+})
+```
+
+打印 ： **callback1 1 , 1, callback2 2 , 2,callback3 3 , 3**
+
+那么在整个 React 上下文执行栈中就会变成如下图这样:
+
+<img src="React知识补充.assets/48e730fc687c4ce087e5c0eab2832273~tplv-k3u1fbpfcp-watermark.awebp" alt="04.jpg" style="zoom:50%;" />
+
+中间省略了其他知识，先记录这些，消化后再记录更多的：[原文](https://juejin.cn/book/6945998773818490884/section/6951186955321376775)。
+
+综上所述， React 同一级别**更新优先级**关系是:
+
+flushSync 中的 setState **>** 正常执行上下文中 setState **>** setTimeout ，Promise 中的 setState。
+
+
+
+#### 函数式组件 useState hook 方法
+
+**基本用法**
+
+```js
+ [ ①state , ②dispatch ] = useState(③initData)
+```
+
+- ① state，目的提供给 UI ，作为渲染视图的数据源。
+- ② dispatch 改变 state 的函数，可以理解为推动函数组件渲染的渲染函数。
+  - dispatch 方法的参数只有一个，有两种情况：
+  - 第一种非函数情况，此时将作为新的值，赋予给 state，作为下一次渲染使用;
+  - 第二种是函数的情况，如果 dispatch 的参数为一个函数，这里可以称它为 reducer。reducer 的参数，是上一次返回最新的 state，返回值会作为新的 state 去更新。
+- ③ initData 有两种情况，第一种情况是非函数，将作为 state 初始化的值。 第二种情况是函数，函数的返回值作为 useState 初始化的值。
+
+所以，useState 没有类似类组件中 setState 的第二个 cb 参数。无法获取最新的 state 数据。但函数组件中可以通过 useEffect 对该 state 产生依赖。当 state 发生更新时，就会调用 useEffect 函数。实现这个功能。
+
+
+
 ### React Hooks 系列知识
 
 useRef 的作用
@@ -59,7 +363,7 @@ const useUpdate = () => {
     const update = () => {
         setFlag(Date.now())
     }
-  
+
     return update
   }
 
@@ -71,6 +375,48 @@ update()
 ```
 
 1. 调用 `update()` 时，就会调用 `setFlag` 方法更新数据，利用 `Date.now()` 具有的不重复性，确保每次调用 setFlag 可以更新与之前不同的数据，确保组件会强制渲染。
+
+
+
+自定义 hooks 之实现 componentDidUpdate
+
+- 回忆：
+  - class 组件中， `componentDidUpdate` 生命周期是初次渲染完后，当接收的 `props`，`state` 改变时或者 `this.forceUpdate`() 就会调用
+  - 函数组件中，`useEffect` 可以看做 `componentDidMount`，`componentDidUpdate`
+    和 `componentWillUnmount` 这三个函数的组合
+
+需求：实现类式组件中的 componentDidUpdate 生命周期
+
+- useRef 返回一个可变的 ref 对象，其 `.current` 属性在组件初次加载时，会被初始化为传入的参数（initialValue）。返回的 ref 对象在组件的整个生命周期内保持不变。
+- ref 对象只有一个 `current` 属性，你把一个东西保存在内，它的地址一直不会变。
+
+```tsx
+import { useRef, useRef } from 'react'
+
+const useDidUpdate = (func) => {
+  const mounted = useRef();
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+    } else {
+     	console.log('I am didUpdate')
+      func();   // 执行传入的函数
+    }
+  })
+}
+```
+
+- 引入 useRef 的原因是，useEffect 会在组件每次加载后都会被执行，但我们需要的是初次加载后不要执行。
+  - 而 useRef 会在组件的全生命周期中保持一个不变的值，所以在初次加载前，将它定义为 false；在完成初次加载后，调用 useEffect 会把他设置为 true，这样除了初次加载，后面 .current 的值都为 true。实现了 componentDidUpdate 的功能。
+
+
+
+这里不能使用 useState 代替更占用资源的 useRef。因为每当 state 发生改变，都会促使组件重新 render；而 useRef 的 `.current` 不会导致 render。
+
+- 假设使用 useState，在组件初次加载前，flag 值为 false，if 判断后，不会执行 func，而是让 flag 的值为 true；这时，即使组件的这一次 func 被拦截了，但因为作为 state 的 flag 发生了改变，所以会导致组件再次被渲染。在这一次加载时，if 判断 flag 变成了 true， 就会执行 func。
+  - 所以，最终效果是组件初次加载话虽然被拦截，但因 state 发生改变，又会调用一次，组件的第二次失控加载无法拦截。
+
+
 
 
 
