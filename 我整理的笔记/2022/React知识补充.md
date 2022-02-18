@@ -1,3 +1,73 @@
+### React API
+
+```ts
+import  React from 'react';
+
+// ReactElement 一个可以包含有React组件的dom结构，是普通dom结构的超集。
+
+React.isValidElement()		// 判断是否是一个 ReactElement
+React.cloneElement()
+
+
+// React.Children 系列
+React.Children.map(item, cb)		// 相当于 arr.map
+React.Children.forEach(item, cb)// 相当于 arr.forEach, 从 ReactElement返回为数组，
+React.Children.count()					// 相当于 arr.length
+React.Children.only()						// 判断是否只有一个 child
+React.Children.toArray()				// 转化为数组 + 扁平化后返回
+
+React.createElement()				// create ReactElement
+React.cloneElement()				// clone ReactElement
+```
+
+- `forEach()`：对数组中每一个元素执行一次回调函数，修改了原数组，不会返回值；
+
+- `map()`：对数组中每一个元素执行一次回调函数，然后放到一个新数组中，返回新数组，不修改原数组；
+- `React.cloneElement(ReactElement, [props], [...chilren])`
+  - 三个参数分别是：
+    - ReactElement：原 ReactElement，这是一个 DOM 结构；
+    - [props]：原 ReactElement 中会传入的 props；
+    - [...children]：替换原 ReactElement 内部的 DOM 结构，也就是说原 ReactElement 内部会被替换为 `...children`；如果参数为空，则不发生替换；
+
+
+
+```tsx
+function Son() {
+  return <h1>Im Son</h1>
+}
+
+function Father(props) {
+ //  props.name 值为 "join"
+ //  props.age 值为 "18"
+ //  props.children[0] 值为 <Son />
+ console.log(props.children)
+  return (
+		<div>
+    	<h1>Im father, my name is {props.name}, my age is {props.age}</h1>
+      {props.children[0]}
+      {props.children[1]}
+      {/* 上面两行代码相当于下面这行，React会自动遍历*/}
+      {props.children}
+    </div>
+  )
+}
+
+function Container() {
+  return (
+  	<Father name="join" age="18">
+    	<Son />
+      <h3>Haha..</h3>
+    </Father>
+  )
+}
+```
+
+![截屏2022-02-18 上午11.03.34](React知识补充.assets/截屏2022-02-18 上午11.03.34.png)
+
+
+
+
+
 ### React 组件
 
 1. React 类组件和函数组件，本质区别：
@@ -204,6 +274,111 @@ this.setState({ number:1 },()=>{
 请记住一个主要任务的先后顺序，这对于弄清渲染过程可能会有帮助：
 
 - render 阶段 render 函数执行 -> commit 阶段真实 DOM 替换 -> setState 回调函数执行 callback 。
+
+
+
+##### 一道题：
+
+```tsx
+class IndexPage extends React.Component{
+    state = { number:0 }
+    handleClick= () => {
+          this.setState({ number:this.state.number + 1 },()=>{   console.log( 'callback1', this.state.number)  })
+          console.log(this.state.number)
+          this.setState({ number:this.state.number + 2 },()=>{   console.log( 'callback2', this.state.number)  })
+          console.log(this.state.number)
+          this.setState({ number:this.state.number + 3 },()=>{   console.log( 'callback3', this.state.number)  })
+          console.log(this.state.number)
+    }
+    render(){
+        return <div>
+            { this.state.number }
+            <p></p>
+            <button onClick={ this.handleClick }  >number++</button>
+        </div>
+    }
+} 
+```
+
+当用户点击后，会发生什么？
+
+<img src="React知识补充.assets/截屏2022-02-17 上午11.22.16.png" alt="截屏2022-02-17 上午11.22.16" style="zoom:50%;" />
+
+几个要点：
+
+1. setState 是异步的，存在任务优先级的问题，可以通过多种方法调整优先级。
+2. 批量更新。当有多个 setState 连续调用时，由于它们的优先级是一样的，所以最终只有最后一个 setState 生效。
+   - 在第一个 `setState` 调用后，再调用第二个时，会将第一个更新任务和第二个更新任务的优先级会进行比较，如果优先级一样，则不会执行第二个更新任务，而是将第二个任务的更新内容与第一个的更新内容进行合并，最终只会进行一次更新渲染，这样的做法叫做 **批量更新**。
+3. callback 会在 state 实现更新后，才被执行。所以不论是哪个 setState 的 callback，都会输出更新后的值 `3`
+4. console.log 会输出当前的 state（尚未更新），所以输出 `0`;
+
+
+
+进一步引申
+
+```jsx
+class IndexPage extends React.Component{
+  state = { number: 0 };
+  handleClick = () => {
+    this.setState({ number: this.state.number + 1 }, () => {
+      console.log("callback1", this.state.number);
+    });
+    console.log(this.state.number);
+    this.setState({ number: this.state.number + 2 }, () => {
+      console.log("callback2", this.state.number);
+    });
+    console.log(this.state.number);
+    Promise.resolve().then(() => {
+      this.setState({ number: this.state.number + 3 }, () => {
+        console.log("callback3", this.state.number);
+      });
+      console.log("promise", this.state.number);
+    });
+
+    setTimeout(() => {
+      this.setState({ number: this.state.number + 4 }, () => {
+        console.log("callback4", this.state.number);
+      });
+      console.log("setTimeNumber", this.state.number);
+    }, 0);
+  }
+
+  render(){
+    return <div>
+      { this.state.number }
+      <p></p>
+      <button onClick={ this.handleClick }  >number++</button>
+    </div>
+  }
+} 
+```
+
+
+
+<img src="React知识补充.assets/截屏2022-02-17 上午11.44.33.png" alt="截屏2022-02-17 上午11.44.33" style="zoom:50%;" />
+
+
+
+几个要点：
+
+1. setState 是微任务（默认环境，如果不支持微任务，React 会把他置为宏任务），setTimeout 是宏任务；
+2. callback 中的 state 一定是该 setState 执行后的值（批量更新，也会消化掉该 setState）；
+3. 前两个 console.log 最先执行，打印了 state 尚未更新的值 0；
+4. 在微任务队列中，有两个微任务：
+   1. setState 微任务执行，两个 setState 的优先级相同，发生了 **批量更新**，第二个 setState 生效，值为 2；
+   2. 接着自定义的 promise.resolve 微任务执行，num 值 +3，值为 5；
+5. 最后执行宏任务 setTimeout 中的 setState 时，num 值已经为 2，随后 +3，值为 5；
+6. **疑问**，
+   1. promise 和 setTimeout 中的 console 为什么在 state 更新之后才被执行。
+   2. 比如 console.log('setTimeNumber') 为什么在 callbback3 之后输出？为什么输出是更新后的 state 值？
+
+
+
+总结：
+
+- 为什么要使用异步渲染？在React中会将连续调用的`setState`进行**批量更新**，这样做的目的，是为了避免短时间内连续调用造成不必要的渲染，增加性能的开销。
+
+- 批量更新只会在一个微任务或宏任务中进行。
 
 
 
@@ -650,6 +825,25 @@ function HOC(WrappedComponent) {
 
 
 
+
+Form 的作用：
+
+- 函数：提交表单、重置表单、更新表项 FormItem 到 state；
+- 判断 props.children 是否是 ForItem，是的话再刷新；
+- 设置 Form 的唯一标示
+
+FormItem 的作用：
+
+- 传递用户输入的内容；
+- 
+
+
+
+Input 的作用：
+
+- 把用户输入的内容通过回调传递出去（给 Form）
+- 一旦用户点击重置，就会把 value 重置为空
+- 设置 Input 的唯一标示
 
 
 
