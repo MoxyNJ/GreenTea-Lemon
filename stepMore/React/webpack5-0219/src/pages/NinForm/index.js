@@ -3,6 +3,12 @@ import Form from './children/Form';
 import FormItem from './children/FormItem';
 import Input from './children/Input';
 
+/**
+ *date：2022.02.20
+ *props讲解，实现一个 Form 表单
+ *原文地址：https://juejin.cn/book/6945998773818490884/section/6950659615675645990
+ */
+
 export default function index() {
   const form = React.useRef(null);
   const submit = () => {
