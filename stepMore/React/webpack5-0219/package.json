@@ -13,6 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.13.8",
+    "@babel/eslint-parser": "^7.17.0",
     "@babel/plugin-proposal-decorators": "^7.17.2",
     "@babel/preset-env": "^7.13.8",
     "@babel/preset-react": "^7.12.13",
@@ -44,6 +45,7 @@
   "dependencies": {
     "core-js": "^3.21.1",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "react-router-dom": "^6.2.1"
   }
 }

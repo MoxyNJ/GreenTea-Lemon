@@ -1,14 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
 
-import nin from '@src/assets/image/nin.jpg';
-import './index.less';
-
-const App = () => (
-  <div>
-    <h1>Ninjee ....</h1>
-    <img src={nin} />
-  </div>
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.querySelector('#root'),
 );
-
-ReactDOM.render(<App />, document.querySelector('#root'));

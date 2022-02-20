@@ -42,9 +42,10 @@ module.exports = {
     'import/no-unresolved': [
       2,
       {
-        ignore: ['^@src', '^@public'], // @ 是设置的路径别名
+        ignore: ['^@src', '^@public', '^./'], // @ 是设置的路径别名
       },
     ],
+    'no-unused-vars': 1,
   },
   // 如果在webpack.config.js中配置了alias 并且在import时使用了别名需要安装eslint-import-resolver-webpack
   settings: {
@@ -54,6 +55,7 @@ module.exports = {
       },
     },
   },
+  parser: '@babel/eslint-parser'
 }
 /*
 "off"或者0    //关闭规则关闭
