@@ -26,21 +26,15 @@ function Home() {
     <div className='ninHome'>
       <h1 className='ninjee'>Ninjee...</h1>
       <nav>
-        <button>
-          <Link to='/Form' className='headerLink'>
-            Form
-          </Link>
-        </button>
-        <button>
-          <Link to='/t1' className='headerLink'>
-            t1
-          </Link>
-        </button>
-        <button>
-          <Link to='/t2' className='headerLink'>
-            t2
-          </Link>
-        </button>
+        <Link to='/Form' className='headerLink'>
+          <button>Form</button>
+        </Link>
+        <Link to='/t1' className='headerLink'>
+          <button>T1</button>
+        </Link>
+        <Link to='/t2' className='headerLink'>
+          <button>T2</button>
+        </Link>
       </nav>
     </div>
   );

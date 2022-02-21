@@ -46,6 +46,7 @@ module.exports = {
       },
     ],
     'no-unused-vars': 1,
+    'react/display-name': "off"
   },
   // 如果在webpack.config.js中配置了alias 并且在import时使用了别名需要安装eslint-import-resolver-webpack
   settings: {
@@ -54,6 +55,9 @@ module.exports = {
         config: 'config/webpack.dev.js',
       },
     },
+    'react': {
+      version: 'detect'
+    }
   },
   parser: '@babel/eslint-parser'
 }

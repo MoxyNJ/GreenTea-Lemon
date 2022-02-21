@@ -147,6 +147,194 @@ function Container() {
 
 
 
+### useMemo
+
+先看一下定义：
+
+```jsx
+const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+```
+
+> `useMemo` will only recompute the memoized value when one of the dependencies has changed. This optimization helps to avoid expensive calculations on every render.
+>  useMemo只会在其中一个依赖项发生变化时重新计算记忆的值。这种优化有助于避免每次渲染的昂贵计算。
+
+
+
+`React.memo()` 是一个 HOC，而 useMemo 是一个 React Hook。 使用 `useMemo()`，我们可以返回记忆值来避免函数的依赖项没有改变的情况下重新渲染。
+
+useMemo 有三个用法：
+
+- 父组件使用 useMemo 包裹一个值，useMemo 的返回值就是这个值。 然后把这个值会通过 props 传递给子组件；当父组件发生 render 时，若 memo 包裹的值没有发生改变，也就是说子组件的 props 没有发生改变（浅对比），就会阻止子组件发生 render。
+
+  - 需要子组件搭配 `React.memo()` 做包裹时一起使用；
+
+- 父组件使用 useMemo 包裹一个函数，useMemo 返回值是这个函数的返回值。当这个函数内部通常是一个 **复杂计算**，比如要进行非常多次的 for 循环等等。所以当父组件重新 render 时，如果依赖值没有发生改变，就不需要再重新执行一遍里面的复杂计算了。
+
+- 在父组件的 render 中使用。用 useMemo 包裹一个函数，这个函数的返回值是一个 reactElement 结构。这样，如果父组件发生了 render，但传递给子组件的 props 并没有改变的时候（下例中甚至没有 props 传递），就不会导致子组件 render。
+
+  - 这一点效果和子组件外部用 `React.memo()` 包裹一下效果是一样的。
+
+  ```jsx
+  return (
+    <div>
+      <span>name: {userInfo.name}</span>
+      <span>age: {age}</span>
+      {
+        useMemo(() => ( <Card /> ), [])
+      }
+    </div>
+  )
+  
+  // 和下面这个效果相同：
+  const NewCard = React.memo(() => <Card />
+  ```
+
+
+
+**问**：context 与 props 和 react-redux 的对比？
+
+**答**： context解决了：
+
+- 解决了 props 需要每一层都手动添加 props 的缺陷。
+- 解决了改变 value ，组件全部重新渲染的缺陷。
+
+react-redux 就是通过 Provider 模式把 redux 中的 store 注入到组件中的。
+
+
+
+
+
+### context
+
+原文：context高阶用法 https://juejin.cn/book/6945998773818490884/section/6957723551818317862
+
+当时的问题：我发现在 ConsumerDemo 组件中，`<ThemeContext.Consumer>` 包裹的内容是一个函数定义，这里并没有调用这个函数，非常费解。
+
+探索过程：我尝试在 `<ThemeContext.Consumer>` 的内部打 console.log 发现应用直接崩溃。然后看了一下 html 的结构，发现这里渲染出来并没有 `<ThemeContext.Consumer>` 和 `<LanContext.Consumer>` ，只有最后的 div。
+
+结论：
+
+-  `<ThemeContext.Consumer>` 和 `<LanContext.Consumer>`最终并没有形成一个 element，因为必须在一个确定的 element 中打 log，所以这里在 div 中 打 log 是 完全 ok 的；
+- `(themeContextValue) => { ... }` 这种应该是 Context 的特殊用法，并不是仅仅是一个函数定义，这里会被最终执行掉，return 一个 reactElement。
+
+
+
+```jsx
+import React, { memo } from 'react';
+
+const ThemeContext = React.createContext(null); // 主题颜色Context
+const LanContext = React.createContext(null); // 主题语言Context
+
+// 最内的组件，consumer
+function ConsumerDemo() {
+  return (
+    <ThemeContext.Consumer>
+      {
+        (themeContextValue) => (
+          <LanContext.Consumer>
+            {(lanContextValue) => {
+              const { color, background } = themeContextValue;
+              return (
+                <div style={{ color, background }}>                  
+                  {lanContextValue === 'CH'
+                    ? '大家好，让我们一起学习React!'
+                    : 'Hello, let us learn React!'}
+                </div>
+              );
+            }}
+          </LanContext.Consumer>
+        )}
+    </ThemeContext.Consumer>
+  );
+}
+
+// 用 memo 包裹，props 不改变时，子组件不会跟着父渲染
+// 换句话说，是
+// 				如果 props 不改变，父组件就不会引起子组件渲染；
+//				如果获取的 context 改变，会引起子组件渲染，但这个是 context 引起的，不是父组件引起的；
+const Son = memo(() => <ConsumerDemo />)
+
+// 最外侧包裹的组件，是 Provider
+export default function T2() {
+  const [themeContextValue] = React.useState({
+    color: '#FFF',
+    background: 'blue',
+  });
+  const [lanContextValue] = React.useState('CH'); // CH -> 中文 ， EN -> 英文
+  return (
+    <ThemeContext.Provider value={themeContextValue}>
+      <LanContext.Provider value={lanContextValue}>
+        <Son />
+      </LanContext.Provider>
+    </ThemeContext.Provider>
+  );
+}
+```
+
+
+
+直接用 `this.props.children` + state 单独提取出来，也可以解决子组件渲染的问题，代替 memo；
+
+- 原文地址：`https://zhuanlan.zhihu.com/p/50336226`
+- 利用的原理：父组件渲染，在父组件的 return 中，包裹的子组件也会渲染。这是因为子组件需要重新用 createElement 重新创建；而我们在最外侧用一个组件包裹，把子组件通过 `this.porps.children` 传递给 Provider 组件。这样对于 Provider 组件来说，这些子组件只是 props。
+  - 即使 Provider 组件内的 state 发生了改变，最外侧的包裹组件依然不会改变。因此 `this.props.children` 这一块的内容（是 reactElement 结构），也就没有重新用 createElement 去创建，因此传给 ThemeProvider 的 children props 就没变。
+  - Provider 的重新渲染，没资格导致其 this.props.children 的子组件也重新渲染；因为 this.props.children 内的这些组件是通过最外侧的 **包裹组件** 渲染的，也就是它才是它们真正的 **父组件**
+
+```js
+class ThemeProvider extends React.Component {
+  state = {
+    theme: redTheme,
+  }
+
+  switchTheme = (theme) => {
+    this.setState({theme});
+  }
+
+  render() {
+    console.log('render ThemeProvider');
+    return (
+      <Context.Provider value={{theme: this.state.theme, switchTheme: this.switchTheme}}>
+        {this.props.children}
+      </Context.Provider>
+    );
+  }
+}
+
+// App的重新渲染，会导致 ThemeProvider 和里面的 Header、Content 重新渲染；
+// 而 ThemeProvider 的重新渲染，不会导致 Header、Content 重新渲染；Header、Content 是通过 props 传递给 ThemeProvier 的。
+function App () {
+  console.log('render App');
+  return (
+    <ThemeProvider>
+      <div className="App">
+        <Header />
+        <Content />
+      </div>
+    </ThemeProvider>
+  )
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
