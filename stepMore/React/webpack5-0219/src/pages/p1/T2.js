@@ -12,7 +12,7 @@ function ConsumerDemo() {
             {(lanContextValue) => {
               const { color, background } = themeContextValue;
               return (
-                <div style={{ color, background }}>                  
+                <div style={{ color, background }}>
                   {lanContextValue === 'CH'
                     ? '大家好，让我们一起学习React!'
                     : 'Hello, let us learn React!'}
