@@ -4,14 +4,23 @@
 >
 > - https://juejin.cn/post/6844903975112671239#heading-4
 > - https://juejin.cn/post/6844903582622285831#comment
+> - 这篇写的明白：https://juejin.cn/post/6943896410987659277
 >
 > Diff 算法：
 >
 > - 深度遍历优先，O(n)：https://juejin.cn/post/6967626390380216334
+>
+> 调度与时间片：
+>
+> - https://nanyang.io/post/deep-dive-into-react-fiber
 
 
 
+Diff 问题：
 
+如果没有 key，是如何进行 Diff 的？
+
+- diff 只有在拥有 key 的时候 Diff 吗？比如 .map 遍历的时候，引入 key 会 diff；那没有 .map 的时候是如何 Diff 的？
 
 
 
@@ -23,7 +32,7 @@ Fiber的另外一种解读是’纤维‘: **这是一种数据结构或者说�
 
 
 
-'`副作用`(Effect)' 
+`副作用` (Effect)
 
 Reconcilation - 调和，v16（不含）以前的经典算法，相当于 diff。
 
@@ -324,10 +333,6 @@ HOC 实际上就是给组件创建了一个闭包，可以对组件增添/删减
 - 高阶函数：接收的参数是一个函数，返回的是一个函数，其本身也是一个函数；
 
 - 高阶组件：接收的参数是一个组件，返回的是一个组件，其本身也是一个组件；
-
-
-
-
 
 
 
