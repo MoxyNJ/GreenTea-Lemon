@@ -88,11 +88,26 @@ Git 功能分支，**你可以将 WIP 树想象成从旧树中 Fork 出来的功
 
 
 
+一次更新发生的过程
+
+render阶段: 
+
+1. 生成新的 fiber 节点，通过 diff 算法对比节点差异创建出用于更新操作的 workinprogress Fiber 树，给需要更新的 fiber 打上相对应的 effectTag 并且生成用于更新的 effectList 链表。
+   - 具体可以拆分为 `beginWork` 、 `completeWork` 两个阶段，通过深度优先遍历来进行这两个阶段；
+   - `beginWork`：该节点向 **下** 遍历其子节点；`completeWork` 该节点的子节点完成遍历，向 **右**/**上** 返回；
+
+2. 相比于 react15 的递归处理虚拟 dom 节点，Reconciler 通过链表的形式改成了循环处理。每处理完一个 fiber 节点都会检查时间是否充足或者是否有高优先级任务。 
+
+commit阶段： 
+
+1. 当前阶段不会被打断，会根据上面两阶段生成的 `effectList` 一口气执行完成渲染操作；
+2. 遍历 render 阶段生成的 effectList，effectList 上的 Fiber 节点保存着对应的 props 变化。之后会遍历 effectList 进行对应的 dom 操作和生命周期、hooks 回调或销毁函数；
+3. 通过双缓存的技术 workInProgress Fiber 完成渲染后会变为 current Fiber 树；
 
 
 
-
-
+- render 阶段：这个阶段是可中断的，会找出所有节点的变更；
+- commit 阶段：这个阶段是不可中断的，会执行所有的变更。
 
 
 
