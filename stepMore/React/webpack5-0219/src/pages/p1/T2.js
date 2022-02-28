@@ -1,42 +1,33 @@
-import React, { memo } from 'react';
+import React, { Component } from 'react';
 
-const ThemeContext = React.createContext(null); // 主题颜色Context
-const LanContext = React.createContext(null); // 主题语言Context
+export default class t2 extends Component {
+  state = {
+    counter: 0,
+    heigher: 10,
+  };
 
-function ConsumerDemo() {
-  return (
-    <ThemeContext.Consumer>
-      {
-        (themeContextValue) => (
-          <LanContext.Consumer>
-            {(lanContextValue) => {
-              const { color, background } = themeContextValue;
-              return (
-                <div style={{ color, background }}>
-                  {lanContextValue === 'CH'
-                    ? '大家好，让我们一起学习React!'
-                    : 'Hello, let us learn React!'}
-                </div>
-              );
-            }}
-          </LanContext.Consumer>
-        )}
-    </ThemeContext.Consumer>
-  );
-}
+  componentDidMount() {
+    this.setState({ counter: this.state.counter + 1 });
+    console.log('counter:', this.state.counter)
+    this.setState({ heigher: this.state.heigher - 1 });
+    console.log('heigher: ', this.state.heigher)
+  }
 
-const Son = memo(() => <ConsumerDemo />);
-export default function T2() {
-  const [themeContextValue] = React.useState({
-    color: '#FFF',
-    background: 'blue',
-  });
-  const [lanContextValue] = React.useState('CH'); // CH -> 中文 ， EN -> 英文
-  return (
-    <ThemeContext.Provider value={themeContextValue}>
-      <LanContext.Provider value={lanContextValue}>
-        <Son />
-      </LanContext.Provider>
-    </ThemeContext.Provider>
-  );
+  render() {
+    console.log('render')
+    return (
+      <div>
+        <h3>t2</h3>
+        counter: {this.state.counter}
+        <br></br>
+        heigher: {this.state.heigher}
+        <div>
+          <button
+            onClick={() => this.setState({ counter: this.state.counter + 1 })}>
+            点我 + 1
+          </button>
+        </div>
+      </div>
+    );
+  }
 }
