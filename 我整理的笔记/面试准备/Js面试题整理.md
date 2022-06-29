@@ -213,44 +213,58 @@ Origin: https://www.mywebsite.com           // <- 浏览器自己加的
 ```js
 // 原生API: sort() 将元素转换为字符串，然后按照 UTF-16 进行排序。
 // 即使数组内容全部是 number，也会转化为 string 然后再进行比较。
-["c","b","a","A","C","B",3,2,1].sort()		// (9) [1, 2, 3, 'A', 'B', 'C', 'a', 'b', 'c']
+["c","b","a","A","C","B",3,2,1].sort()		
+// (9) [1, 2, 3, 'A', 'B', 'C', 'a', 'b', 'c']
 
-// 快速排序 1
-function quickSort(arr) {
-    let left = 0, right = arr.length - 1;
-    main(arr, left, right);
-    return arr;
-  
-    function main(arr, left, right) {
-        if (arr.length === 1) return;
-        let index = partition(arr, left, right);
+var sortArray = function (nums) {
+  // 快速排序
+  let left = 0, right = nums.length - 1;
+  quickSort(nums, left, right);
+  return nums;
 
-        if (left < index - 1) main(arr, left, index - 1);
-        if (index < right)    main(arr, index, right);
+  // 将 [left, right] 排序(切分)
+  function quickSort(nums, left, right) {
+    // base case
+    if (left >= right) return;
+
+    const pivotIndex = partition(nums, left, right);
+    quickSort(nums, left, pivotIndex - 1);
+    quickSort(nums, pivotIndex + 1, right);
+  }
+
+  // 将 [left, right] 左右归类，返回下标
+  function partition(arr, left, right) {
+    // 随机选取基数pivot，并交换位置到第一个:index 为 pivot 的下标
+    let index = Math.floor((left + right) / 2);
+    [arr[index], arr[left]] = [arr[left], arr[index]];
+    const povit = arr[left];
+    index = left;
+    left++;
+    
+    // 循环
+    while (left <= right) {
+      while (arr[left] < povit) left++;
+      while (arr[right] > povit) right--;
+
+      if (left <= right) {
+        [arr[left], arr[right]] = [arr[right], arr[left]];
+        left++;
+        right--;
+      }
     }
-
-    function partition(arr, left, right) {
-        let pvoit = arr[Math.floor((left + right) / 2)];
-
-        while (left <= right) {
-            while (arr[left] < pvoit) left++;
-            while (arr[right] > pvoit) right--;
-
-            if (left <= right) {
-                [arr[left], arr[right]] = [arr[right], arr[left]];
-                left++;
-                right--;
-            }
-        }
-        return left;
-    }
-}
+    // 修改基数的位置
+    [arr[index], arr[right]] = [arr[right], arr[index]];
+    return right;
+  }
+};
 
 let arr = [5, 43, 7, 60, 5, 3, 21, 8, 1];
 console.log(quickSort(arr));
 ```
 
 简便方法：
+
+- 快排的特点是原地，这里简便后不是原地快排了。
 
 ```js
 // 快速排序 2
