@@ -1,4 +1,94 @@
-# 1 Js 的执行过程：
+## 1 基础
+
+### 1.1 浏览器内核
+
+浏览器内核，也称浏览器的排版引擎、浏览器引擎、页面渲染引擎。
+
+- Gecko：早期被Netscape和Mozilla Firefox浏览器浏览器使用； 
+- Trident：微软开发，被IE4~IE11浏览器使用，但是Edge浏览器已经转向Blink； 
+- Webkit：苹果基于KHTML开发、开源的，用于Safari，Google Chrome之前也在使用； 
+- Blink：是Webkit的一个分支，Google开发，目前应用于Google Chrome、Edge、Opera等；
+
+
+
+浏览器的工作过程：
+
+![截屏2022-07-01 17.04.14](images/01-JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/%E6%88%AA%E5%B1%8F2022-07-01%2017.04.14.png)
+
+浏览器的渲染流程：
+
+![截屏2022-07-01 17.03.38](images/01-JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/%E6%88%AA%E5%B1%8F2022-07-01%2017.03.38.png)
+
+
+
+### 1.2 JavaScript 引擎
+
+高级的编程语言都是需要转成最终的机器指令来执行的，JavaScript引擎将JavaScript代码翻译成CPU指令来执行。
+
+
+
+#### 1.2.1 常见的 JavaScript 引擎
+
+- **SpiderMonkey** (蜘蛛猴??)：第一款JavaScript引擎，由Brendan Eich开发（也就是JavaScript作者）； 
+- **JavaScriptCore**：WebKit中的 JavaScript 引擎，Apple公司开发； 
+- **V8**：Google 开发的强大JavaScript引擎，也帮助Chrome从众多浏览器中脱颖而出；
+- Chakra：微软开发，用于IT浏览器； 
+
+
+
+### 1.3 浏览器内核 + JS 引擎
+
+以 WebKit 为例，WebKit 事实上由两部分组成的：
+
+- WebCore：负责HTML解析、布局、渲染等等相关的工作； 
+- JavaScriptCore：解析、执行 JavaScript 代码；
+
+小程序中编写的 JavaScript 代码，就是被 JsCore 执行的。
+
+![截屏2022-07-01 17.09.59](images/01-JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/%E6%88%AA%E5%B1%8F2022-07-01%2017.09.59.png)
+
+
+
+### 1.4 V8 引擎
+
+定义：V8 是用 C ++ 编写的 Google 开源高性能 JavaScript 和 WebAssembly 引擎，它用于 Chrome 和 Node.js 等。实现了 ECMAScript 和 WebAssembly。V8可以独立运行，也可以嵌入到任何C ++应用程序中。
+
+
+
+V8 引擎的大致执行过程：
+
+1. **Blink** 内核会把网络进程下载好的 Js 代码，以 stream 流的形式传输给 V8 引擎。
+2. **V8** 引擎会进行词法分析、语法分析，然后转化为 AST。 
+3. PrePaser：这里有一个 Js 的预解析优化：并不是所有的JavaScript代码，在一开始时就会被执行。
+   - Lazy Parsing（延迟解析）：将暂不执行的函数进行预解析，只解析函数内暂时需要的内容，而对函数的全量解析是在函数被调用时才会进行。
+   - 比如在一个函数 foo 内定义了一个函数 inner，那么 inner 函数就会进行预解析，只有在 inner 作用域环境被执行时（入调用栈前），才会解析 inner。
+4. 然后就是下图的流程。
+
+![截屏2022-07-01 17.11.55](images/01-JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/%E6%88%AA%E5%B1%8F2022-07-01%2017.11.55.png)
+
+**Parse模块**：会将JavaScript代码转换成AST（抽象语法树），这是因为解释器并不直接认识JavaScript代码；
+
+- 如果函数没有被调用，那么是不会被转换成AST的； 
+- Parse的V8官方文档：https://v8.dev/blog/scanner
+
+**Ignition**：是一个解释器，会将AST转换成ByteCode（**字节码**）
+
+- 同时会收集TurboFan优化所需要的信息（比如函数参数的类型信息，有了类型才能进行真实的运算）； 
+- 如果函数只调用一次，Ignition会执行解释执行ByteCode； 
+- Ignition的V8官方文档：https://v8.dev/blog/ignition-interpreter
+
+**TurboFan**：是一个编译器，可以将字节码编译为CPU可以直接执行的 **机器码**；
+
+- 一个短时间内被多次调用的函数会被标记为 **热函数**，该函数就会经过TurboFan转换成优化的机器码，提高代码的执行性能； 
+  - 如在一个 for 循环中反复调用的无副作用的函数。
+- 但是，机器码实际上也会被还原为 ByteCode，这是因为如果后续执行函数的过程中，类型发生了变化（比如sum函数原来执行的是 number 类型，后来执行变成了 string 类型），之前优化的机器码并不能正确的处理运算，就会逆向的转换成字节码。所以，使用 ts 规范类型，一定程度上也会优化 js 的执行速度。
+- TurboFan的V8官方文档：https://v8.dev/blog/turbofan-jit
+
+
+
+
+
+## 2 Js 的执行过程
 
 面对一个 Js 脚本，JavaScript 引擎在运行这段脚本会经历 2 个阶段，**词法/语法分析** 和 运行阶段。在运行阶段又划分为 **编译时** 和 **运行时**。这几个阶段的间隔时间会非常的短，可以理解为当引擎刚刚完成了词法分析，便会立刻开始编译阶段和运行阶段。而不像传统的 C，Java 等语言，编译阶段和运行阶段可以分开执行。
 
@@ -7,11 +97,11 @@
 
 
 
-![image-20210903121904296](images/04JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/image-20210903121904296.png)
+![image-20210903121904296](images/01-JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/image-20210903121904296.png)
 
 JavaScript 的执行，一共有 2 个阶段：
 
-### 1.1 词法/语法分析阶段
+### 2.1 词法/语法分析阶段
 
 主要是为了分析代码的语法是否正确，如果不正确会抛出语法错误（`syntaxError`）并停止执行代码。
 
@@ -20,7 +110,7 @@ JavaScript 的执行，一共有 2 个阶段：
 
 
 
-### 1.2 执行阶段
+### 2.2 执行阶段
 
 词法/语法分析阶段后，
 
@@ -34,7 +124,7 @@ JavaScript 的执行，一共有 2 个阶段：
 
 
 
-#### 2.1 编译阶段
+#### 2.2.1 编译阶段
 
 根据运行环境的词法作用域，创建 **执行上下文（execution context）**，并放入 **调用栈（call stack）**中。
 栈底是 **全局执行上下文（global execution context）**，栈顶则是当前的执行上下文。
@@ -50,7 +140,7 @@ JavaScript 的执行，一共有 2 个阶段：
 
 
 
-#### 2.2 运行阶段
+#### 2.2.2 运行阶段
 
 根据创建好的 **当前执行上下文**，开始逐次运行 **当前运行环境** 中的全部代码。
 
@@ -62,21 +152,21 @@ JavaScript 的执行，一共有 2 个阶段：
 
 
 
-![image-20210902171804797](images/04JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/image-20210902171804797.png)
+![image-20210902171804797](images/01-JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/image-20210902171804797.png)
 
 
 
 
 
-# 2 作用域 scope
+## 2 作用域 scope
 
 作用域是一个区域，规定了代码中变量和函数的可访问范围。所以，作用域决定了变量和函数的可见性和生命周期。
 
-![image-20210903121548301](images/04JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/image-20210903121548301.png)
+![image-20210903121548301](images/01-JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/image-20210903121548301.png)
 
 
 
-## 2.1 作用域的两种工作模型：
+### 2.1 作用域的两种工作模型
 
 #### 动态作用域
 
@@ -96,13 +186,13 @@ JavaScript 同绝大多数编程语言一样，使用静态的词法作用域。
 
 
 
-# 3 词法作用域
+## 3 词法作用域
 
 词法作用域就是指作用域是由代码中函数声明的位置来决定的，所以词法作用域是静态的作用域，通过它就能够预测代码在执行过程中如何查找标识符。
 
 **词法作用域是代码编译阶段就决定好的，和函数是怎么调用的没有关系。**
 
-![imgx](images/04JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/image-20210905000728729.png)
+![imgx](images/01-JavaScript%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.assets/image-20210905000728729.png)
 
 
 
@@ -132,7 +222,7 @@ JavaScript 同绝大多数编程语言一样，使用静态的词法作用域。
 
 
 
-##  分析打印结果：
+##  分析打印结果
 
 ```js
 function bar() {
@@ -157,10 +247,12 @@ foo()  // Moxy
 
 
 
-# 引用
+## 引用
 
 > 《你不知道的JavaScript》
 >
 > winter - 重学前端
 >
 > 李兵 - 浏览器工作原理与实战
+>
+> coderwhy - JavaScript 高级语法课

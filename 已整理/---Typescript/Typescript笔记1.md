@@ -1,5 +1,15 @@
 # 1 概述
 
+## TypeScript 是什么
+
+Typescript 为 JavaScript 丰富了类型检查功能，并不是取代 JavaScript。
+
+Typescript 是 JavaScript 的超集，是 js 在基础之上的扩展。
+
+ts 最终需要 bebel 转译为 js 后才能运行。
+
+
+
 ## TypeScript 的发展历史
 
 - 2012-10：微软发布了 TypeScript 第一个版本（0.8），此前已经在微软内部开发了两年。
@@ -1276,7 +1286,6 @@ let directions = [Directions.Up, Directions.Down, Directions.Left, Directions.Ri
 ```js
 var directions = [0 /* Up */, 1 /* Down */, 2 /* Left */, 3 /* Right */];
 ```
-
 
 
 
