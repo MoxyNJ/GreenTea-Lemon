@@ -2,6 +2,9 @@
 
 每一个函数（全局）作用域中，都会有一个 `this` 关键字。`this` 的值保存在执行上下文中。在全局上下文被创建时，也就是 JS 引擎的编译时，会让 `this` 值根据特定规则去 **指向一个对象**。
 
+- this 是在运行时动态绑定的（箭头函数）除外；
+- this 和定义位置（代码位置）没有关系，只和调用方式（调用位置）有关。
+
 ![imgx](images/08this%E4%B8%8E%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0.assets/image-20210905222654919.png)
 
 全局执行上下文中的 `this`，默认指向 window 对象。而函数执行上下文中的 `this` 则根据函数调用的实际情况而发生改变。
@@ -20,6 +23,7 @@
 2. 显式绑定：通过 `call`，`apply` 和 `bind` 硬绑定三种方法。`func.call(obj)`
 3. 隐式绑定：通过 `对象.` 的方式调用函数。`obj.func()`
 4. 默认绑定：直接调用函数。`func()`
+   - 实际上是：`func.call()`
 
 
 
@@ -40,7 +44,7 @@ let person1 = new Person("Moxy", 15);
 3. 将构造函数的作用域 **`this`** 赋给新对象 `{}`；
 4. 执行构造函数中的代码，为 `{}` 添加属性：`Person.call(this)`；
 5. 如果构造函数最终会返回一个对象，就返回 **构造函数中的对象**。
-6. 如果构造函数没有返回其他对象，就会返回 **新对象**。
+6. 如果构造函数没有返回其他对象，就会返回 **新对象  `{}`** 。
 
 最终，代码中左侧的 `person1` 变量接收到了新创建的那个对象。
 
@@ -164,6 +168,8 @@ let obj = { name: "obj", child1: child1, func: func}
 obj.child1.child2.func()	// child2
 ```
 
+事实上，隐式绑定利用了函数调用的规则（见2.）：`func.call(obj, p1, p2, ..)`
+
 
 
 ## 1.4 默认绑定
@@ -192,7 +198,7 @@ foo()
 函数调用的完整形式，实际上是通过 `call` 调用：
 
 ```js
-foo.call(context, p1, p2)
+foo.call(context, p1, p2, ..)
 ```
 
 第一个参数 `context` 是调用函数时给 `foo`传递的 `this` 指向；后面的参数则是传递给 `foo` 的参数。
@@ -237,9 +243,12 @@ foo.call(undefined, p1)
 
 箭头函数与作用域链是一套规则。
 
-箭头函数并不会创建其自身的执行上下文，没有 `this`，`arguments`，`super`或 `new.target` 等等这些函数属性。如果要使用 `this` ，引擎会沿着作用域链 `outer`，去查找外部作用域的 `this` 的值。
+箭头函数并不会创建其自身的执行上下文，没有 `this`，`arguments`，`super` 或 `new.target` 等等这些函数属性。如果要使用 `this` ，引擎会沿着作用域链 `outer`，去查找外部作用域的 `this` 的值。
 
 所以，箭头函数与外部作用域的 this 保持一致。
+
+- 箭头函数无法与构造函数一起使用，即箭头函数无法用 new 调用，会报错。
+- 作用域关系在代码的编译阶段已经确定，也就是说，作用域关系是静态绑定的，直接看代码分析的，而不考虑代码的执行。**（见问题4的双红色叹号）**
 
 ```js
 function foo() {
@@ -260,15 +269,17 @@ bar.call(obj2)  	// 1
 
 # 4 思考
 
+### 问题1
+
 ```js
 function foo() {
-    console.log( this )
+    console.log(this);
 }
-debugger
-var a = "global" 		// var 声明，绑定到window
-let obj = { a:"obj", foo:foo}
-let bar = obj.foo
-bar()    // global
+debugger;
+var a = "global"; 		// var 声明，绑定到 window
+let obj = { a:"obj", foo:foo};
+let bar = obj.foo;
+bar();    // global
 ```
 
 `let bar = obj.foo` 代码，右侧表达式的含义是通过 RHS 获取了 `obj.foo`的值，也就是函数的地址。然后赋值给 `bar` 变量。此时 `bar` 变量得到了 `obj.foo` 的地址值。
@@ -289,6 +300,155 @@ bar()    // undefined
 ```
 
 因为用 `let` 声明的变量不会在 window 对象中绑定。即使 `bar()` 调用会把 `this`指向 Window 也无法访问到 `a`，所以进行 RHS 的结果是 `undefined`。
+
+### 问题2
+
+```js
+var name = "window";
+
+var person = {
+  name: "person";
+  sayName: function() {
+    console.log(this.name);
+  }
+}
+
+function sayName(){
+  var sss = person.sayName;
+  sss(); 								// window,默认绑定
+  person.sayName();			// person,隐式调用
+  (person.sayName)();		// person,隐式调用。有没有括号无所谓
+  (b = person.sayName)(); // window,默认绑定。
+  												// 赋值产生了RHS右查询，返回了函数本身，接着小括号调用函数本身。
+}
+sayName();
+```
+
+### 问题3
+
+```js
+var name = 'window'
+
+var person1 = {
+  name: 'person1',
+  foo1: function () {
+    console.log(this.name)
+  },
+  foo2: () => console.log(this.name),
+  foo3: function () {
+    return function () {
+      console.log(this.name)
+    }
+  },
+  foo4: function () {
+    return () => {
+      console.log(this.name)
+    }
+  }
+}
+
+var person2 = { name: 'person2' }
+
+person1.foo1(); // person1，隐式
+person1.foo1.call(person2);  // person2，显式
+
+person1.foo2();  // window，箭头函数的父作用域（全局）。person1是对象，不是一个作用域
+person1.foo2.call(person2);  // window，同上
+
+person1.foo3()(); // window，默认，括号1返回了一个函数，括号2直接调用
+person1.foo3.call(person2)(); // window，默认，同上
+person1.foo3().call(person2); // person2，显式，括号2调用时绑定了this
+
+// foo4内的箭头函数没有this，内部的this永远等于它的父作用域：foo4
+person1.foo4()();  // person1，隐式+箭头
+person1.foo4.call(person2)(); // person2，显式+箭头，foo4显式绑定了this = person2
+person1.foo4().call(person2); // person1，隐式+箭头，显示绑定对箭头函数无效
+```
+
+### 问题4
+
+❗️❗️即使下面的 Person 是通过 new 调用的。但 foo2 箭头函数的上级作用域依然是 Person 函数作用域。
+
+- `person1.foo2()` 调用，会输出 `person1`。此时 Person 函数作用域中的 this 指向了 person1 对象。
+
+```js
+var name = 'window'
+
+function Person (name) {
+  this.name = name
+  this.foo1 = function () {
+    console.log(this.name)
+  },
+  this.foo2 = () => console.log(this.name),
+  this.foo3 = function () {
+    return function () {
+      console.log(this.name)
+    }
+  },
+  this.foo4 = function () {
+    return () => {
+      console.log(this.name)
+    }
+  }
+}
+
+// new 创建 person1/2 对象
+var person1 = new Person('person1');
+var person2 = new Person('person2');
+
+person1.foo1()  								// person1
+person1.foo1.call(person2) 			// person2
+
+//‼️ 箭头函数的上层作用域：函数作用域 Person
+person1.foo2() 									// person1，函数作用域Person此时的this指向person1
+person1.foo2.call(person2)      // person1，显式绑定对箭头无效
+
+person1.foo3()()								// window
+person1.foo3.call(person2)()    // window
+person1.foo3().call(person2)    // person2
+
+person1.foo4()()								// person1，箭头函数父作用域foo4
+person1.foo4.call(person2)()    // person2，同上
+person1.foo4().call(person2)    // person1，显式绑定对箭头无效
+```
+
+### 问题5
+
+```js
+var name = 'window'
+
+function Person (name) {
+  this.name = name
+  this.obj = {
+    name: 'obj',
+    foo1: function () {
+      return function () {
+        console.log(this.name)
+      }
+    },
+    foo2: function () {
+      return () => {
+        console.log(this.name)
+      }
+    }
+  }
+}
+
+var person1 = new Person('person1')
+var person2 = new Person('person2')
+
+person1.obj.foo1()()  // window
+person1.obj.foo1.call(person2)() // window
+person1.obj.foo1().call(person2) // person2
+
+// 箭头函数的上层作用域:foo2
+// 多级隐式调用，this最终绑定最后一级标识符:foo2的this绑定obj
+person1.obj.foo2()()   // obj
+person1.obj.foo2.call(person2)() // person2
+person1.obj.foo2().call(person2)  // obj
+```
+
+
 
 
 
