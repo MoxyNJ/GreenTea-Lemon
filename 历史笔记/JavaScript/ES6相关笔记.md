@@ -2005,7 +2005,6 @@ Boolean(sym)    // true
 ```javascript
 sym.toString()  // Symbol('S')
 sym.description  // 'S' 
-
 ```
 
 
@@ -2601,7 +2600,7 @@ set.forEach((value, key, mySet) =>
 
 
 
-数组的`map`和`filter`方法也可以间接用于 Set ，实现 并集、交集、差集：
+数组的 `map` 和 `filter` 方法也可以间接用于 Set ，实现 并集、交集、差集：
 
 - `filter()`: 规定一个条件。符合条件的元素将被返回，组成新数组。
 - `map()` : 返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值。

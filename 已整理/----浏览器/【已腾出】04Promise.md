@@ -17,7 +17,7 @@
 
 
 
-### Promise 的 2 个状态：
+### Promise 的 2 个状态 ：
 
 - `panding`：尚未决议。
 
@@ -368,9 +368,9 @@ p1.then(
 
 1. 传给 `Promise.all([...])` 的数组中的成员，可以是 `Promise` / `thenable` / 立即值。
 2. 本质而言，数组中的成员均会经过 `Promise.resolve(...)` 过滤，以确保最终是一个真正的 `Promise`。
-3. 数组中的成员中一旦有 `reject` 决议，就立即把这个 `reject` 决议设置为拒绝理由，并返回。不再理会其他成员的决议。
+3. 数组中的成员中一旦 **有** `reject` 决议，就立即把这个 `reject` 决议设置为拒绝理由，并返回。不再理会其他成员的决议。
 4. 数组中的成员如果 **没有** `reject` 决议，就一直等待所有成员全部 `fulfill`，把它们成功决议传递的值打包成一个数组，然后再包装为一个成功决议的 `Promise` 并返回。
-   - 这个返回的成功决议的数组中，成员顺序不是按照决议完成的先后顺序，而是按照传递`Promise.all([...])` 时的成员顺序。
+   - 这个返回的成功决议的数组中，成员顺序不是按照决议完成的先后顺序，而是按照传递 `Promise.all([...])` 时的成员顺序。
 5. 如果传入的是空数组，就会立即完成。
 
 使用举例：
@@ -418,9 +418,9 @@ let p4 = new Promise((resolve, reject) => {
 ```js
 let pAll1 = Promise.all([p1, p2, p3])
 .then((data) => {
-    console.log(data)
+    console.log(data);
 }, (err) => {
-    console.log("Promise.all reject!", err)
+    console.log("Promise.all reject!", err);
 })
 ```
 
