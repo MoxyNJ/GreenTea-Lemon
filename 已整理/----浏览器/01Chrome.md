@@ -1441,7 +1441,7 @@ function resize(e) {
 window.addEventListener('resize', resize);
 ```
 
-![image-20220630230547824](images/01Chrome.assets/image-20220630230547824.png)
+![为什么要节流.gif](images/01Chrome.assets/c123c40627a249a7abd66bf29db1b69a~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
 
 ### 节流（throttle）
 
@@ -1490,7 +1490,7 @@ function resize(e) {
 window.addEventListener('resize', throttle(resize, 1000));
 ```
 
-![image-20220630230554600](images/01Chrome.assets/image-20220630230554600.png)
+![节流定时器版执行.gif](images/01Chrome.assets/054c7f1c6afb4688992b8d0d9adfe229~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
 
 
 
@@ -1512,6 +1512,8 @@ function resize(e) {
 }
 window.addEventListener('resize', debounce(resize, 1000));
 ```
+
+![什么是防抖.gif](images/01Chrome.assets/5f3ce434ea4040508735c2f1fd7bb666~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
 
 ### 引用
 
