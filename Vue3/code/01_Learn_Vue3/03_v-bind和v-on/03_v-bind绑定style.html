@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <div id="app"></div>
+
+  <template id="my-app">
+    <h1>绑定 style 样式</h1>
+    <h2>对象语法</h2>
+
+    <!-- :style="{属性名: 属性值（加引号是变量，不加引号是具体值）}" -->
+    <div :style="{color: finalColor, 'font-size':'15px'}">属性名有连接符，需要加引号</div>
+    <div :style="{color: finalColor, fontSize: '15px'}">使用驼峰，不需要加引号</div>
+    <div :style="{color: finalColor, fontSize: finalFontSize + 'px'}">引用变量，拼接字号单位</div>
+
+    <div :style="finalStyleObj">直接引用对象</div>
+    <div :style="getFinalStyleObj()">调用method，返回对象</div>
+
+    <h2>数组语法</h2>
+    <div :style="[{color: finalColor}, finalStyleObj]">哈哈哈</div>
+  </template>
+
+  <script src="../js/vue.js"></script>
+  <script>
+    const App = {
+      template: '#my-app',
+      data() {
+        return {
+          message: "Hello World",
+          finalColor: 'red',
+          finalFontSize: 20,
+          finalStyleObj: {
+            'font-size': '20px',
+            fontWeight: 700,
+            backgroundColor: 'pink'
+          }
+        }
+      },
+      methods: {
+        getFinalStyleObj() {
+          return {
+            'font-size': '20px',
+            fontWeight: 700,
+            backgroundColor: 'orange'
+          }
+        }
+      }
+    }
+
+    Vue.createApp(App).mount('#app');
+  </script>
+</body>
+</html>

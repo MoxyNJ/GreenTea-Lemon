@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style>
+    .active {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <template id="my-app">
+    <h1>绑定 class 属性</h1>
+    <h2>对象语法</h2>
+    <div :class="className">绑定属性名</div>
+
+    <!-- 对象语法: {'active': boolean} -->
+    <!-- key：待绑定的属性名，value：布尔值决定是否添加（访问 data中的key）-->
+    <button @click="toggle">切换</button>
+    <div :class="{active: isActive}">
+      测试1：点击切换会变色
+    </div>
+    <div :class="{active: isActive, title: true}">
+      测试2：对象可添加多个属性
+    </div>
+    <div class="abc cba" :class="{active: isActive, title: true}">
+      测试3：结合，默认class + 动态class
+    </div>
+    <div class="abc cba" :class="classObj">
+      测试4：直接绑定data中的一个对象
+    </div>
+    <div class="abc cba" :class="getClassObj()">
+      测试5：通过调用methods中的方法，返回一个对象
+    </div>
+
+
+    <h2>数组语法</h2>
+    <div :class="['abc', className]">通过数组的形式，添加静态（单引号）和动态的class名（无引号）</div>
+    <div :class="['abc', className, isActive ? 'active': '']">三元运算符</div>
+    <div :class="['abc', className, classObj]">数组中可包含对象</div>
+  </template>
+
+  <script src="../js/vue.js"></script>
+  <script>
+    const App = {
+      template: "#my-app",
+      data() {
+        return {
+          className: "why",
+          isActive: true,
+          classObj: {
+            active: true,
+            title: true
+          },
+        };
+      },
+      methods: {
+        toggle() {
+          this.isActive = !this.isActive;
+        },
+        getClassObj() {
+          return {
+            active: true,
+            title: true
+          }
+        }
+      },
+    };
+
+    Vue.createApp(App).mount("#app");
+  </script>
+</body>
+
+</html>

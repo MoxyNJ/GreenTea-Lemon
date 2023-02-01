@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <div id="app"></div>
+
+  <template id="my-app">
+    <h1>基本使用</h1>
+    <button @click="toggle">清除</button>
+    <h2 v-if="isShow">v-if 会直接从 DOM 中清除元素</h2>
+    
+
+    <h1>多个条件</h1>
+    <input type="text" v-model="score">
+    <h3 v-if="score >= 90">优秀</h3>
+    <h3 v-else-if="score >= 60">良好</h3>
+    <h3 v-else>不及格</h3>
+  </template>
+
+  <script src="../js/vue.js"></script>
+  <script>
+    const App = {
+      template: '#my-app',
+      data() {
+        return {
+          isShow: true,
+          score: 95
+        }
+      },
+      methods: {
+        toggle() {
+          this.isShow = !this.isShow;
+        }
+      }
+    }
+
+    Vue.createApp(App).mount('#app');
+  </script>
+</body>
+</html>

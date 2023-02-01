@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    .area {
+      width: 200px;
+      height: 200px;
+      background: red;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app"></div>
+
+  <template id="my-app">
+    <h1>v-on 基本使用，绑定事件监听</h1>
+    <!-- 完整写法: v-on:事件名="methods方法" -->
+    <!-- 语法糖，使用 @ 符号，代替  "v-on:"-->
+    <button v-on:click="btn1Click">绑定函数：点击打印</button>
+    <div class="area" v-on:mousemove="mouseMove">绑定函数：鼠标移动</div>
+
+    <button @click="counter++">绑定表达式：{{counter}}</button>
+    <div class="area" v-on="{click: btn1Click, mousemove: mouseMove}">绑定对象，添加多个事件</div>
+    <div class="area" @="{click: btn1Click, mousemove: mouseMove}">绑定对象，语法糖</div>
+
+
+    <h1>v-on 参数传递</h1>
+    <button @click="btn1Click">默认绑定 Event 参数</button><p />
+    <button @click="btn2Click($event, 'coderwhy', 18)">额外添加其他参数</button>
+    <!-- $event 固定语法：获取事件对象 -->
+
+
+    <h1>v-on 修饰符，固定的快捷方法</h1>
+    <div @click="divClick">
+      <button @click.stop="btnClick">.stop 阻止冒泡，divClick不会触发</button><p />
+      <button @click="btnClick">.divClick会触发</button>
+    </div>
+
+    <span>松开按键就触发：</span><input type="text" @keyup="enterKeyup"><p />
+    <span>.enter 按下Enter才触发：</span><input type="text" @keyup.enter="enterKeyup">
+  </template>
+
+  <script src="../js/vue.js"></script>
+  <script>
+    const App = {
+      template: '#my-app',
+      data() {
+        return {
+          counter: 100
+        }
+      },
+      methods: {
+        btn1Click(e) {
+          console.log("按钮1发生了点击", e);
+        },
+        btn2Click(event, name, age) {
+          console.log(name, age, event);
+        },
+        mouseMove(e) {
+          console.log("鼠标移动");
+        },
+        divClick() {
+          console.log("divClick");
+        },
+        btnClick() {
+          console.log('btnClick');
+        },
+        enterKeyup(e) {
+          console.log("触发", e.target.value);
+        }
+      }
+    }
+
+    Vue.createApp(App).mount('#app');
+  </script>
+</body>
+
+</html>

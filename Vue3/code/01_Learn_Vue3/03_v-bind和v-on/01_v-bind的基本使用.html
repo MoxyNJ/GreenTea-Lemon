@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <div id="app"></div>
+  <template id="my-app">
+    <h1>(1) v-bind 基本使用</h1>
+    <img v-bind:src="imgUrl" alt="">
+    <a v-bind:href="link">百度一下</a>
+    <img :src="imgUrl" alt="v-bind 语法糖 ">
+
+    <h1>(2) src、href、class、style 等等所有属性，包括自定义属性，都可以动态绑定</h1>
+    <img :src="" alt="">
+    <a :href=""></a>
+    <div :class></div>
+    <div :moxy></div>
+
+    <div :[name]=nameValue>动态绑定属性名</div>
+
+    <h1>(3) 常用：属性直接绑定一个对象</h1>
+    <div v-bind="info">把对象展开，形成 name=value 添加到元素属性上</div>
+    <div :="info">语法糖</div>
+
+    <h1>类似disabled等，规定没有值的属性，值为false时不添加属性，true时添加属性</h1>
+    <button :disabled="isButtonDisabled">没有 disabled 属性</button><p></p>
+    <button :happy="isButtonDisabled">有自定义的 happy 属性 </button>
+  </template>
+
+  <script src="../js/vue.js"></script>
+  <script>
+    const App = {
+      template: '#my-app',
+      data() {
+        return {
+          imgUrl: "https://avatars.githubusercontent.com/u/10335230?s=60&v=4",
+          link: "https://www.baidu.com",
+          name: "moxy",
+          nameValue: "ninjee",
+          info: {
+            name: "why",
+            age: 18,
+            height: 1.88
+          },
+          isButtonDisabled: false
+        }
+      }
+    }
+
+    Vue.createApp(App).mount('#app');
+  </script>
+</body>
+
+</html>

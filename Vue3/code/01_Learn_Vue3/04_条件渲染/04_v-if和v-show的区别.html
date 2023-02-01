@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <div id="app"></div>
+
+  <template id="my-app">
+    <button @click="isShow = !isShow">清除</button>
+    <h2 v-show="isShow">v-show 通过 display: none; 使用元素在 DOM 中保留。不可在 template 上使用，不可和 v-else 配合</h2>
+    <h2 v-if="isShow">v-if 在 DOM 渲染清除</h2>
+  </template>
+
+  <script src="../js/vue.js"></script>
+  <script>
+    const App = {
+      template: '#my-app',
+      data() {
+        return {
+          isShow: true
+        }
+      }
+    }
+
+    Vue.createApp(App).mount('#app');
+  </script>
+</body>
+</html>
