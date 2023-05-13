@@ -1,6 +1,7 @@
 import React, { Suspense, memo } from 'react';
 import type { FC, ReactNode } from 'react';
 import { Outlet, Link } from 'react-router-dom';
+import NavBar from './components/nav-bar';
 
 interface IProps {
   children?: ReactNode;
@@ -9,12 +10,7 @@ interface IProps {
 const Discover: FC<IProps> = (): JSX.Element => {
   return (
     <div>
-      <div>Discover component</div>
-      <div>
-        <Link to="./recommend">推荐</Link>
-        <Link to="./ranking">排行榜</Link>
-        <Link to="./songs">歌单</Link>
-      </div>
+      <NavBar />
       <Suspense fallback={'loading component...'}>
         <Outlet />
       </Suspense>
