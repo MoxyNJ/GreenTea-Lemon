@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 
 export const AppFooterWrapper = styled.div`
   .content {
-    height: 325px;
+    height: 310px;
     overflow: hidden;
     border-top: 1px solid #d3d3d3;
 
