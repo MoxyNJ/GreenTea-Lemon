@@ -1,73 +1,4 @@
-// @import '~antd/dist/antd.css';
-// @import '~normalize.css';
-
-// /* 样式的重置 */
-// body,
-// html,
-// h1,
-// h2,
-// h3,
-// h4,
-// h5,
-// h6,
-// ul,
-// ol,
-// li,
-// dl,
-// dt,
-// dd,
-// header,
-// menu,
-// section,
-// p,
-// input,
-// td,
-// th,
-// ins {
-//   padding: 0;
-//   margin: 0;
-// }
-
-// ul,
-// ol,
-// li {
-//   list-style: none;
-// }
-
-// a {
-//   text-decoration: none;
-//   color: #666;
-// }
-
-// a:hover {
-//   color: #666;
-//   text-decoration: underline;
-// }
-
-// i,
-// em {
-//   font-style: normal;
-// }
-
-// input,
-// textarea,
-// button,
-// select,
-// a {
-//   outline: none;
-//   border: none;
-// }
-
-// table {
-//   border-collapse: collapse;
-//   border-spacing: 0;
-// }
-
-// img {
-//   border: none;
-//   vertical-align: middle;
-// }
-
+/* 文字不超过两行== */
 /* 全局样式 */
 body,
 textarea,
@@ -84,6 +15,16 @@ button {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.text-nowrap-2 {
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  /*! autoprefixer: off */
+  -webkit-box-orient: vertical;
+  word-break: break-all;
 }
 
 .wrap-v1 {
@@ -105,7 +46,7 @@ button {
   background: url(../img/sprite_02.png) no-repeat 0 9999px;
 }
 
-.sprite_covor {
+.sprite_cover {
   background: url(../img/sprite_cover.png) no-repeat 0 9999px;
 }
 
