@@ -1,11 +1,11 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import type { FC, ReactNode, ElementRef } from 'react';
 import { Carousel } from 'antd';
-import { AlbumItemWrapper, NewAlbumWrapper } from './style';
+import { NewAlbumWrapper } from './style';
 import AreaHeaderV1 from '@/components/area-header-v1';
-import { useAppSelector } from '@/store';
 import { getSizeImage } from '@/utils/format-utils';
 import { getNewAlbum } from '@/service/modules/recommend';
+import AlbumCover from '@/components/album-cover';
 
 interface IProps {
   children?: ReactNode;
@@ -48,8 +48,9 @@ const NewAlbum: FC<IProps> = () => {
               return (
                 <div key={item}>
                   <div className="album-list">
+                    {/* 第一组是图片0-4，第二组是图片5-9 */}
                     {newAlbumDatas.slice(item * 5, (item + 1) * 5).map((album) => {
-                      return <AlbumItem key={album.id} itemData={album} />;
+                      return <AlbumCover key={album.id} itemData={album} />;
                     })}
                   </div>
                 </div>
@@ -60,28 +61,6 @@ const NewAlbum: FC<IProps> = () => {
         <button className="sprite_02 arrow arrow-right" onClick={handleNextClick}></button>
       </div>
     </NewAlbumWrapper>
-  );
-};
-
-/** item 光碟子组件 */
-const AlbumItem: FC<{ itemData: any }> = (props) => {
-  const { itemData } = props;
-  return (
-    <AlbumItemWrapper>
-      <div className="top">
-        <img src={getSizeImage(itemData.picUrl, 100)} alt="" />
-        <a href="/" className="cover sprite_cover"></a>
-        <a href="/" className="play sprite_icon"></a>
-      </div>
-      <div className="bottom">
-        <div className="name text-nowrap">
-          <a href="/">{itemData.name}</a>
-        </div>
-        <div className="artist  text-nowrap">
-          <a href="/">{itemData.artist.name}</a>
-        </div>
-      </div>
-    </AlbumItemWrapper>
   );
 };
 

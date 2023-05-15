@@ -2,6 +2,7 @@ import React, { Suspense, memo } from 'react';
 import type { FC, ReactNode } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import NavBar from './components/nav-bar';
+import AppFooter from '@/components/app-footer';
 
 interface IProps {
   children?: ReactNode;

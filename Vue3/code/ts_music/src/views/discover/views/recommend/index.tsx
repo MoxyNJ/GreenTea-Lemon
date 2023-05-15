@@ -3,9 +3,13 @@ import type { FC, ReactNode } from 'react';
 import { useAppDispatch } from '@/store';
 import { fetchBannerAction } from './store';
 import { RecommendWrapper } from './style';
-import TopBanner from './components/TopBanner';
+import TopBanner from './components/top-banner';
 import HotRecommend from './components/hot-recommend';
 import NewAlbum from './components/new-album';
+import TopRanking from './components/top-ranking';
+import UsrLogin from './components/usr-login';
+import SettleSinger from './components/settle-singer';
+import HotRadio from './components/hot-radio';
 
 interface IProps {
   children?: ReactNode;
@@ -26,11 +30,13 @@ const Recommend: FC<IProps> = (): JSX.Element => {
         <div className="left">
           <HotRecommend />
           <NewAlbum />
-          <h1>Content Left Container</h1>
+          <TopRanking />
         </div>
         <div className="right">
           <div>
-            <h1>Contnet Right</h1>
+            <UsrLogin />
+            <SettleSinger />
+            <HotRadio />
           </div>
         </div>
       </div>

@@ -27,6 +27,7 @@ export function getNewAlbum(limit = 10) {
   });
 }
 
+/** 发现音乐/推荐/榜单 */
 export function getPlaylistDetail(id: number) {
   return hyRequest.get({
     url: '/playlist/detail',
@@ -36,6 +37,7 @@ export function getPlaylistDetail(id: number) {
   });
 }
 
+/** 发现音乐/推荐/入驻歌手 */
 export function getArtistList(limit = 30) {
   return hyRequest.get({
     url: '/artist/list',
@@ -45,8 +47,12 @@ export function getArtistList(limit = 30) {
   });
 }
 
-export function getTopList() {
+/** 发现音乐/推荐/热门主播 */
+export function getDjRadioTopList(limit = 30) {
   return hyRequest.get({
-    url: '/toplist'
+    url: '/dj/toplist',
+    params: {
+      limit
+    }
   });
 }

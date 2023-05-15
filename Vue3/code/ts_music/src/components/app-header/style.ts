@@ -4,9 +4,9 @@ export const HeaderWrapper = styled.div`
   height: 75px;
   background-color: #242424;
   font-size: 14px;
-  color: #fff;
 
   .content {
+    height: 70px;
     display: flex;
     justify-content: space-between;
   }
@@ -19,31 +19,49 @@ export const HeaderWrapper = styled.div`
 
 export const HeaderLeft = styled.div`
   display: flex;
-
   .logo {
     display: block;
     width: 176px;
-    height: 70px;
+    height: 69px;
     background-position: 0 0;
-    text-indent: -9999px;
+    text-indent: -99999px;
   }
 
-  .title-list {
+  .select-list {
     display: flex;
     line-height: 70px;
 
-    .item {
+    .select-item {
       position: relative;
 
       a {
         display: block;
-        padding: 0 20px;
+        padding: 0 19px;
+        /* padding: 0 38px; */
         color: #ccc;
       }
 
-      // &:hover 值上一层样式，等同于：.item :hover
+      /* 为最后一个标签添加 new 小标签 */
+      &:last-of-type a {
+        position: relative;
+        /* 红色new，需要绝对定位到标签的右上角位置 */
+        /* 设置一个伪元素 */
+        ::after {
+          position: absolute;
+          /* before和after伪元素要content填充一下 */
+          content: '';
+          width: 28px;
+          height: 19px;
+          /* 精灵图要用require引入 */
+          background-image: url(${require('@/assets/img/sprite_01.png')});
+          background-position: -190px 0;
+          top: 20px;
+          right: -15px;
+        }
+      }
+
       &:hover a,
-      .active {
+      a.active {
         color: #fff;
         background: #000;
         text-decoration: none;
@@ -60,28 +78,15 @@ export const HeaderLeft = styled.div`
         background-position: -226px 0;
       }
     }
-    :last-child {
-      position: relative;
-      a::after {
-        position: absolute;
-        content: '';
-        width: 28px;
-        height: 19px;
-        background-image: url(${require('@/assets/img/sprite_01.png')});
-        background-position: -190px 0;
-        top: 20px;
-        right: -15px;
-      }
-    }
   }
 `;
 export const HeaderRight = styled.div`
   display: flex;
   align-items: center;
-  color: #787878;
+  color: #ccc;
   font-size: 12px;
 
-  > .search {
+  .search {
     width: 158px;
     height: 32px;
     border-radius: 16px;
@@ -94,22 +99,18 @@ export const HeaderRight = styled.div`
   }
 
   .center {
-    width: 90px;
-    height: 32px;
-    line-height: 32px;
-    margin: 0 16px;
+    width: 88px;
+    height: 30px;
+    line-height: 30px;
     text-align: center;
     border: 1px solid #666;
     border-radius: 16px;
-    color: #ccc;
+    margin: 0 14px;
   }
 
-  .button {
-    cursor: pointer;
-
-    &:hover {
-      color: #fff;
-      border-color: #fff;
-    }
+  .LoginSmall {
+    padding-left: 4px;
+    padding-right: 26px;
+    color: #787878;
   }
 `;

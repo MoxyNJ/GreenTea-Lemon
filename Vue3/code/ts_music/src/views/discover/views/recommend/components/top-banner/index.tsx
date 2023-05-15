@@ -110,7 +110,7 @@ const TopBanner: FC<IProps> = (): JSX.Element => {
               return (
                 <li key={item.imageUrl}>
                   <span
-                    className={classNames('item', {
+                    className={classNames('item banner_sprite', {
                       active: !imgSwitching && index === currentIndex
                     })}
                   ></span>
@@ -119,10 +119,22 @@ const TopBanner: FC<IProps> = (): JSX.Element => {
             })}
           </ul>
         </BannerLeft>
-        <BannerRight></BannerRight>
+        <BannerRight>
+          <a href="https://music.163.com/#/download" target="_blank" rel="noreferrer">
+            <div className="SignInInfo">PC 安卓 iPhone WP iPad Mac 六大客户端</div>
+            <span className="shadow banner_sprite"></span>
+            <span className="shadow shadowr banner_sprite"></span>
+          </a>
+        </BannerRight>
         <BannerControl>
-          <button className="btn left" onClick={() => handleArrClick('left')}></button>
-          <button className="btn right" onClick={() => handleArrClick('right')}></button>
+          <button
+            className="btn left banner_sprite"
+            onClick={() => handleArrClick('left')}
+          ></button>
+          <button
+            className="btn right banner_sprite"
+            onClick={() => handleArrClick('right')}
+          ></button>
         </BannerControl>
       </div>
     </BannerWrapper>

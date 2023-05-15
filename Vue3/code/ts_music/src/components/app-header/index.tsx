@@ -33,10 +33,10 @@ const AppHeader: FC<IProps> = (): JSX.Element => {
           <a className="logo sprite_01" href="/">
             网易云音乐
           </a>
-          <div className="title-list">
+          <div className="select-list">
             {headerTitles.map((item) => {
               return (
-                <div className="item" key={item.title}>
+                <div className="select-item" key={item.title}>
                   {showItem(item)}
                 </div>
               );
@@ -45,8 +45,8 @@ const AppHeader: FC<IProps> = (): JSX.Element => {
         </HeaderLeft>
         <HeaderRight>
           <Input className="search" placeholder="音乐/视频/电台/用户" prefix={<SearchOutlined />} />
-          <span className="button center">创作者中心</span>
-          <span className="button login">登录</span>
+          <span className="center">创作者中心</span>
+          <span className="LoginSmall">登录</span>
         </HeaderRight>
       </div>
       <div className="divider"></div>

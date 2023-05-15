@@ -2,21 +2,23 @@ import styled from 'styled-components';
 
 export const BannerWrapper = styled.div`
   .banner {
-    height: 270px;
+    height: 285px;
     display: flex;
     position: relative;
   }
 `;
 
 export const BannerLeft = styled.div`
-  position: relative;
   width: 730px;
+  position: relative;
 
   .banner-item {
     overflow: hidden;
-    height: 270px;
+    height: 285px;
     .image {
-      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      margin-left: -10px;
     }
   }
 
@@ -36,7 +38,7 @@ export const BannerLeft = styled.div`
         display: inline-block;
         width: 20px;
         height: 20px;
-        background: url(${require('@/assets/img/banner_sprite.png')}) 3px -343px;
+        background-position: 3px -343px;
         cursor: pointer;
 
         &:hover,
@@ -47,13 +49,34 @@ export const BannerLeft = styled.div`
     }
   }
 `;
-export const BannerRight = styled.a.attrs({
-  href: 'https://music.163.com/#/download',
-  target: '_blank'
-})`
-  width: 254px;
-  height: 270px;
+export const BannerRight = styled.div`
+  position: relative;
+  width: 256px;
+  height: 285px;
   background: url(${require('@/assets/img/download.png')});
+
+  .SignInInfo {
+    text-align: center;
+    margin-top: 253px;
+    color: #8d8d8d;
+  }
+
+  .shadow {
+    display: block;
+    _display: none;
+    position: absolute;
+    top: 0;
+    left: -20px;
+    width: 20px;
+    height: 285px;
+    background-position: -1px 0;
+  }
+
+  .shadowr {
+    left: auto;
+    right: -20px;
+    background-position: -20px 0;
+  }
 `;
 
 export const BannerControl = styled.div`
@@ -68,7 +91,6 @@ export const BannerControl = styled.div`
     position: absolute;
     width: 37px;
     height: 63px;
-    background-image: url(${require('@/assets/img/banner_sprite.png')});
     background-color: transparent;
     cursor: pointer;
 
