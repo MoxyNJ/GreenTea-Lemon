@@ -3,7 +3,6 @@ import { styled } from 'styled-components';
 export const AppFooterWrapper = styled.div`
   .content {
     height: 310px;
-    overflow: hidden;
     border-top: 1px solid #d3d3d3;
 
     .enter {
@@ -58,7 +57,7 @@ export const AppFooterWrapper = styled.div`
         justify-content: center;
         flex-direction: row;
 
-        > p {
+        > span {
           &:last-child {
             .divider {
               display: none;

@@ -3,12 +3,13 @@ import styled from 'styled-components';
 export const NavWrapper = styled.div`
   height: 30px;
   background-color: ${(props) => props.theme.color.primary};
+  box-sizing: border-box;
 
   .nav {
     display: flex;
-    padding-left: 180px;
     position: relative;
     top: -4px;
+    left: 180px;
 
     .item {
       a {

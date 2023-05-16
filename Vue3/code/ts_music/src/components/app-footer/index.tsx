@@ -117,12 +117,12 @@ const AppFooter: FC<IProps> = (): JSX.Element => {
             <p className="more-link">
               {moreLink.map((item) => {
                 return (
-                  <p key={item.name}>
+                  <span key={item.name}>
                     <a href={item.link} target="_blank" rel="noreferrer">
                       {item.name}
                     </a>
                     <span className="divider">|</span>
-                  </p>
+                  </span>
                 );
               })}
             </p>

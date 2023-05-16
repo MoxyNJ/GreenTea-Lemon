@@ -6,7 +6,7 @@ import type { RouteObject } from 'react-router-dom';
 const Discover = lazy(() => import('@/views/discover'));
 const Mine = lazy(() => import('@/views/mine'));
 const Focus = lazy(() => import('@/views/focus'));
-const Download = lazy(() => import('@/views/download'));
+// const Download = lazy(() => import('@/views/download'));
 
 // Discover下二级路由
 const Ranking = lazy(() => import('@/views/discover/views/ranking'));
@@ -62,11 +62,11 @@ const routes: RouteObject[] = [
   {
     path: '/focus',
     element: <Focus />
-  },
-  {
-    path: '/download',
-    element: <Download />
   }
+  // {
+  //   path: '/download',
+  //   element: <Download />
+  // }
 ];
 
 export default routes;

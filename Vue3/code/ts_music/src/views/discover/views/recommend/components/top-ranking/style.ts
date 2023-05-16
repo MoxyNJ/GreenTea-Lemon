@@ -10,7 +10,10 @@ export const RankingWrapper = styled.div`
 `;
 
 export const RankingItemWrapper = styled.div`
-  flex: 1;
+  width: 230px;
+  &:last-child {
+    width: 228px;
+  }
 
   .header {
     height: 100px;

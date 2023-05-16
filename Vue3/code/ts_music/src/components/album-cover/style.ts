@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 export const AlbumCoverWrapper = styled.div`
   .container_mask {
-    /* background: black; */
     background-position: -260px 100px;
   }
 
