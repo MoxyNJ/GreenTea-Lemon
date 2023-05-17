@@ -10,14 +10,16 @@ interface IProps {
   children?: ReactNode;
   info: any;
   rightMargin?: number;
+  bottomMargin?: number;
   size?: number;
+  showName?: boolean;
 }
 
 const PicCoverV1: FC<IProps> = (props) => {
-  const { info, size = 140, rightMargin = 0 } = props;
+  const { info, size = 140, rightMargin = 0, bottomMargin = 20, showName = false } = props;
 
   return (
-    <PicCoverV1Wrapper $rightMargin={rightMargin}>
+    <PicCoverV1Wrapper $rightMargin={rightMargin} $bottomMargin={bottomMargin}>
       <div className="top">
         <img
           src={getSizeImage(info.picUrl ? info.picUrl : info.coverImgUrl, size)}
@@ -33,7 +35,14 @@ const PicCoverV1: FC<IProps> = (props) => {
           </div>
         </div>
       </div>
-      <div className="bottom text-nowrap-2">{info.name}</div>
+      {showName ? (
+        <div className="footer">
+          <div className="bottom text-nowrap">{info.name}</div>
+          <div className="nickname text-nowrap">{'by ' + info?.creator?.nickname || '佚名'}</div>
+        </div>
+      ) : (
+        <div className="bottom text-nowrap-2">{info.name}</div>
+      )}
     </PicCoverV1Wrapper>
   );
 };

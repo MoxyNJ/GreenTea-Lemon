@@ -65,8 +65,8 @@ const AllAlbum: FC<IProps> = (): JSX.Element => {
   };
 
   /** 获取数据 */
-  const getAllAlbum = async (area: string, currentPage: number) => {
-    const offset = currentPage - 1;
+  const getAllAlbum = async (area: string, page: number) => {
+    const offset = page - 1;
     const res = await getTopAlbums(area, PER_PAGE_NUMBER, offset);
     setTotal(res.total);
     setTopAlbums(res.albums);

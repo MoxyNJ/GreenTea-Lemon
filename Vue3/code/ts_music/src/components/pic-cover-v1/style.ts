@@ -2,9 +2,10 @@ import styled from 'styled-components';
 
 export const PicCoverV1Wrapper = styled.div<{
   $rightMargin?: number;
+  $bottomMargin?: number;
 }>`
   width: 140px;
-  margin: 20px ${(props) => props.$rightMargin} 20px 0;
+  margin: 20px ${(props) => props.$rightMargin}px ${(props) => props.$bottomMargin}px 0;
 
   .top {
     position: relative;
@@ -70,7 +71,8 @@ export const PicCoverV1Wrapper = styled.div<{
     }
   }
 
-  /* .source {
+  .nickname {
     color: #666;
-  } */
+    padding-top: 4px;
+  }
 `;
