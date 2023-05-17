@@ -1,7 +1,7 @@
+import NavBar from '@/components/nav-bar';
 import React, { Suspense, memo } from 'react';
 import type { FC, ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
-import NavBar from './components/nav-bar';
 
 interface IProps {
   children?: ReactNode;

@@ -9,3 +9,15 @@ export const getHotNewAlbum = (limit = 10) => {
     }
   });
 };
+
+// 获取：全部新碟
+export function getTopAlbums(area = 'ALL', limit = 10, offset = 0) {
+  return hyRequest.get({
+    url: '/album/new',
+    params: {
+      area,
+      limit,
+      offset
+    }
+  });
+}
