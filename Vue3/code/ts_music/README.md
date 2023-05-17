@@ -1,3 +1,11 @@
+# TODO
+1. 播放器还没做
+2. 歌手 / 主播电台 还未完成
+
+接口：
+1. http://codercba.com:9002/
+2. https://binaryify.github.io/NeteaseCloudMusicApi
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
