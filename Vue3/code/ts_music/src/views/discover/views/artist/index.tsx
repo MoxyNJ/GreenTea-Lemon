@@ -22,8 +22,8 @@ export interface IArtistList {
 }
 
 const defaultParam: IParam = {
-  name: '入驻歌手',
-  area: -1,
+  name: '华语男歌手',
+  area: 7,
   type: 1
 };
 
@@ -34,7 +34,6 @@ const Artist: FC<IProps> = (): JSX.Element => {
   const [artistList, setartistList] = useState<IArtistList[]>([]);
 
   const changeArtist = (curParam: IParam) => {
-    console.log(curParam);
     setParam(curParam);
   };
 

@@ -46,7 +46,7 @@ const Songs: FC<IProps> = (): JSX.Element => {
   const onPageChange = (page: number) => {
     setSearchParams({
       cate: currentCat,
-      offset: String(page - 1)
+      offset: String((page - 1) * PER_PAGE_NUMBER)
     });
     // 调整state
     setCurrentPage(page);
@@ -56,7 +56,7 @@ const Songs: FC<IProps> = (): JSX.Element => {
   const onCatChange = (cate: string) => {
     setSearchParams({
       cate: cate,
-      offset: String(currentPage - 1)
+      offset: String((currentPage - 1) * PER_PAGE_NUMBER)
     });
     // 调整state
     setCurrentCat(cate);
@@ -71,7 +71,7 @@ const Songs: FC<IProps> = (): JSX.Element => {
     getTopPlayListCategoryList();
 
     const cat = searchParams.get('cat') || '全部';
-    const offset = Number(searchParams.get('offset')) || 0;
+    const offset = (Number(searchParams.get('offset')) || 0) / PER_PAGE_NUMBER;
     setCurrentPage(offset + 1);
     setCurrentCat(cat);
   }, []);

@@ -47,7 +47,7 @@ const AllAlbum: FC<IProps> = (): JSX.Element => {
   const onPageChange = (page: number) => {
     setSearchParams({
       area: currentArea,
-      offset: String(page - 1)
+      offset: String((page - 1) * PER_PAGE_NUMBER)
     });
     // 调整state
     setCurrentPage(page);
@@ -57,7 +57,7 @@ const AllAlbum: FC<IProps> = (): JSX.Element => {
   const onAreaChange = (area: string) => {
     setSearchParams({
       area: area,
-      offset: String(currentPage - 1)
+      offset: String((currentPage - 1) * PER_PAGE_NUMBER)
     });
 
     // 调整state
@@ -66,7 +66,7 @@ const AllAlbum: FC<IProps> = (): JSX.Element => {
 
   /** 获取数据 */
   const getAllAlbum = async (area: string, page: number) => {
-    const offset = page - 1;
+    const offset = (page - 1) * PER_PAGE_NUMBER;
     const res = await getTopAlbums(area, PER_PAGE_NUMBER, offset);
     setTotal(res.total);
     setTopAlbums(res.albums);
@@ -76,7 +76,7 @@ const AllAlbum: FC<IProps> = (): JSX.Element => {
   useEffect(() => {
     const area = searchParams.get('area') || 'all';
     const offset = Number(searchParams.get('offset')) || 0;
-    setCurrentPage(offset + 1);
+    setCurrentPage(offset / PER_PAGE_NUMBER + 1);
     setCurrentArea(area);
   }, []);
 

@@ -20,8 +20,7 @@ const ArtistCategory: FC<IProps> = (props): JSX.Element => {
     return (
       <div>
         {localArtists.map((item, index) => {
-          // 判断是否被选中，要大类area和小类type都相符合。
-          console.log(item, param);
+          // 判断是否被选中，area + type
           const isSelect = param.area === localArea && param.type === item.type;
           return (
             <CategoryItem key={item.name} className={isSelect ? 'active' : ''}>
