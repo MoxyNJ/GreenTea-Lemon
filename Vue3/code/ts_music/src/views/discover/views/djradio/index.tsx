@@ -25,6 +25,16 @@ const Djradio: FC<IProps> = (): JSX.Element => {
       console.log('getDjRadioCatelist 出错');
       return;
     }
+    // 暂时额外再加两个假数据
+    const list = res.categories;
+    const add1 = { ...list[list.length - 2] };
+    const add2 = { ...list[list.length - 1] };
+    add1.name = '常见问题';
+    add1.picWebUrl = 'https://music.163.com/style/web2/img/index_radio/radio_faq.png';
+    add2.name = '我要做主播';
+    add2.picWebUrl = 'https://music.163.com/style/web2/img/index_radio/radio_apply.png';
+    res.categories.push(add1, add2);
+
     setCategories(res.categories);
   };
 
