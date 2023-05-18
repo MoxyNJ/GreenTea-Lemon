@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import singer_sprite from '@/assets/img/singer_sprite.png';
 
 export const CategoryWrapper = styled.div`
+  box-sizing: border-box;
   width: 180px;
   padding: 35px 9px 40px;
   border: 1px solid #d3d3d3;
@@ -23,6 +24,7 @@ export const CategoryWrapper = styled.div`
       font-size: 16px;
       margin-bottom: 1px;
       font-family: 'Microsoft Yahei';
+      line-height: 1.5715;
     }
   }
 `;

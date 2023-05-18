@@ -2,31 +2,41 @@ import React, { memo } from 'react';
 import type { FC, ReactNode } from 'react';
 import { CategoryItem, CategoryWrapper } from './style';
 import { artistCategories } from '@/assets/data/local_data';
-import { ICurrentType } from '../..';
+import { IParam } from '../..';
 
 interface IProps {
   children?: ReactNode;
-  currentArea?: number;
-  currentType: ICurrentType;
-  changeArtist: (area: number, item: ICurrentType) => void;
+  param: IParam;
+  changeArtist: (param: IParam) => void;
 }
 
 const ArtistCategory: FC<IProps> = (props): JSX.Element => {
-  const { currentArea, currentType, changeArtist } = props;
+  const { param, changeArtist } = props;
 
   /**
    *  把每个大类中的小类提取出来
    */
-  const renderArtist = (artists: any[], area: any) => {
+  const renderArtist = (localArtists: any[], localArea: any) => {
     return (
       <div>
-        {artists.map((item, index) => {
+        {localArtists.map((item, index) => {
           // 判断是否被选中，要大类area和小类type都相符合。
-          const isSelect = currentArea === area && currentType.type === item.type;
+          console.log(item, param);
+          const isSelect = param.area === localArea && param.type === item.type;
           return (
             <CategoryItem key={item.name} className={isSelect ? 'active' : ''}>
-              {/* 如果选中后，就会dispatch area & type，从而让list组件获取详细歌手数据 */}
-              <span onClick={(e) => changeArtist(area, item)}>{item.name}</span>
+              {/* 如果选中后，保存param，进而list组件获取数据 */}
+              <span
+                onClick={(e) =>
+                  changeArtist({
+                    name: item.name,
+                    area: localArea,
+                    type: item.type
+                  })
+                }
+              >
+                {item.name}
+              </span>
             </CategoryItem>
           );
         })}
@@ -36,11 +46,11 @@ const ArtistCategory: FC<IProps> = (props): JSX.Element => {
   return (
     <CategoryWrapper>
       {/* 左侧导航的数据是本地提前保存的，直接拿来用。 */}
-      {artistCategories.map((item, index) => {
+      {artistCategories.map((localItem, index) => {
         return (
-          <div className="section" key={item.area}>
-            <h2 className="title">{item.title}</h2>
-            {renderArtist(item.artists, item.area)}
+          <div className="section" key={localItem.area}>
+            <h2 className="title">{localItem.title}</h2>
+            {renderArtist(localItem.artists, localItem.area)}
           </div>
         );
       })}
