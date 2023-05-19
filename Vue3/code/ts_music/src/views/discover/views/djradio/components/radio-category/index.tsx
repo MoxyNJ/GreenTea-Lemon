@@ -3,17 +3,16 @@ import type { FC, ReactNode, ElementRef } from 'react';
 import { RadioCategoryContent, RadioCategoryItemImage, RadioCategoryWrapper } from './style';
 import { Carousel } from 'antd';
 import { DJ_RADIO_CATE_NUMBER } from '@/assets/constant';
-import { getDjRadioCatelist } from '@/service/modules/djradio';
 
 interface IProps {
   children?: ReactNode;
   currentId: number;
   categories: any[];
-  setCurrentId: React.Dispatch<React.SetStateAction<number>>;
+  handleCateIdParam: (cateId: number) => void;
 }
 
 const RadioCategor: FC<IProps> = (props): JSX.Element => {
-  const { currentId, setCurrentId, categories } = props;
+  const { currentId, categories, handleCateIdParam } = props;
   const carouselRef = useRef<ElementRef<typeof Carousel>>(null);
 
   // 计算出共有几页，每页应当有18个类目 ceil 向下取整
@@ -36,7 +35,7 @@ const RadioCategor: FC<IProps> = (props): JSX.Element => {
                       return (
                         <div
                           key={item.id}
-                          onClick={(e) => setCurrentId(item.id)}
+                          onClick={(e) => handleCateIdParam(item.id)}
                           className={'category-item' + (currentId === item.id ? ' active' : '')}
                         >
                           <RadioCategoryItemImage

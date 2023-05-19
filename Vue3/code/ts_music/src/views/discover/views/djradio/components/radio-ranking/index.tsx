@@ -9,14 +9,14 @@ interface IProps {
   children?: ReactNode;
   hotRadioList: any[];
   currentPage: number;
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  handlePageParam: (page: number) => void;
 }
 
 const RadioRanking: FC<IProps> = (props): JSX.Element => {
-  const { hotRadioList, currentPage, setCurrentPage } = props;
+  const { hotRadioList, currentPage, handlePageParam } = props;
 
   const onPageChange = (page: number) => {
-    setCurrentPage(page);
+    handlePageParam(page);
   };
 
   return (
