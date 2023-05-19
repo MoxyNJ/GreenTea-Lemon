@@ -2,16 +2,17 @@ import { configureStore } from '@reduxjs/toolkit';
 import { useSelector, TypedUseSelectorHook, useDispatch, shallowEqual } from 'react-redux';
 
 import recommendReducer from '@/views/discover/views/recommend/store';
+import playerReducer from '@/views/player/store/player';
 
 const store = configureStore({
   reducer: {
-    recommend: recommendReducer
+    recommend: recommendReducer,
+    player: playerReducer
   }
 });
 
 type GetStateFnType = typeof store.getState;
-type IRootState = ReturnType<GetStateFnType>;
-
+export type IRootState = ReturnType<GetStateFnType>;
 type DispatchType = typeof store.dispatch;
 
 export const useAppSelector: TypedUseSelectorHook<IRootState> = useSelector;
