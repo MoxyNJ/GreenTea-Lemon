@@ -65,3 +65,16 @@ export function formatMonthDay(time: any) {
 export function formatMinuteSecond(time: any) {
   return formatDate(time, 'mm:ss');
 }
+
+//** 新的格式化音乐时间函数 */
+export function formatTime(time: number) {
+  // 毫秒 => 秒
+  const timeSeconds = time / 1000;
+  // 获取分钟 + 秒钟
+  const min = Math.floor(timeSeconds / 60);
+  const sed = Math.floor(timeSeconds) % 60;
+  // 格式化，添加两位数的0补位，如：”3:21“ 调整为：”03:31“
+  const formatMin = String(min).padStart(2, '0');
+  const formatDed = String(sed).padStart(2, '0');
+  return `${formatMin}:${formatDed}`;
+}

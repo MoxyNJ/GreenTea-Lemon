@@ -1,4 +1,4 @@
-export function scrollTo(element: { scrollTop: number }, to: number, duration: number) {
+export function scrollTo(element: any, to: number, duration: number) {
   if (duration <= 0) return;
   // to 元素已经滚动的长度
   // scrollTop 元素目前滚动的长度

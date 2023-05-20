@@ -83,6 +83,11 @@ export const PlayInfo = styled.div`
     width: 34px;
     height: 34px;
     border-radius: 5px;
+
+    img {
+      height: 35px;
+      width: 35px;
+    }
   }
 
   .info {
@@ -125,7 +130,7 @@ export const PlayInfo = styled.div`
           width: 22px;
           height: 24px;
           border: none;
-          margin-top: -7px;
+          margin-top: -5px;
           background: url(${sprite_icon}) 0 -250px;
 
           &::after {
@@ -133,9 +138,8 @@ export const PlayInfo = styled.div`
           }
         }
 
-        .ant-slider-handle:focus {
-          border-color: red;
-          box-shadow: 0 0 0 5px rgb(255 24 35 / 12%);
+        .ant-slider-handle:hover {
+          background-position: 0 -280px;
         }
       }
 
@@ -163,9 +167,6 @@ export const Operator = styled.div<{
   top: 5px;
   padding-bottom: 6px;
 
-  .left {
-    padding-right: 8px;
-  }
   .btn {
     margin-left: 3px;
     width: 25px;
@@ -173,34 +174,38 @@ export const Operator = styled.div<{
     cursor: pointer;
   }
 
-  .pip {
-    background-position-y: 0;
-  }
+  .left {
+    padding-right: 8px;
+    .pip {
+      background-position-y: 0;
+    }
 
-  .favor {
-    background-position: -88px -163px;
-  }
+    .favor {
+      background-position: -88px -163px;
+    }
 
-  .share {
-    background-position: -114px -163px;
-  }
+    .share {
+      background-position: -114px -163px;
+    }
 
-  .pip:hover {
-    background-position-y: -25px;
-  }
+    .pip:hover {
+      background-position-y: -25px;
+    }
 
-  .favor:hover {
-    background-position: -88px -189px;
-  }
+    .favor:hover {
+      background-position: -88px -189px;
+    }
 
-  .share:hover {
-    background-position: -114px -189px;
+    .share:hover {
+      background-position: -114px -189px;
+    }
   }
 
   .right {
     display: flex;
     align-items: center;
     width: 126px;
+    box-sizing: border-box;
     padding-left: 13px;
     padding-bottom: 3px;
     background-position: -147px -248px;

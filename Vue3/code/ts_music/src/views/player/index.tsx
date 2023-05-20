@@ -1,13 +1,25 @@
 import React, { memo } from 'react';
 import type { FC, ReactNode } from 'react';
-import { PlayerWrapper } from './style';
+import { PlayerLeft, PlayerRight, PlayerWrapper } from './style';
 
 interface IProps {
   children?: ReactNode;
 }
 
 const Player: FC<IProps> = (): JSX.Element => {
-  return <PlayerWrapper>Player component</PlayerWrapper>;
+  return (
+    <PlayerWrapper>
+      <div className="content wrap-v2">
+        <PlayerLeft>
+          <LJPlayerInfo />
+        </PlayerLeft>
+        <PlayerRight>
+          <LJPlayerCoverList />
+          <LJPlayerSameSongs />
+        </PlayerRight>
+      </div>
+    </PlayerWrapper>
+  );
 };
 
 export default memo(Player);

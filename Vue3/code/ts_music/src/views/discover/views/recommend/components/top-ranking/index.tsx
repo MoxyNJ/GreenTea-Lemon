@@ -5,6 +5,8 @@ import AreaHeaderV1 from '@/components/area-header-v1';
 import { getPlaylistDetail } from '@/service/modules/recommend';
 import { NEW_SONG, ORIGINAL_SONG, SOARING_SONG } from '@/assets/constant';
 import { getSizeImage } from '@/utils/format-utils';
+import { useAppDispatch } from '@/store';
+import { fetchCurrentSongAction } from '@/views/player/store/player';
 
 interface IProps {
   children?: ReactNode;
@@ -51,14 +53,11 @@ interface Itemprops {
 const TopRankingItem: FC<Itemprops> = (props) => {
   const { itemData } = props;
   const { tracks = [] } = itemData;
+  const dispatch = useAppDispatch();
 
   /** 添加歌曲到播放列表 */
   const handlePlayClick = (id: number) => {
-    // const dispatch = useAppDispatch();
-    // function handlePlayClick(id: number) {
-    //   dispatch(fetchCurrentSongAction(id));
-    // }
-    return;
+    dispatch(fetchCurrentSongAction(id));
   };
 
   return (

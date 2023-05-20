@@ -14,15 +14,17 @@ export const PlayerListWrapper = styled.div`
     height: 28px;
     line-height: 28px;
     color: #ccc;
+    cursor: pointer;
 
     &.active {
       color: #fff;
       background-color: #000;
 
-      ::before {
+      .left::before {
         content: '';
         position: absolute;
         left: 8px;
+        top: 8px;
         width: 10px;
         height: 13px;
         background: url(${require('@/assets/img/playlist_sprite.png')}) -182px 0;

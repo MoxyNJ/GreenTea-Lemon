@@ -18,158 +18,6 @@ export const DJ_RADIO_CATE_NUMBER = 18;
 // 默认播放列表
 export const DEFAULT_PLAY_LIST = [
   {
-    name: 'Something Just Like This',
-    id: 461347998,
-    pst: 0,
-    t: 0,
-    ar: [
-      {
-        id: 893484,
-        name: 'The Chainsmokers',
-        tns: [],
-        alias: []
-      },
-      {
-        id: 89365,
-        name: 'Coldplay',
-        tns: [],
-        alias: []
-      }
-    ],
-    alia: [],
-    pop: 100,
-    st: 0,
-    rt: null,
-    fee: 8,
-    v: 101,
-    crbt: null,
-    cf: '',
-    al: {
-      id: 35196287,
-      name: 'Something Just Like This',
-      picUrl: 'https://p1.music.126.net/A59-h_qsGXsq0wDbGVPNbg==/109951165981250182.jpg',
-      tns: [],
-      pic_str: '109951165981250182',
-      pic: 109951165981250180
-    },
-    dt: 247626,
-    h: {
-      br: 320000,
-      fid: 0,
-      size: 9907766,
-      vd: -66440
-    },
-    m: {
-      br: 192000,
-      fid: 0,
-      size: 5944677,
-      vd: -66440
-    },
-    l: {
-      br: 128000,
-      fid: 0,
-      size: 3963133,
-      vd: -66440
-    },
-    a: null,
-    cd: '1',
-    no: 1,
-    rtUrl: null,
-    ftype: 0,
-    rtUrls: [],
-    djId: 0,
-    copyright: 1,
-    s_id: 0,
-    mark: 270336,
-    originCoverType: 1,
-    originSongSimpleData: null,
-    tagPicList: null,
-    resourceState: true,
-    version: 101,
-    songJumpInfo: null,
-    single: 0,
-    noCopyrightRcmd: null,
-    rurl: null,
-    mv: 5449021,
-    mst: 9,
-    cp: 7001,
-    rtype: 0,
-    publishTime: 1487952000000
-  },
-  {
-    name: 'Unstoppable',
-    id: 400876320,
-    pst: 0,
-    t: 0,
-    ar: [
-      {
-        id: 74625,
-        name: 'Sia',
-        tns: [],
-        alias: []
-      }
-    ],
-    alia: [],
-    pop: 100,
-    st: 0,
-    rt: null,
-    fee: 8,
-    v: 33,
-    crbt: null,
-    cf: '',
-    al: {
-      id: 3394107,
-      name: 'This Is Acting',
-      picUrl: 'https://p1.music.126.net/zmDE8IMf0QKDLVQc1xh4RA==/109951165973312283.jpg',
-      tns: [],
-      pic_str: '109951165973312283',
-      pic: 109951165973312290
-    },
-    dt: 217808,
-    h: {
-      br: 320000,
-      fid: 0,
-      size: 8712403,
-      vd: -66479
-    },
-    m: {
-      br: 192000,
-      fid: 0,
-      size: 5227459,
-      vd: -64026
-    },
-    l: {
-      br: 128000,
-      fid: 0,
-      size: 3484987,
-      vd: -62608
-    },
-    a: null,
-    cd: '1',
-    no: 5,
-    rtUrl: null,
-    ftype: 0,
-    rtUrls: [],
-    djId: 0,
-    copyright: 1,
-    s_id: 0,
-    mark: 270336,
-    originCoverType: 1,
-    originSongSimpleData: null,
-    tagPicList: null,
-    resourceState: true,
-    version: 33,
-    songJumpInfo: null,
-    single: 0,
-    noCopyrightRcmd: null,
-    rtype: 0,
-    rurl: null,
-    mst: 9,
-    cp: 7001,
-    mv: 0,
-    publishTime: 1453996800000
-  },
-  {
     name: 'Happy',
     id: 26548584,
     pst: 0,
@@ -241,5 +89,91 @@ export const DEFAULT_PLAY_LIST = [
     cp: 743010,
     mv: 206025,
     publishTime: 1371484800007
+  },
+  {
+    name: 'The Nights',
+    id: 1858069368,
+    pst: 0,
+    t: 0,
+    ar: [
+      {
+        id: 45236,
+        name: 'Avicii',
+        tns: [],
+        alias: []
+      }
+    ],
+    alia: [],
+    pop: 95,
+    st: 0,
+    rt: '',
+    fee: 8,
+    v: 3,
+    crbt: null,
+    cf: '',
+    al: {
+      id: 129843333,
+      name: 'Viral Summer Hits 2021',
+      picUrl: 'https://p1.music.126.net/M4D1Tg0GezdKAeovJcM7qQ==/109951166140780571.jpg',
+      tns: [],
+      pic_str: '109951166140780571',
+      pic: 109951166140780580
+    },
+    dt: 178057,
+    h: {
+      br: 320002,
+      fid: 0,
+      size: 7125203,
+      vd: -71940,
+      sr: 44100
+    },
+    m: {
+      br: 192002,
+      fid: 0,
+      size: 4275139,
+      vd: -69456,
+      sr: 44100
+    },
+    l: {
+      br: 128002,
+      fid: 0,
+      size: 2850107,
+      vd: -68034,
+      sr: 44100
+    },
+    sq: {
+      br: 1067606,
+      fid: 0,
+      size: 23761936,
+      vd: -71902,
+      sr: 44100
+    },
+    hr: null,
+    a: null,
+    cd: '01',
+    no: 12,
+    rtUrl: null,
+    ftype: 0,
+    rtUrls: [],
+    djId: 0,
+    copyright: 1,
+    s_id: 0,
+    mark: 270336,
+    originCoverType: 1,
+    originSongSimpleData: null,
+    tagPicList: null,
+    resourceState: true,
+    version: 3,
+    songJumpInfo: null,
+    entertainmentTags: null,
+    awardTags: null,
+    single: 0,
+    noCopyrightRcmd: null,
+    mv: 0,
+    rtype: 0,
+    rurl: null,
+    mst: 9,
+    cp: 7003,
+    publishTime: 1625155200000
   }
 ];

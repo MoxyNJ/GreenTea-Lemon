@@ -2,6 +2,8 @@ import React, { memo } from 'react';
 import type { FC, ReactNode } from 'react';
 import { RankingListWrapper } from './style';
 import { formatMinuteSecond, getSizeImage } from '@/utils/format-utils';
+import { useAppDispatch } from '@/store';
+import { fetchCurrentSongAction } from '@/views/player/store/player';
 
 interface IProps {
   children?: ReactNode;
@@ -12,6 +14,13 @@ interface IProps {
 
 const RankingList: FC<IProps> = (props): JSX.Element => {
   const { title, tracks, playCount } = props;
+
+  const dispatch = useAppDispatch();
+
+  /** 列表中切换歌曲 */
+  function changeListSong(item: any) {
+    dispatch(fetchCurrentSongAction(item.id));
+  }
   return (
     <RankingListWrapper>
       <div className="header">
@@ -56,8 +65,10 @@ const RankingList: FC<IProps> = (props): JSX.Element => {
                       {index < 3 ? (
                         <img src={getSizeImage(item.al.picUrl, 50)} alt={item.name} />
                       ) : null}
-                      {/* <span className="play sprite_table" onClick={(e) => playMusic(item)}></span> */}
-                      <span className="play sprite_table"></span>
+                      <span
+                        className="play sprite_table"
+                        onClick={(e) => changeListSong(item)}
+                      ></span>
                       <span className="title text-nowrap">{item.name}</span>
                     </div>
                   </td>

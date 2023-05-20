@@ -1,4 +1,4 @@
-import React, { Suspense, memo } from 'react';
+import React, { Suspense, memo, useEffect } from 'react';
 import type { FC } from 'react';
 import { useRoutes } from 'react-router-dom';
 import routes from '@/router';
