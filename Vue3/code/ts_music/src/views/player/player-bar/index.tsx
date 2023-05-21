@@ -17,6 +17,14 @@ import picSize35 from '@/assets/img/picSize35.png';
 
 interface IProps {
   children?: ReactNode;
+  volumnHandle: {
+    showVolumn: boolean;
+    setShowVolumn: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  pannelHandle: {
+    showPannel: boolean;
+    setShowPannel: React.Dispatch<React.SetStateAction<boolean>>;
+  };
 }
 
 interface ISongInfo {
@@ -36,7 +44,11 @@ const defaultSongInfo: ISongInfo = {
   formatDuration: '00:00'
 };
 
-const PlayerBar: FC<IProps> = (): JSX.Element => {
+const PlayerBar: FC<IProps> = (props): JSX.Element => {
+  const {
+    volumnHandle: { showVolumn, setShowVolumn },
+    pannelHandle: { showPannel, setShowPannel }
+  } = props;
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const { currentSong, lyrics, lyricIndex, playMode, playVolume, playSongList } = useAppSelector(
@@ -62,10 +74,6 @@ const PlayerBar: FC<IProps> = (): JSX.Element => {
   const [progress, setProgress] = useState<number>(0);
   /** 用户是否正在拖动滑动条  */
   const [isSliding, setIsSliding] = useState(false);
-  /** 展示音量控件 */
-  const [showVolumn, setShowVolumn] = useState<boolean>(false);
-  /** 展示歌词和播放列表 */
-  const [showPannel, setShowPannel] = useState<boolean>(false);
 
   /** 初始：默认播放歌单中最后一首歌 */
   useEffect(() => {

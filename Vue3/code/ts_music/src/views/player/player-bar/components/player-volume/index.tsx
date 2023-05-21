@@ -22,7 +22,6 @@ const PlayerVolume: FC<IProps> = (): JSX.Element => {
 
   useEffect(() => {
     setProgress(volume * 100);
-    console.log(volume);
   }, [volume]);
 
   /** 按下调整音量 */

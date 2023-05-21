@@ -4,6 +4,7 @@ import { AppFooterWrapper, LogoWrapper } from './style';
 
 interface IProps {
   children?: ReactNode;
+  handleShow: () => void;
 }
 
 interface IFooterLogo {
@@ -13,7 +14,7 @@ interface IFooterLogo {
   logoPositionHover: number[];
 }
 
-const AppFooter: FC<IProps> = (): JSX.Element => {
+const AppFooter: FC<IProps> = ({ handleShow }): JSX.Element => {
   const logoList: IFooterLogo[] = [
     {
       info: '音乐开放平台',
@@ -90,7 +91,7 @@ const AppFooter: FC<IProps> = (): JSX.Element => {
   ];
 
   return (
-    <AppFooterWrapper>
+    <AppFooterWrapper onClick={(e) => handleShow()}>
       <div className="content">
         <div className="wrap-v2">
           <div className="enter">
