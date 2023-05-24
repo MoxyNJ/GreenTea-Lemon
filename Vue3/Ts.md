@@ -42,6 +42,8 @@ ts-node xxx.ts # 运行
 
 
 
+## 2 数据类型
+
 ### 类型注解 Type Annotation
 
 在定义标识符时，需要添加对类型的约束：
@@ -61,15 +63,15 @@ ts-node xxx.ts # 运行
 
 类型举例：
 
-- Js中存在的类型：string、number、object、symbol、null、undefined
-- 函数
+- Js中存在的类型：string、number、object、symbol、null、undefined、function
+- 匿名函数通常不需要添加类型，可以自动推导，如使用 forEach 进行遍历(下面有例子) 
 
 ```typescript
 // 数组类型
 const names1: string[] = ['abc', 'def'];
 const names2: Array<string> = ['abc', 'def'];
 
-// Object类型
+// Object类型 (定义对象类型:type)
 type InfoType = {
   name: string
   age: number
@@ -83,14 +85,33 @@ const info: InfoType = {
 const n: null = null;
 const u: undefined = undefined;
 
-
 // 函数
 function sum(num1: number, num2: number): number {
   return num1 + num2;
 }
-
+// 箭头函数
 const sum =  (num1: number, num2: number): number => num1 + num2;
+
+
+// 匿名函数
+const name = ['ninjee', 'moxy', 'hou'];
+names.forEach((item, index) => {				// 回调函数的入参不需要手动添加类型约束
+  console.log(item.toUpperCase(), index)
+})
+
 ```
+
+
+
+### 对象类型 type
+
+- 对象类型：用来细化 object 类型
+
+```js
+function printCoordinate()
+```
+
+
 
 
 
