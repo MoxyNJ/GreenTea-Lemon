@@ -251,10 +251,10 @@ const PlayerBar: FC<IProps> = (props): JSX.Element => {
           </div>
           <div className="info">
             <div className="song">
-              <a href="/todo" className="song-name">
+              <a href="/player" className="song-name">
                 {songInfo.songName}
               </a>
-              <a href="/todo" className="singer-name">
+              <a href="/player" className="singer-name">
                 {songInfo.singerName}
               </a>
             </div>
