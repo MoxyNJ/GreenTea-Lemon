@@ -42,25 +42,13 @@ tsconfig.node.json
 
 
 
-（3）配置 env.d.ts
-
-- 通过 declare 声明 .vue 文件
-
-```ts
-/// <reference types="vite/client" />
-
-declare module "*.vue" {
-    import { DefineComponent } from 'vue'
-    const component: DefineComponent
-    export default component   
-}
-```
-
-
-
 ## Step 2 项目搭建规范
 
-#### 2.1 集成editorconfig配置
+- 项目最终打包为：default_project
+
+
+
+### 2.1 集成editorconfig配置
 
 说明：EditorConfig 有助于为不同 IDE 编辑器上处理同一项目的多个开发人员维护一致的编码风格。
 
@@ -93,7 +81,7 @@ trim_trailing_whitespace = false
 
 
 
-#### 2.2 使用prettier工具
+### 2.2 使用prettier工具
 
 说明：Prettier 是代码格式化工具，支持主流前端等语言（js、ts、css、less、vue、react、md...）。
 
@@ -105,7 +93,7 @@ trim_trailing_whitespace = false
 npm install prettier -D
 ```
 
-2. 配置 `.prettierrc` 文件
+2. 配置 `.prettierrc.json` 文件
 
 ```json
 {
@@ -162,7 +150,7 @@ VSCode 中配置：
 
 
 
-#### 2.3 使用ESLint检测
+### 2.3 使用ESLint检测
 
 流程：
 
@@ -172,10 +160,10 @@ VSCode 中配置：
 
 3. 解决 eslint 和 prettier 冲突的问题：
 
-   1. 安装插件：vue在创建项目时，如果选择prettier，那么这两个插件会自动安装
+   1. 安装插件：
 
       ```shell
-      npm install eslint-plugin-prettier eslint-config-prettier -D
+      npm install eslint-plugin-prettier -D
       ```
 
    2. `.eslintrc.cjs` 添加 prettier 插件：
@@ -187,29 +175,23 @@ VSCode 中配置：
           "@vue/typescript/recommended",
           "@vue/prettier",
           "@vue/prettier/@typescript-eslint",
-          'plugin:prettier/recommended'
+          'plugin:prettier/recommended' // 添加这个
         ],
       ```
 
-   3. VSCode中 eslint 的配置
+4. 关闭部分 ESLint 检测：
 
-      ```json
-        "eslint.lintTask.enable": true,
-        "eslint.alwaysShowStatus": true,
-        "eslint.validate": [
-          "javascript",
-          "javascriptreact",
-          "typescript",
-          "typescriptreact"
-        ],
-        "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": true
-        },
-      ```
+   在 .eslintrc.cjs 中添加 rules 字段，可配置 ESLint 的其他规则。比如下面例子中，将“已声明但未使用的变量”警告提示关闭。
 
+   ```js
+     rules: {
+       '@typescript-eslint/no-unused-vars': 'off'
+     }
+   ```
 
+   
 
-### 1.4. git Husky和eslint（后续）
+### 2.4 git Husky和eslint（后续）
 
 虽然我们已经要求项目使用eslint了，但是不能保证组员提交代码之前都将eslint中的问题解决掉了：
 
@@ -255,9 +237,9 @@ npx husky-init && npm install
 
 
 
-### 1.5. git commit规范（后续）
+### 2.4. git commit规范（后续）
 
-#### 1.5.1. 代码提交风格
+#### 2.4.1 代码提交风格
 
 通常我们的git commit会按照统一的风格来提交，这样可以快速定位每次提交的内容，方便之后对版本进行控制。
 
@@ -331,7 +313,7 @@ npx commitizen init cz-conventional-changelog --save-dev --save-exact
 
 
 
-#### 1.5.2. 代码提交验证
+#### 2.4.2 代码提交验证
 
 如果我们按照cz来规范了提交风格，但是依然有同事通过 `git commit` 按照不规范的格式提交应该怎么办呢？
 
@@ -359,17 +341,18 @@ npx husky add .husky/commit-msg "npx --no-install commitlint --edit $1"
 
 
 
-## 二. 接口文档
+### 2.5  接口文档
 
 接口文档v1版本：
 
-https://documenter.getpostman.com/view/12387168/TzsfmQvw
+- https://documenter.getpostman.com/view/12387168/TzsfmQvw
 
 baseURL的值：
 
-```
+```shell
 http://152.136.185.210:5000
 http://152.136.185.210:4000
+http://codercba.com:5000 # new
 ```
 
 设置全局token的方法：
@@ -383,7 +366,61 @@ pm.globals.set("token", res.data.token);
 
 接口文档v2版本：（有部分更新）
 
-https://documenter.getpostman.com/view/12387168/TzzDKb12
+- https://documenter.getpostman.com/view/12387168/TzzDKb12
+
+
+
+### 2.6 项目结构重置
+
+- 在 src 中创建以下文件：
+
+```shell
+assets
+  css
+    common.less # 公共css
+    index.less # 统一导出
+    reset.less # 重置css
+  img
+base-ui # 公共UI组件
+components # 主要组件
+hooks # 自定义hooks
+router # vue-router 路由
+service # 服务器接口
+stores # pinia 状态管理
+utils	# 赋能函数
+views # 视图，主页面
+```
+
+
+
+### 2.7 配置 CSS 样式
+
+- 安装：`npm install normalize.css`
+- 在 `main.ts` 中导入：`import 'normalize.css'`
+- 安装：`npm install less -D`（开发时依赖）
+- 在 `assets/css/reset.less` 中配置重置样式
+
+
+
+### 2.8  配置 vue-router 路由配置
+
+- 在项目初始化时已做安装，略作修改，具体见项目代码
+- 主要是在 router、view、App.vue 文件中修改
+
+
+
+### 2.9 配置 pinia 状态管理
+
+- 在项目初始化时已做安装，略作修改，具体见项目代码
+- 主要是在 store、main.ts 文件中修改
+
+
+
+### 2.10 封装网络请求 axios
+
+- npm install axios
+  - 配置并测试 axios
+- 区分 development 和 production 环境
 
 
 
@@ -399,29 +436,9 @@ https://documenter.getpostman.com/view/12387168/TzzDKb12
 
 
 
+## 技巧：
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- vscode `cmd + p` 快速打开文件搜索，不需要在左侧费劲的找文件。
 
 
 
