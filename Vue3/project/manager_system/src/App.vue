@@ -1,22 +1,17 @@
 <template>
   <div class="app">
-    <h2>app</h2>
-    <nav>
-      <RouterLink to="/login">登录</RouterLink>
-      <RouterLink to="/main">主要</RouterLink>
-    </nav>
+    <!-- 路由占位 -->
+    <RouterView />
   </div>
-
-  <!-- 路由占位 -->
-  <RouterView />
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 </script>
 
 <style scoped>
-nav a {
-  padding: 0 10px;
+.app {
+  height: 100%;
+  width: 100%;
 }
 </style>

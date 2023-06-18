@@ -1,11 +1,10 @@
 <template>
-  <div class="login">
-    <h2>login</h2>
-  </div>
+  <div class="login"><login-panel /></div>
 </template>
 
 <script setup lang="ts">
 import request from '@/service'
+import LoginPanel from './cpns/LoginPanel.vue'
 
 request
   .get({
@@ -18,6 +17,12 @@ request
 
 <style lang="less" scoped>
 .login {
-  color: red;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+
+  background: url('@/assets/img/login-bg.svg');
 }
 </style>

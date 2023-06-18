@@ -424,6 +424,33 @@ views # 视图，主页面
 
 
 
+## Step 3 
+
+### 3.1 集成 Element-Plus
+
+- 文档：https://element-plus.org/zh-CN/guide/installation.html
+
+- 安装：`npm install element-plus`
+
+- 全局注册组件 / 按需导入组件
+
+  - 完整引入：相对方便，但打包体积较大，组件和CSS文件全部导入并打包；
+
+  - 按需导入：按量导入，推荐使用“自动导入”方式，在文档中有导入方式。
+
+    - 会生成 `auto-imports.d.ts` 和 `components.d.ts` 文件，手动添加到 `tsconfig.app.json`后，被导入组件才会有自动提示。注：Feedback 反馈组件，不在 `<template>` 中使用，所以不会自动导入。
+
+      ```json
+      {
+        "extends": "@vue/tsconfig/tsconfig.dom.json",
+        "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "auto-imports.d.ts", "components.d.ts"],
+      // ...
+      ```
+
+- 安装 icons
+
+### 3.2 
+
 
 
 
