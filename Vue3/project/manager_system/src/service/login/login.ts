@@ -1,7 +1,5 @@
 import request from '..'
 import type { IAccount } from '@/types'
-// import { localCache } from '@/utils/cache'
-// import { LOGIN_TOKEN } from '@/global/constants'
 
 export function accountLoginRequest(account: IAccount) {
   return request.post({
@@ -13,9 +11,6 @@ export function accountLoginRequest(account: IAccount) {
 export function getUserInfoById(id: number) {
   return request.get({
     url: `/users/${id}`
-    // headers: {
-    //   Authorization: 'Bearer ' + localCache.getCache(LOGIN_TOKEN)
-    // }
   })
 }
 

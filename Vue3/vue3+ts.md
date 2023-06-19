@@ -424,7 +424,7 @@ views # 视图，主页面
 
 
 
-## Step 3 
+## Step 3 开发细节
 
 ### 3.1 集成 Element-Plus
 
@@ -447,15 +447,68 @@ views # 视图，主页面
       // ...
       ```
 
-- 安装 icons
+- 安装 icons，文档中有
 
-### 3.2 
+  ```ts
+  /** elementplus 全局注册图标 */
+  import type { App } from 'vue'
+  import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+  
+  function registerIcons(app: App<Element>) {
+    // 遍历所有图标
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      // app.component 将图标注册成组件
+      app.component(key, component)
+    }
+  }
+  
+  // 导出注册函数，在main.ts中使用plugin方式直接自动调用并注册
+  export default registerIcons
+  ```
+
+- 引入 ElMessage  样式
+
+  1. 安装插件：`npm i vite-plugin-style-import -D`
+  2. 在 vite.config.ts 中配置 plugin：
+
+  ```ts
+  // 导入
+  import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
+  
+  // 配置 plugins: [ ... ]
+  createStyleImportPlugin({
+    resolves: [ElementPlusResolve()],
+    libs: [
+      {
+        libraryName: 'element-plus',
+        esModule: true,
+        resolveStyle: (name) => {
+          return `element-plus/theme-chalk/${name}.css`
+        }
+      }
+    ]
+  })
+  ```
+
+  
+
+### 3.2 使用 postman 调试工具
+
+- 官网安装 postman
+- 接口文档：`https://documenter.getpostman.com/view/12387168/TzzDKb12`
+- baseURL：`http://codercba.com:5000`
 
 
 
+### 3.3 RBAC
 
+系统管理：包含用户管理、部门管理、角色管理、菜单管理等。
 
+系统管理等开发，主要是基于权限管理的。
 
+- 权限管理：根据登录用户身份不同，呈现不同的后台管理系统（具备不同的权限）。
+- role based access control 基于角色的访问控制。
+- 拓展了解：Linux 的文件管理系统。
 
 
 

@@ -3,16 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import request from '@/service'
 import LoginPanel from './cpns/LoginPanel.vue'
-
-request
-  .get({
-    url: '/test'
-  })
-  .then((res) => {
-    console.log(res.response.data)
-  })
 </script>
 
 <style lang="less" scoped>

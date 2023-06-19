@@ -35,13 +35,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, type Ref } from 'vue'
 import PanelAccount from './PanelAccount.vue'
 import PanelPhone from './PanelPhone.vue'
+import useLoginStore from '@/store/login/login'
 
 /** 变量 */
+const loginStore = useLoginStore()
 /**记住密码 */
-const isRemPwd = ref<boolean>(false)
+const isRemPwd = ref<boolean>(loginStore.isRemPwd)
 /**当前登录方式 */
 const currentTab = ref<'account' | 'phone'>('account')
 /**子组件：账号登录表单 */
@@ -49,14 +51,24 @@ const currentTab = ref<'account' | 'phone'>('account')
 const accountRef = ref<InstanceType<typeof PanelAccount>>()
 
 /** 逻辑 */
+
+/** 更新记住密码 */
+watch(isRemPwd, (newValue) => {
+  /** 当记住密码发生改变， 就更新state*/
+  if (loginStore.isRemPwd !== newValue) loginStore.isRemPwd = newValue
+})
+
 /** 登录逻辑 */
 function handleLoginBtnClick() {
   if (currentTab.value == 'account') {
-    // （1）获取子组件实例 => ref，（2）调用子组件方法，校验并传递数据
-    accountRef.value?.loginAction()
-    console.log('账号登录')
+    /*** 流程
+     * （1）获取子组件实例 => ref
+     * （2）调用子组件方法，校验并传递数据
+     * （3）子组件通过isRemPwd确定是否保存密码
+     */
+    accountRef.value?.loginAction(isRemPwd.value)
   } else {
-    console.log('手机登录')
+    console.log('手机登录，暂未开发')
   }
 }
 </script>
