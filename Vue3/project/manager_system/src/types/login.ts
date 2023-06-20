@@ -10,29 +10,26 @@ export interface IPhoneNumber {
 }
 
 export interface UserInfo {
-  code?: number
-  data?: {
+  id?: number
+  name?: string
+  realname?: string
+  cellphone?: number
+  enable?: number
+  createAt?: string
+  updateAt?: string
+  role?: {
     id: number
     name: string
-    realname: string
-    cellphone: number
-    enable: number
+    intro: string
     createAt: string
-    updateAt: string
-    role: {
-      id: number
-      name: string
-      intro: string
-      createAt: string
-      updateAt: string
-    }
-    department: {
-      id: number
-      name: string
-      parentId: number
-      createAt: string
-      updateAt: string
-      leader: string
-    }
+    updateAt?: string
+  }
+  department?: {
+    id: number
+    name: string
+    parentId: number
+    createAt?: string
+    updateAt?: string
+    leader?: string
   }
 }

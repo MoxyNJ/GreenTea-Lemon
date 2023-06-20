@@ -1,25 +1,75 @@
 <template>
   <div class="main">
-    <h2>main</h2>
-    <button @click="handleExitClick">退出登录</button>
+    <el-container class="main-content">
+      <el-aside :width="isFold ? '60px' : '210px'">
+        <main-menu :is-fold="isFold" />
+      </el-aside>
+      <el-container>
+        <el-header height="50px">
+          <main-header @fold-change="handleFoldChange" />
+        </el-header>
+        <el-main>Main</el-main>
+      </el-container>
+    </el-container>
   </div>
 </template>
 
 <script setup lang="ts">
-import { LOGIN_TOKEN } from '@/global/constants'
-import router from '@/router'
+import { ref } from 'vue'
+import MainMenu from '@/components/main-menu/MainMenu.vue'
+import MainHeader from '@/components/main-header/MainHeader.vue'
 import { localCache } from '@/utils/cache'
+import { ID } from '@/global/constants'
+import { onMounted } from 'vue'
+import useLoginStore from '@/store/login/login'
 
-/** 退出登录 */
-function handleExitClick() {
-  // 删除token、跳回登录
-  localCache.remove(LOGIN_TOKEN)
-  router.push('/login')
+const isFold = ref(false) /** main-header是否折叠*/
+const loginStore = useLoginStore()
+
+/** 校验是否已获取用户数据 */
+onMounted(() => {
+  if (loginStore.userInfo.id || loginStore.userMenus.length !== 0) {
+    return
+  }
+  // 重新获取数据
+  if (localCache.getCache(ID)) {
+    loginStore.getUserInfoAction()
+  }
+})
+
+/** 折叠逻辑 */
+function handleFoldChange(nweIsFold: boolean) {
+  isFold.value = nweIsFold
 }
 </script>
 
 <style lang="less" scoped>
 .main {
-  color: red;
+  height: 100%;
+}
+
+.main-content {
+  height: 100%;
+
+  .el-aside {
+    overflow-x: hidden;
+    overflow-y: auto;
+    line-height: 200px;
+    text-align: left;
+    // cursor: pointer;
+    background-color: #001529;
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+
+    transition: width 0.3s ease;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .el-main {
+    background-color: #f0f2f5;
+  }
 }
 </style>
