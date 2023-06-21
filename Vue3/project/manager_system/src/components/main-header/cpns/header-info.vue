@@ -44,20 +44,27 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { ID, LOGIN_TOKEN } from '@/global/constants'
+import { ID, LOGIN_TOKEN, USER_INFO, USER_MENUS } from '@/global/constants'
 import { localCache } from '@/utils/cache'
 import useLoginstore from '@/store/login/login'
+import { defaultRoutes } from '@/router'
 
 const router = useRouter()
+const loginStore = useLoginstore()
 
 function handleExitClick() {
-  // 删除token、跳回登录
+  // 删除localCache：token、id
   localCache.remove(LOGIN_TOKEN)
   localCache.remove(ID)
+  localCache.remove(USER_INFO)
+  localCache.remove(USER_MENUS)
+
+  // 重置路由：功能暂无实现
+  // loginStore.routes.forEach((storeRoute) => storeRoute.name && router.removeRoute(storeRoute.name))
+
+  // 跳回登录
   router.push('/login')
 }
-
-const loginStore = useLoginstore()
 </script>
 
 <style lang="less" scoped>

@@ -35,15 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, type Ref } from 'vue'
+import { ref, watch } from 'vue'
 import PanelAccount from './PanelAccount.vue'
 import PanelPhone from './PanelPhone.vue'
-import useLoginStore from '@/store/login/login'
+import { localCache } from '@/utils/cache'
+import { IS_REM_PWD } from '@/global/constants'
 
-/** 变量 */
-const loginStore = useLoginStore()
 /**记住密码 */
-const isRemPwd = ref<boolean>(loginStore.isRemPwd)
+const isRemPwd = ref<boolean>(localCache.getCache(IS_REM_PWD) ?? false)
 /**当前登录方式 */
 const currentTab = ref<'account' | 'phone'>('account')
 /**子组件：账号登录表单 */
@@ -54,8 +53,7 @@ const accountRef = ref<InstanceType<typeof PanelAccount>>()
 
 /** 更新记住密码 */
 watch(isRemPwd, (newValue) => {
-  /** 当记住密码发生改变， 就更新state*/
-  if (loginStore.isRemPwd !== newValue) loginStore.isRemPwd = newValue
+  localCache.setCache(IS_REM_PWD, newValue)
 })
 
 /** 登录逻辑 */

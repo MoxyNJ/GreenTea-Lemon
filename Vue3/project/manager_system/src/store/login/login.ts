@@ -1,56 +1,70 @@
-import { ID, LOGIN_TOKEN } from '@/global/constants'
-import router from '@/router'
+import { ID, LOGIN_TOKEN, USER_INFO, USER_MENUS } from '@/global/constants'
+import router, { defaultRoutes } from '@/router'
 import { accountLoginRequest, getUserInfoById, getUserMenusByRoleId } from '@/service/login/login'
 import type { IAccount, UserInfo } from '@/types'
 import { localCache } from '@/utils/cache'
+import { mapMenusToRoutes } from '@/utils/map-menus'
 import { defineStore } from 'pinia'
+import type { RouteRecordRaw } from 'vue-router'
 
 interface ILoginState {
   token: string
-  isRemPwd: boolean
   userInfo: UserInfo
   userMenus: Array<any>
+  routes: RouteRecordRaw[]
 }
 
 /** 存储用户登录信息，action封装用户登录验证网络请求 */
 const useLoginStore = defineStore('login', {
   state: (): ILoginState => ({
-    token: localCache.getCache(LOGIN_TOKEN) ?? '',
-    isRemPwd: false,
+    token: '',
     userInfo: {},
-    userMenus: []
+    userMenus: [],
+    routes: []
   }),
   actions: {
     /** 登录后获取数据 */
     async loginAccountAction(account: IAccount) {
-      // 1.登录请求，并保存pinia
+      // 1.POST：登录请求
       const res = await accountLoginRequest(account)
-      if (res.code !== 0) {
-        console.log('请求错误')
-        return
-      }
-      const id = res.data.id == 5 ? 4 : res.data.id
-      this.token = res.data.token
-      // 2.本地缓存token
-      localCache.setCache(LOGIN_TOKEN, this.token)
-      localCache.setCache(ID, id)
-      // 3.角色权限获取
+      res.data.id = res.data.id == 5 ? 4 : res.data.id
+      const id = res.data.id
+      const token = res.data.token
+      localCache.setCache(LOGIN_TOKEN, token)
+
+      // 获取：角色权限
       const userInfoRes = await getUserInfoById(id)
-      this.userInfo = userInfoRes.data
+      const userInfo = userInfoRes.data
+      localCache.setCache(USER_INFO, userInfo)
+
+      // 获取：角色菜单
       const userMenusRes = await getUserMenusByRoleId(id)
-      this.userMenus = userMenusRes.data
+      const userMenus = userMenusRes.data
+      localCache.setCache(USER_MENUS, userMenus)
+
+      //加载：Pinia 保存 + 权限请求 + 动态绑定路由
+      this.perMissionAction(userInfo, userMenus, token)
 
       // 4.页面跳转
       router.push('/main')
     },
-    /** 页面重新加载时获取数据 */
-    async getUserInfoAction() {
-      console.log('触发action')
-      const id = localCache.getCache(ID)
-      const userInfoRes = await getUserInfoById(id)
-      this.userInfo = userInfoRes.data
-      const userMenusRes = await getUserMenusByRoleId(id)
-      this.userMenus = userMenusRes.data
+    /** Pinia 保存 + 权限请求 + 动态绑定路由 */
+    perMissionAction(
+      userInfo = localCache.getCache(USER_INFO),
+      userMenus = localCache.getCache(USER_MENUS),
+      token = localCache.getCache(LOGIN_TOKEN)
+    ) {
+      // Pinia 保存
+      if (token && userInfo && userMenus) {
+        this.token = token
+        this.userInfo = userInfo
+        this.userMenus = userMenus
+
+        /**动态添加路由对象 */
+        const routes = mapMenusToRoutes(userMenus)
+        routes.forEach((item) => router.addRoute('main', item))
+        this.routes = routes
+      }
     }
   }
 })

@@ -1,31 +1,40 @@
 import { LOGIN_TOKEN } from '@/global/constants'
 import { localCache } from '@/utils/cache'
-import { createRouter, createWebHistory } from 'vue-router'
+import { firstMenu } from '@/utils/map-menus'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+
+/** 不需要权限的路由 */
+export const defaultRoutes: RouteRecordRaw[] = [
+  {
+    path: '/',
+    name: 'redirect',
+    redirect: '/main'
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/login/Login.vue')
+  },
+  {
+    path: '/main',
+    name: 'main',
+    component: () => import('../views/main/Main.vue')
+  },
+  {
+    path: '/:pathMatch(.*)',
+    name: '404',
+    component: () => import('../views/not-found/NotFound.vue')
+  }
+]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [
-    {
-      path: '/',
-      redirect: '/main'
-    },
-    {
-      path: '/login',
-      component: () => import('../views/login/Login.vue')
-    },
-    {
-      path: '/main',
-      component: () => import('../views/main/Main.vue'),
-      children: [
-        // path: 'main/'
-      ]
-    },
-    {
-      path: '/:pathMatch(.*)',
-      component: () => import('../views/not-found/NotFound.vue')
-    }
-  ]
+  routes: defaultRoutes
 })
+
+// export function resetRouter() {
+//   const newRoute = createRouter({})
+// }
 
 /**
  * 路由导航守卫
@@ -38,8 +47,11 @@ router.beforeEach((to, from) => {
   if (to.path === '/main' && !token) {
     // 没有token，跳转登录页面
     return '/login'
-  } else if (to.path === '/login') {
-    // 验证token是否正确
+  }
+
+  // 如果进入 main，且有 token 值，跳转到第一个子路由表
+  if (to.path == '/main') {
+    return firstMenu?.url
   }
 })
 

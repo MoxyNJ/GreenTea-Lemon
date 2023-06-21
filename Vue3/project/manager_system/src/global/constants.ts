@@ -1,2 +1,5 @@
 export const LOGIN_TOKEN = 'login/token'
 export const ID = 'login/id'
+export const USER_MENUS = 'userMenus'
+export const USER_INFO = 'userInfo'
+export const IS_REM_PWD = 'isRemPwd'

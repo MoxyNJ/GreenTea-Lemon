@@ -36,7 +36,11 @@
 </template>
 
 <script setup lang="ts">
+import router from '@/router'
 import useLoginStore from '@/store/login/login'
+import { mapPathToMenu } from '@/utils/map-menus'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 /** 父组件props */
 defineProps({
@@ -47,10 +51,19 @@ defineProps({
 })
 
 const loginStore = useLoginStore()
+const route = useRoute()
+const userMenus = loginStore.userMenus
 
-const defaultActive = 'a'
-const userMenus: any[] = []
-function handleItemClick(a: any) {}
+/** 默认选中菜单 computed 自动添加依赖，route改变重新计算 */
+const defaultActive = computed(() => {
+  const pathMenu = mapPathToMenu(route.path, userMenus)
+  return pathMenu.id + ''
+})
+
+/** 监听item点击 */
+function handleItemClick(item: any) {
+  router.push(item.url)
+}
 </script>
 
 <style lang="less" scoped>

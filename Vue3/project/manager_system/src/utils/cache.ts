@@ -13,7 +13,7 @@ class Cache {
   }
   /**保存 */
   setCache(key: string, value: any) {
-    if (value) this.storage.setItem(key, JSON.stringify(value))
+    this.storage.setItem(key, JSON.stringify(value))
   }
   /**获取 */
   getCache(key: string) {

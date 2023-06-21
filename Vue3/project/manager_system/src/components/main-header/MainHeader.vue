@@ -14,6 +14,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import headerInfo from './cpns/header-info.vue'
+import headerCrumb from './cpns/header-crumb.vue'
 
 /** 折叠状态 */
 const isFold = ref<boolean>(false)

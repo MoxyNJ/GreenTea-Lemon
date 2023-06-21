@@ -1,12 +1,14 @@
 <template>
   <div class="app">
-    <!-- 路由占位 -->
-    <RouterView />
+    <el-config-provider :locale="zhCn">
+      <router-view></router-view>
+    </el-config-provider>
   </div>
 </template>
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 </script>
 
 <style scoped>

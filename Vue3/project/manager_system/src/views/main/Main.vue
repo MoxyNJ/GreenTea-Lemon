@@ -8,14 +8,14 @@
         <el-header height="50px">
           <main-header @fold-change="handleFoldChange" />
         </el-header>
-        <el-main>Main</el-main>
+        <el-main><router-view></router-view></el-main>
       </el-container>
     </el-container>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onUpdated, ref } from 'vue'
 import MainMenu from '@/components/main-menu/MainMenu.vue'
 import MainHeader from '@/components/main-header/MainHeader.vue'
 import { localCache } from '@/utils/cache'
@@ -27,15 +27,16 @@ const isFold = ref(false) /** main-header是否折叠*/
 const loginStore = useLoginStore()
 
 /** 校验是否已获取用户数据 */
-onMounted(() => {
-  if (loginStore.userInfo.id || loginStore.userMenus.length !== 0) {
-    return
-  }
-  // 重新获取数据
-  if (localCache.getCache(ID)) {
-    loginStore.getUserInfoAction()
-  }
-})
+// ;(() => {
+//   console.log('main组件刷新，并执行过一次')
+//   if (loginStore.userInfo.id || loginStore.userMenus.length !== 0) {
+//     return
+//   }
+//   // 重新获取数据
+//   if (localCache.getCache(ID)) {
+//     loginStore.getUserInfoAction()
+//   }
+// })()
 
 /** 折叠逻辑 */
 function handleFoldChange(nweIsFold: boolean) {

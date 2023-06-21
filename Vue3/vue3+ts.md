@@ -512,7 +512,39 @@ views # 视图，主页面
 
 
 
+### 3.4 动态路由
 
+动态路由：跟上用户的权限信息，动态的添加左侧菜单，并不是一次性的注册所有路由。
+
+背景：登录接口的三个内容
+
+- token
+- role：用户角色信息
+- menu：用户菜单信息
+
+
+
+思路一：基于角色（Role）的动态路由管理
+
+- 后端提供完整的角色-路由信息表，前端全部获取后，通过 roles 对象统一管理。
+
+```ts
+const roles = {
+  "superAdmin": ['路由1'，'路由2'，'路由3'，'路由4'，'路由5'],
+  "admin":  ['路由1'，'路由2'，'路由3'，'路由4'],
+  "svervice": ['路由2'，'路由3']
+}
+```
+
+
+
+思路二：基于菜单（menu）的动态路由管理
+
+- 将接口获取的菜单信息，动态映射为前端路由。
+
+
+
+ 
 
 
 
@@ -536,4 +568,107 @@ views # 视图，主页面
   // 规则...
 }
 ```
+
+
+
+
+
+### Pinia 持久化
+
+- 问题：Pinia 状态管理存储在内存中，所以一旦用户刷新页面，所有存储的数据就会丢失。
+- 解决：Pinia 持久化，将数据存储在本地内存中：Cookie、LocalStorage、SessionStorage。
+
+方法一：使用自动化插件 `pinia-plugin-persist`
+
+- https://juejin.cn/post/7213994684262891576#heading-10
+
+方法二：手动将重要数据存储在 LocalStorage 中
+
+在本项目中，用户 token、userInfo、menu 都存储在 localStorage 中。当用户刷新页面，重新执行并注册 APP 前，设置从 localStorage读取menu数据，并动态绑定到路由表中，再通过 `app.use()` 加载路由，具体代码为：
+
+```ts
+/* =========== src/store/index.ts =========== */
+import { createPinia } from 'pinia'
+import type { App } from 'vue'
+import useLoginStore from './login/login'
+
+const pinia = createPinia()
+
+function registerStore(app: App<Element>) {
+  // import pinia
+  app.use(pinia)
+
+  // 加载本地数据
+  const loginStore = useLoginStore()
+  loginStore.loadLocalCacheAction()
+}
+
+export default registerStore
+
+
+/* =========== src/main.ts =========== */
+import router from './router'
+import store from './store'
+
+const app = createApp(App)
+
+app.use(store) // 加载store中导出的registerStore，此时便会先执行动态路由注册
+app.use(router) 
+app.mount('#app')
+
+/* =========== src/store/login/ligin.ts =========== */
+// 在 pinia 中，设置两个action：
+// [action 1]: 当用户点击登录时：
+//   1 发送网络请求，验证 token；
+//   2 获取 userInfo 和 userMenu‘
+//   3 将 token、userInfo、userMenu 保存在 localStorage 中
+//   4 调用action2
+//   5 跳转页面至 main
+
+// [action 2]: 当用户刷新，和用户点击登录的后续action
+//   1 从 localStorage 中获取 token、userInfo、userMenu
+//   2 将上述数据保存在 pinia 中
+//   3 动态添加路由对象
+```
+
+
+
+### dayjs 时间格式化
+
+使用 dayjs 对时间文本进行格式化
+
+- `npm install dayjs`
+
+
+
+
+
+### 编写技巧
+
+- Pinia 会在页面刷新后数据消失。
+- 网络请求
+  - 网络请求逻辑：在 Vue3 中，通常将网络请求的逻辑放在 pinia 的 store 的 action 中编写。
+  - 网络请求时机：直接在 Component 的 setup 中调用，该环境的调用时机为 created。
+  - 网络请求数据：通常将数据保存在 pinia 中统一管理，在使用 pinia 中数据时，用 `storeToRefs()`  将数据包裹，将数据修改为响应式，自动依赖。当 pinia 中的数据发生改变时，view 视图数据也同步发生改变。
+- `computed` 自动添加依赖，类似 React 中的 `useEffect` 添加依赖的效果。
+- `reactive`  响应式变量，通常和 `v-model` 配合，绑定 Element 元素，实现数据的双向绑定。
+- `ref` 通常用来保持对 Element 的引用，或添加一些 `isOpen` 等，Boolean 类型的基础变量。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
