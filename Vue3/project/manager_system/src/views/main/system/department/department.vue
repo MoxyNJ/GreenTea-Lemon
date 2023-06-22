@@ -1,12 +1,47 @@
 <template>
-  <div class="department">
-    <h2>department</h2>
+  <div class="page">
+    <page-search @query-click="handleQueryClick" @reset-click="handleResetClick" />
+    <page-content ref="contentRef" @new-click="handleNewClick" @edit-click="handleEditClick" />
+    <page-modal ref="modalRef" @commit-click="handleCommitClick" />
   </div>
 </template>
+<script setup lang="ts">
+import { ref } from 'vue'
+import PageSearch from './cpns/page-search.vue'
+import PageContent from './cpns/page-content.vue'
+import PageModal from './cpns/page-modal.vue'
 
-<script setup lang="ts" name="department"></script>
+/** refs */
+const contentRef = ref<InstanceType<typeof PageContent>>()
+const modalRef = ref<InstanceType<typeof PageModal>>()
 
-<style scoped>
-.department {
+/**点击搜索 */
+function handleQueryClick(formData: any) {
+  contentRef.value?.fetchPageListData(formData)
+}
+/** 点击重置 */
+function handleResetClick() {
+  contentRef.value?.fetchPageListData()
+}
+
+/**新建角色 */
+function handleNewClick() {
+  modalRef.value?.setModalVisible()
+}
+/**编辑角色 */
+function handleEditClick(itemData: any) {
+  modalRef.value?.setModalVisible(false, itemData)
+}
+
+/** 新建/编辑提交 */
+function handleCommitClick() {
+  contentRef.value?.fetchPageListData()
+}
+</script>
+
+<style lang="less" scoped>
+.page {
+  border-radius: 8px;
+  overflow: hidden;
 }
 </style>

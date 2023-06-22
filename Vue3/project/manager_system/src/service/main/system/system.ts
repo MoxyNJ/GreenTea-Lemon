@@ -1,19 +1,20 @@
 import request from '@/service'
 
-/** 用户的网络请求 */
+/** 用户管理：下拉列表 */
 export function postUsersListData(queryInfo: any) {
   return request.post({
     url: '/users/list',
     data: queryInfo
   })
 }
-
+/** 用户管理：删除数据 */
 export function deleteUserById(id: number) {
   return request.delete({
     url: `/users/${id}`
   })
 }
 
+/** 用户管理：新建用户 */
 export function newUserData(userInfo: any) {
   return request.post({
     url: '/users',
@@ -21,6 +22,7 @@ export function newUserData(userInfo: any) {
   })
 }
 
+/** 用户管理：编辑用户 */
 export function editUserData(id: number, userInfo: any) {
   return request.patch({
     url: `/users/${id}`,

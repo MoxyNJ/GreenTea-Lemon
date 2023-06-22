@@ -6,6 +6,7 @@ import { localCache } from '@/utils/cache'
 import { mapMenusToRoutes } from '@/utils/map-menus'
 import { defineStore } from 'pinia'
 import type { RouteRecordRaw } from 'vue-router'
+import useMainStore from '../main/main'
 
 interface ILoginState {
   token: string
@@ -42,18 +43,23 @@ const useLoginStore = defineStore('login', {
       const userMenus = userMenusRes.data
       localCache.setCache(USER_MENUS, userMenus)
 
-      //加载：Pinia 保存 + 权限请求 + 动态绑定路由
+      //防刷新，加载：Pinia 保存 + 权限请求 + 动态绑定路由
       this.perMissionAction(userInfo, userMenus, token)
 
       // 4.页面跳转
       router.push('/main')
     },
-    /** Pinia 保存 + 权限请求 + 动态绑定路由 */
+
+    /** 防刷新：Pinia 保存 + 权限请求 + 动态绑定路由 */
     perMissionAction(
       userInfo = localCache.getCache(USER_INFO),
       userMenus = localCache.getCache(USER_MENUS),
       token = localCache.getCache(LOGIN_TOKEN)
     ) {
+      // 防刷新：获取：roles、department 数据
+      const mainStore = useMainStore()
+      mainStore.fetchEntireDataAction()
+
       // Pinia 保存
       if (token && userInfo && userMenus) {
         this.token = token
