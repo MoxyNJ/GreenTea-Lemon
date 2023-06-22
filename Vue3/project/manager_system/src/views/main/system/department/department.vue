@@ -1,15 +1,21 @@
 <template>
   <div class="page">
-    <page-search @query-click="handleQueryClick" @reset-click="handleResetClick" />
+    <page-search
+      :search-config="searchConfig"
+      @query-click="handleQueryClick"
+      @reset-click="handleResetClick"
+    />
     <page-content ref="contentRef" @new-click="handleNewClick" @edit-click="handleEditClick" />
     <page-modal ref="modalRef" @commit-click="handleCommitClick" />
   </div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import PageSearch from './cpns/page-search.vue'
-import PageContent from './cpns/page-content.vue'
-import PageModal from './cpns/page-modal.vue'
+import PageSearch from '@/components/page-search/page-search.vue'
+import PageContent from '@/components/page-content/page-content.vue'
+import PageModal from '@/components/page-modal/page-modal.vue'
+
+import searchConfig from './config/search.config'
 
 /** refs */
 const contentRef = ref<InstanceType<typeof PageContent>>()
