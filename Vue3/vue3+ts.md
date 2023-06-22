@@ -663,6 +663,20 @@ app.mount('#app')
 
 
 
+`v-bind` 自动展开
+
+```vue
+<template v-for="item in contentConfig.propsList" :key="item.prop">
+	<el-table-column align="center" :name="item.name" :prop="item.prop" :width="item.width" />
+</template>
+
+// 使用 v-bind，直接将 item 内的属性全部绑定到 el-table-column 中
+// v-bind="item" ，可以简写为 :="item"
+<template v-for="item in contentConfig.propsList" :key="item.prop">
+	<el-table-column align="center" :="item" />
+</template>
+```
+
 
 
 

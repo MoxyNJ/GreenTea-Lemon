@@ -5,7 +5,12 @@
       @query-click="handleQueryClick"
       @reset-click="handleResetClick"
     />
-    <page-content ref="contentRef" @new-click="handleNewClick" @edit-click="handleEditClick" />
+    <page-content
+      :content-config="contentConfig"
+      ref="contentRef"
+      @new-click="handleNewClick"
+      @edit-click="handleEditClick"
+    />
     <page-modal ref="modalRef" @commit-click="handleCommitClick" />
   </div>
 </template>
@@ -16,6 +21,7 @@ import PageContent from '@/components/page-content/page-content.vue'
 import PageModal from '@/components/page-modal/page-modal.vue'
 
 import searchConfig from './config/search.config'
+import contentConfig from './config/content.config'
 
 /** refs */
 const contentRef = ref<InstanceType<typeof PageContent>>()
