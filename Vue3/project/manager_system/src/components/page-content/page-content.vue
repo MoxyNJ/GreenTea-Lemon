@@ -7,7 +7,7 @@
       }}</el-button>
     </div>
     <div class="table">
-      <el-table :data="pageList" border style="width: 100%">
+      <el-table :data="pageList" border style="width: 100%" :="contentConfig.childrenTree">
         <template v-for="item in contentConfig.propsList" :key="item.prop">
           <template v-if="item.type === 'timer'">
             <el-table-column align="center" :="item">
@@ -45,7 +45,12 @@
           <template v-else-if="item.type === 'custom'">
             <el-table-column align="center" v-bind="item">
               <template #default="scope">
-                <slot :name="item.slotName" v-bind="scope" :prop="item.prop" hName="why"></slot>
+                <slot
+                  :name="item.slotName"
+                  v-bind="scope"
+                  :prop="item.prop"
+                  hName="item.name"
+                ></slot>
               </template>
             </el-table-column>
           </template>
@@ -74,20 +79,10 @@ import { storeToRefs } from 'pinia'
 import useSystemStore from '@/store/main/system/system'
 import { formatUTC } from '@/utils/format'
 import { ref } from 'vue'
-import { PAGE_NAME } from '@/global/constants'
+import type { IContentProps } from './type'
 // import usePermissions from '@/hooks/usePermissions'
 
-interface IProps {
-  contentConfig: {
-    header?: {
-      title?: string
-      btnTitle?: string
-    }
-    propsList: any[]
-  }
-}
-
-const props = defineProps<IProps>()
+const props = defineProps<IContentProps>()
 
 // 定义事件
 const emit = defineEmits(['newClick', 'editClick'])
@@ -130,12 +125,12 @@ function fetchPageListData(formData: any = {}) {
 
   // 2.发起网络请求
   const queryInfo = { ...pageInfo, ...formData }
-  systemStore.postPageListAction(PAGE_NAME, queryInfo)
+  systemStore.postPageListAction(props.contentConfig.pageName, queryInfo)
 }
 
 /** 删除角色 */
 async function handleDeleteBtnClick(id: number) {
-  await systemStore.deletePageByIdAction(PAGE_NAME, id)
+  await systemStore.deletePageByIdAction(props.contentConfig.pageName, id)
   // 删除成功后，刷新页面
   fetchPageListData()
 }

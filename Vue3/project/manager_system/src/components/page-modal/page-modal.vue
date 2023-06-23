@@ -2,38 +2,42 @@
   <div class="modal">
     <el-dialog
       v-model="dialogVisible"
-      :title="isNewRef ? '新建用户' : '编辑用户'"
+      :title="isNewRef ? modalConfig.header.newTitle : modalConfig.header.editTitle"
       width="30%"
       center
     >
       <div class="form">
         <el-form :model="formData" label-width="80px" size="large">
-          <el-form-item label="用户名" prop="name">
-            <el-input v-model="formData.name" placeholder="请输入用户名" />
-          </el-form-item>
-          <el-form-item label="真实姓名" prop="realname">
-            <el-input v-model="formData.realname" placeholder="请输入真实姓名" />
-          </el-form-item>
-          <el-form-item v-if="isNewRef" label="密码" prop="password">
-            <el-input v-model="formData.password" placeholder="请输入密码" show-password />
-          </el-form-item>
-          <el-form-item label="手机号码" prop="cellphone">
-            <el-input v-model="formData.cellphone" placeholder="请输入手机号码" />
-          </el-form-item>
-          <el-form-item label="选择角色" prop="roleId">
-            <el-select v-model="formData.roleId" placeholder="请选择角色" style="width: 100%">
-              <template v-for="item in entireRoles" :key="item.id">
-                <el-option :label="item.name" :value="item.id" />
+          <template v-for="item in modalConfig.formItems" :key="item.prop">
+            <el-form-item :label="item.label" :prop="item.prop">
+              <template v-if="item.type === 'input'">
+                <el-input v-model="formData[item.prop]" :placeholder="item.placeholder" />
               </template>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="选择部门" prop="departmentId">
-            <el-select v-model="formData.departmentId" placeholder="请选择部门" style="width: 100%">
-              <template v-for="item in entireDepartments" :key="item.id">
-                <el-option :label="item.name" :value="item.id" />
+              <template v-if="item.type === 'date-picker'">
+                <el-date-picker
+                  v-model="formData[item.prop]"
+                  type="daterange"
+                  range-separator="-"
+                  start-placeholder="开始时间"
+                  end-placeholder="结束时间"
+                />
               </template>
-            </el-select>
-          </el-form-item>
+              <template v-if="item.type === 'select'">
+                <el-select
+                  v-model="formData[item.prop]"
+                  :placeholder="item.placeholder"
+                  style="width: 100%"
+                >
+                  <template v-for="option in item.options" :key="option.value">
+                    <el-option :label="option.label" :value="option.value" />
+                  </template>
+                </el-select>
+              </template>
+              <template v-if="item.type === 'custom'">
+                <slot :name="item.slotName"></slot>
+              </template>
+            </el-form-item>
+          </template>
         </el-form>
       </div>
       <template #footer>
@@ -48,10 +52,10 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import useMainStore from '@/store/main/main'
-import { storeToRefs } from 'pinia'
 import useSystemStore from '@/store/main/system/system'
-import { PAGE_NAME } from '@/global/constants'
+import type { IModalProps } from './type'
+
+const props = defineProps<IModalProps>()
 
 const emit = defineEmits(['commitClick'])
 
@@ -59,23 +63,18 @@ const emit = defineEmits(['commitClick'])
 /** modal的显示/隐藏 */
 const dialogVisible = ref(false)
 /** 表单内容 */
-const formData = reactive<any>({
-  name: '',
-  realname: '',
-  password: '',
-  cellphone: '',
-  roleId: '',
-  departmentId: ''
-})
+const initialData: any = {}
+for (const item of props.modalConfig.formItems) {
+  initialData[item.prop] = item.initialValue ?? ''
+}
+const formData = reactive<any>(initialData)
 /** 编辑/新建表单 */
 const isNewRef = ref(true)
 /** 编辑表单时，表单的原始数据，用于提交编辑时确认角色id */
 const editData = ref()
 
 /** 获取选择列表的下拉内容 */
-const mainStore = useMainStore()
 const systemStore = useSystemStore()
-const { entireRoles, entireDepartments } = storeToRefs(mainStore)
 
 /**
  * 对外暴露：显示/隐藏 modal 逻辑
@@ -96,7 +95,8 @@ function setModalVisible(isNew: boolean = true, itemData?: any): void {
   } else {
     // 新建数据，将旧数据清空
     for (const key in formData) {
-      formData[key] = ''
+      const item = props.modalConfig.formItems.find((item) => item.prop === key)
+      formData[key] = item ? item.initialValue : ''
     }
     editData.value = null
   }
@@ -106,12 +106,19 @@ function setModalVisible(isNew: boolean = true, itemData?: any): void {
 async function handleConfirmClick() {
   // 隐藏 modal
   dialogVisible.value = false
+
+  // 传入额外数据，角色管理-新建角色-权限选择的复选框 使用
+  let infoData = formData
+  if (props.otherInfo) {
+    infoData = { ...infoData, ...props.otherInfo }
+  }
+
   if (!isNewRef.value && editData.value) {
     // 编辑用户的数据
-    await systemStore.editPageDataAction(PAGE_NAME, editData.value.id, formData)
+    await systemStore.editPageDataAction(props.modalConfig.pageName, editData.value.id, infoData)
   } else {
     // 创建新的用户
-    await systemStore.newPageDataAction(PAGE_NAME, formData)
+    await systemStore.newPageDataAction(props.modalConfig.pageName, infoData)
   }
   emit('commitClick')
 }

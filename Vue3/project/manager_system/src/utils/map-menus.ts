@@ -85,3 +85,48 @@ export function mapPathToBreadcrumbs(path: string, userMenus: any[]) {
 
   return breadcrumbs
 }
+
+/**
+ * 菜单映射到id的列表，将层层嵌套的menuList对象，展开为 Array ，且只要对象最底层叶子节点的 id
+ * @param menuList
+ */
+export function mapMenuListToIds(menuList: any[]) {
+  const ids: number[] = []
+  recurseGetId(menuList)
+
+  // 递归
+  function recurseGetId(menus: any[]) {
+    for (const item of menus) {
+      // 如果有 chidlren，就继续往里递归，只要最底层叶子节点的 id
+      if (item.children) {
+        recurseGetId(item.children)
+      } else {
+        ids.push(item.id)
+      }
+    }
+  }
+
+  return ids
+}
+
+/**
+ * 从菜单映射到按钮的权限
+ * @param menuList 菜单的列表
+ * @returns 权限的数组(字符串数组)
+ */
+export function mapMenusToPermissions(menuList: any[]) {
+  const permissions: string[] = []
+
+  function recurseGetPermission(menus: any[]) {
+    for (const item of menus) {
+      if (item.type === 3) {
+        permissions.push(item.permission)
+      } else {
+        recurseGetPermission(item.children ?? [])
+      }
+    }
+  }
+  recurseGetPermission(menuList)
+
+  return permissions
+}

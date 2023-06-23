@@ -44,15 +44,10 @@
 <script setup lang="ts">
 import type ElForm from 'element-plus/lib/components/form/index.js'
 import { reactive, ref } from 'vue'
+import type { ISearchProps } from './type'
 
-interface IProps {
-  searchConfig: {
-    formItems: any[]
-    labelWidth?: number
-  }
-}
 /** 父组件的props */
-const props = defineProps<IProps>()
+const props = defineProps<ISearchProps>()
 
 const formRef = ref<InstanceType<typeof ElForm>>()
 

@@ -679,13 +679,113 @@ app.mount('#app')
 
 
 
+使用插槽
+
+三个地方
+
+- 子组件：定义插槽位置
+  - `#default="scope"` ，Element-plus 会将表格内当前行的数据传递给插槽中。
+  - `:name="item.slotName"` 定位父组件传递过来的，需要展示的插槽。
+- 父组件：定义插槽内容，通过 `scope` 可获取所需的数据，并做展示；
+  - 作用域 CSS 规则：父组件也可以通过给插槽内添加 class，设置 css 样式；
+- Config.ts：配置数据所需数据。
+
+```vue
+<!-- 子组件 Page Content -->
+<template v-else-if="item.type === 'custom'">
+	<el-table-column align="center" v-bind="item">
+    	<template #default="scope">
+        	<slot :name="item.slotName" :="scope" :width="`${item.width ?? 150}px`"></slot>
+			</template>
+  </el-table-column>
+</template>
+
+<!-- 父组件 -->
+<template>
+	<page-content ref="contentRef" :content-config="contentConfig">
+    <template #leader="scope">{{ scope.row.leader }}</template>
+    <template #parent="scope">{{ scope.row.parentId }}</template>
+  </page-content>
+</template>
+```
+
+```ts
+// config.ts 配置
+const contentConfig = {
+  propsList: [
+    {type:'custom', label:'部门领导', prop:"leader", width:'150px', slotName:'leader'},
+    {type:'custom', label:'上级部门', prop:"parentId", width:'150px', slotName:'parent'},
+  ]
+}
+```
+
+- 子元素：
+  - slot 元素是一个插槽出口，标志了父元素提供的插槽内容将在那里被渲染。
+  - slot 内部的内容，由父元素提供。
+- 具名插槽：
+  - 子组件：通过 `<slot name='header'>` 来指出需要插入的位置。
+  - 父组件：通过 `<template v-slot:header>` 表明该内容（模版）的名称。
+    -  `<template #header>` 
+
+- 作用域限制：
+
+  - 组件只能访问其定义时所处的作用域。所以 slot 内部的作用域环境是父组件，只可访问父组件的数据，无法访问子组件的数据。
+
+    - 父组件可以在 template 中自定义 Element 结构、CSS 样式，甚至其他组件。
+
+  - 子组件也可通过 props 方式，将子组件作用域内的数据传递给 `<slot>` 内部，也就是传递给 父组件的 `template`
+
+    ```vue
+    <!--【匿名插槽】--> 
+    <!-- Son 子组件，以下方式都可 -->
+    <slot :="scope"></slot>
+    <slot :nick="scope.nick" :age="scope.age" ></slot>`
+    
+    <!-- 父组件 -->
+    <template>
+    	<son #="props">
+        {{ props.nick }}
+        {{ props.age }}
+      </son>
+    </template>
+    
+    <!--【具名插槽】--> 
+    <!-- Son子组件 -->
+    <template>
+      	<slot name="header" :="scope" ></slot>
+      	<slot name="footer" :="scope"></slot>
+    </template>
+    
+    <!-- 父组件 -->
+    <template>
+    	<Son>
+    	<template #header="slotProps">
+    		{{ slotProps.header }} {{ slotProps.age }}
+    	</template>
+    	<template #footer="slotProps">
+    		{{ slotProps.footer }} {{ slotProps.age }}
+    	</template>
+      </Son>
+    </template>
+    ```
+
+    
+
+    
 
 
 
+### 项目细节
 
+- 商品类别、商品信息、故事列表，功能基本相似，略。
+- 你的故事，采用富文本框架 WangEdit，基于 ts 编写可以学习一下。
+- 核心技术，基本是内容的搭建，其中项目结构采用命令行工具一键生成：
+  - 一键生成生成目录结构：windows 下 tree 命令（bing）
+- 商品统计，echars
 
+Day05 - 预习代码 - hy-vue3-ts-cms 基于 webpack 搭建，有相关页面的搭建。
 
-
+Day10 - 预习代码 - hy-vue3-ts-cms -  src/compoennts/echarts/page-charts 做了组件封装，可以一建导入学习一下。
 
 
 

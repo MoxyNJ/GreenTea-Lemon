@@ -1,4 +1,7 @@
-const contentConfig = {
+import type { IContentConfig } from '@/components/page-content/type'
+
+const contentConfig: IContentConfig = {
+  pageName: 'department',
   header: {
     title: '部门列表',
     btnTitle: '新建部门'
@@ -12,7 +15,11 @@ const contentConfig = {
     { type: 'normal', label: '上级部门', prop: 'parentId', width: 150 },
 
     { type: 'timer', label: '创建时间', prop: 'createAt' },
-    { type: 'timer', label: '更新时间', prop: 'updateAt' }
+    { type: 'timer', label: '更新时间', prop: 'updateAt' },
+
+    { type: 'handler', label: '操作', width: 150 }
+
+    // { type: 'custom', label: '上级部门', prop: 'parentId', width: 150, slotName: 'parent' }
   ]
 }
 
