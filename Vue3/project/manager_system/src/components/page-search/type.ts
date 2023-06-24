@@ -1,6 +1,6 @@
 export interface ISearchConfig {
   pageName: string
-  header: {
+  header?: {
     newTitle: string
     editTitle: string
   }
@@ -9,6 +9,7 @@ export interface ISearchConfig {
 
 export interface ISearchProps {
   searchConfig: {
+    pageName: string
     formItems: any[]
     labelWidth?: number
   }

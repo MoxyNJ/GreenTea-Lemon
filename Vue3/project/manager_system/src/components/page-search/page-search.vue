@@ -1,5 +1,5 @@
 <template>
-  <div class="search">
+  <div class="search" v-if="isQuery">
     <el-form :model="searchForm" ref="formRef" label-width="80px" size="large">
       <el-row :gutter="20">
         <template v-for="item in searchConfig.formItems" :key="item.prop">
@@ -45,9 +45,12 @@
 import type ElForm from 'element-plus/lib/components/form/index.js'
 import { reactive, ref } from 'vue'
 import type { ISearchProps } from './type'
+import usePermissions from '@/hooks/usePermissions'
 
 /** 父组件的props */
 const props = defineProps<ISearchProps>()
+
+const isQuery = usePermissions(`${props.searchConfig.pageName}`)
 
 const formRef = ref<InstanceType<typeof ElForm>>()
 

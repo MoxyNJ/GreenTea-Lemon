@@ -1,4 +1,7 @@
-const searchConfig = {
+import type { ISearchConfig } from '@/components/page-search/type'
+
+const searchConfig: ISearchConfig = {
+  pageName: 'department',
   formItems: [
     {
       type: 'input',

@@ -661,6 +661,17 @@ app.mount('#app')
 
 
 
+Boolean 类型的转换：
+
+- 使用两个感叹号，转换 Boolean 类型。一个感叹号，取反 + Boolean；两个感叹号，再次取饭
+
+```ts
+Boolean(someValue)
+!!someValue
+```
+
+
+
 
 
 `v-bind` 自动展开
@@ -786,6 +797,57 @@ const contentConfig = {
 Day05 - 预习代码 - hy-vue3-ts-cms 基于 webpack 搭建，有相关页面的搭建。
 
 Day10 - 预习代码 - hy-vue3-ts-cms -  src/compoennts/echarts/page-charts 做了组件封装，可以一建导入学习一下。
+
+
+
+
+
+### nextTick(cb)
+
+**作用**：解决异步操作的问题
+
+- **异步更新**：在Vue 中更改响应式状态，最终的 DOM 更新不是立即生效的。Vue 会将 DOM 修改缓存在一个队列中，直到下一个 `tick` 才集中执行，以确保每个组件无论发生多少状态改变，都仅执行一次更新。
+
+- **累计更新**：如果在一个同步时间段内，批量修改数字，均会生效，但会累积一次性更新。
+
+**重点：**
+
+- `nextTick` 在状态改变后，即 DOM 更新完毕后，会立即执行回调。
+- 在 `nextTick` 中的回调，是一个宏任务，还是微任务？
+  - Vue2 版本中，发生过很多次变化，最开始是宏任务，之后微任务、宏任务交替发生过很多次变化。
+  - **Vue3 版本中是微任务。**将 nextTick 中，将回调函数全部加入到 `Promise.the()` 中执行。
+
+```js
+// 使用
+nextTick(() => {
+  // ...
+})
+
+
+// nextTick 回调的微任务
+const promise = new Promise(() => {
+  // 队列一 queueJob
+  // 队列二 ...
+  // 队列三 ...
+  // ..
+}).then(nextTickCallback) // 放在队列的 then() 中，立即执行。
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

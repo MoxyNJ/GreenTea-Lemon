@@ -80,7 +80,7 @@ import useSystemStore from '@/store/main/system/system'
 import { formatUTC } from '@/utils/format'
 import { ref } from 'vue'
 import type { IContentProps } from './type'
-// import usePermissions from '@/hooks/usePermissions'
+import usePermissions from '@/hooks/usePermissions'
 
 const props = defineProps<IContentProps>()
 
@@ -89,14 +89,10 @@ const emit = defineEmits(['newClick', 'editClick'])
 
 /** 组件初始化 */
 // 获取用户权限
-// const isCreate = usePermissions('users:create')
-// const isDelete = usePermissions('users:delete')
-// const isUpdate = usePermissions('users:delete')
-// const isQuery = usePermissions('users:query')
-const isCreate = true
-const isDelete = true
-const isUpdate = true
-const isQuery = true
+const isCreate = usePermissions(`${props.contentConfig.pageName}:create`)
+const isDelete = usePermissions(`${props.contentConfig.pageName}:delete`)
+const isUpdate = usePermissions(`${props.contentConfig.pageName}:delete`)
+const isQuery = usePermissions(`${props.contentConfig.pageName}:query`)
 
 // 初始化网络请求：userLists 相关参数
 const systemStore = useSystemStore()
@@ -117,6 +113,7 @@ function handleCurrentChange() {
 
 /** 页面刷新，网络请求获取新数据 */
 function fetchPageListData(formData: any = {}) {
+  // 没有查询权限，无法查询
   if (!isQuery) return
   // 1.获取offset/size
   const size = pageSize.value

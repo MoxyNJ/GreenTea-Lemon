@@ -3,7 +3,7 @@ import router, { defaultRoutes } from '@/router'
 import { accountLoginRequest, getUserInfoById, getUserMenusByRoleId } from '@/service/login/login'
 import type { IAccount, UserInfo } from '@/types'
 import { localCache } from '@/utils/cache'
-import { mapMenusToRoutes } from '@/utils/map-menus'
+import { mapMenusToPermissions, mapMenusToRoutes } from '@/utils/map-menus'
 import { defineStore } from 'pinia'
 import type { RouteRecordRaw } from 'vue-router'
 import useMainStore from '../main/main'
@@ -13,6 +13,7 @@ interface ILoginState {
   userInfo: UserInfo
   userMenus: Array<any>
   routes: RouteRecordRaw[]
+  permissions: Array<any>
 }
 
 /** 存储用户登录信息，action封装用户登录验证网络请求 */
@@ -21,7 +22,8 @@ const useLoginStore = defineStore('login', {
     token: '',
     userInfo: {},
     userMenus: [],
-    routes: []
+    routes: [],
+    permissions: []
   }),
   actions: {
     /** 登录后获取数据 */
@@ -65,6 +67,8 @@ const useLoginStore = defineStore('login', {
         this.token = token
         this.userInfo = userInfo
         this.userMenus = userMenus
+        // 获取：按钮权限
+        this.permissions = mapMenusToPermissions(userMenus)
 
         /**动态添加路由对象 */
         const routes = mapMenusToRoutes(userMenus)

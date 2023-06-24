@@ -117,16 +117,20 @@ export function mapMenuListToIds(menuList: any[]) {
 export function mapMenusToPermissions(menuList: any[]) {
   const permissions: string[] = []
 
+  // 递归，获取叶子节点的所有 permission 参数
   function recurseGetPermission(menus: any[]) {
     for (const item of menus) {
+      // 根据menu结构得知，权限在第三层，所以直接锁定第三层
       if (item.type === 3) {
+        // 权限参数：permission: "system:users:create"
         permissions.push(item.permission)
       } else {
-        recurseGetPermission(item.children ?? [])
+        item.children && recurseGetPermission(item.children)
+        // todo 看一下上面的逻辑行不行
+        // recurseGetPermission(item.children ?? [])
       }
     }
   }
   recurseGetPermission(menuList)
-
   return permissions
 }

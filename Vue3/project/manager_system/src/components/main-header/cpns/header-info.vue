@@ -47,7 +47,6 @@ import { useRouter } from 'vue-router'
 import { ID, LOGIN_TOKEN, USER_INFO, USER_MENUS } from '@/global/constants'
 import { localCache } from '@/utils/cache'
 import useLoginstore from '@/store/login/login'
-import { defaultRoutes } from '@/router'
 
 const router = useRouter()
 const loginStore = useLoginstore()
