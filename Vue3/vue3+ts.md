@@ -4,6 +4,20 @@
 
 
 
+链接：
+
+- Vue：https://cn.vuejs.org/api/general.html
+- Element-plus：https://element-plus.org/zh-CN/component/button.html
+- Vue Router：https://router.vuejs.org/zh/introduction.html
+- Pinia：https://pinia.web3doc.top/introduction.html
+- ECharts：https://echarts.apache.org/handbook/zh/get-started
+- 接口 postnam：https://documenter.getpostman.com/view/12387168/TzzDKb12
+- 参考：http://localhost:5174/#/main/analysis/dashboard
+
+
+
+
+
 ## Step 1 创建 vue 项目
 
 - 文档：cn.vuejs.org
@@ -548,7 +562,21 @@ const roles = {
 
 
 
- 
+一些未完成的页面：
+
+- 商品类别：
+
+![商品类别](images/vue3+ts.assets/%E5%95%86%E5%93%81%E7%B1%BB%E5%88%AB.png)
+
+- 商品信息：
+
+![商品信息](images/vue3+ts.assets/%E5%95%86%E5%93%81%E4%BF%A1%E6%81%AF.png)
+
+- 故事列表：
+
+![故事列表](images/vue3+ts.assets/%E6%95%85%E4%BA%8B%E5%88%97%E8%A1%A8.png)
+
+
 
 
 
