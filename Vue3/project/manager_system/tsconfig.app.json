@@ -8,7 +8,8 @@
     "components.d.ts",
     "src/**/*.ts",
     "package.json",
-    "src/**/*.config.ts"
+    "src/**/*.config.ts",
+    "src/**/*.json"
   ],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {

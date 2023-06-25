@@ -835,6 +835,39 @@ const promise = new Promise(() => {
 
 
 
+### 兄弟组件通信
+
+- EventBus
+
+- `emit('')` 自定义事件 + 借助父组件交流
+
+- `store`。事件发起者 A 组件：向 pinia store 中更新数据，通过 action ；事件监听者 B 组件：监听action 是否被执行
+
+  ```ts
+  // B 组件，通过设置监听 api：$onAction，监听特定的 action 是否在别处被触发，触发立即执行回调
+  // args.name 是 aciton 名称
+  systemStore.$onAction((args) => {
+  	console.log('Action 被调用：', args.name)
+    console.log()
+  })
+  
+  systemStore.$onAction(({name, after}) => {
+  	after(() => {
+      if (name == 'newPageDataAction') {
+        currentPage += 1
+        // 通过after包裹，该逻辑会在 newPageDataAction 执行完毕，并执行成功后才回调
+        // 如果执行失败则不触发回调 
+      }
+    }) 
+  })
+  ```
+
+  
+
+### 数字载入时的动画效果
+
+- 组件：county.js
+
 
 
 
