@@ -1,6 +1,5 @@
 <template>
   <div class="dashboard">
-    <!-- 1.顶部数字的数据展示 -->
     <el-row :gutter="10">
       <template v-for="item in amountList" :key="item.amount">
         <el-col :span="6" :xs="24" :sm="12" :md="8" :lg="6">
@@ -9,7 +8,6 @@
       </template>
     </el-row>
 
-    <!-- 2.中间部分的图表 -->
     <el-row :gutter="10">
       <el-col :span="7">
         <chart-card>
@@ -28,7 +26,6 @@
       </el-col>
     </el-row>
 
-    <!-- 3.底部部分的图表 -->
     <el-row :gutter="10">
       <el-col :span="12">
         <chart-card>

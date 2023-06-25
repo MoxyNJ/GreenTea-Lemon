@@ -191,13 +191,15 @@ VSCode 中配置：
 
    
 
-### 2.4 git Husky和eslint（后续）
+### 2.4 git Husky和eslint
 
 虽然我们已经要求项目使用eslint了，但是不能保证组员提交代码之前都将eslint中的问题解决掉了：
 
-* 也就是我们希望保证代码仓库中的代码都是符合eslint规范的；
+* 保证代码仓库中的代码都是符合eslint规范的；
 
-* 那么我们需要在组员执行 `git commit ` 命令的时候对其进行校验，如果不符合eslint规范，那么自动通过规范进行修复；
+* 需要在组员执行 `git commit ` 命令的时候对其进行校验，如果不符合eslint规范，自动规范代码；
+
+* 执行：`npm run lint`，会对指定的类型文件进行代码检查和修复；
 
 那么如何做到这一点呢？可以通过Husky工具：
 
@@ -209,6 +211,12 @@ VSCode 中配置：
 
 ```shell
 npx husky-init && npm install
+
+# 前提1: 系统已安装git
+git --verison
+
+# 前提2: 当前项目包含 .git 文件
+git init
 ```
 
 这里会做三件事：
@@ -228,10 +236,6 @@ npx husky-init && npm install
 接下来，我们需要去完成一个操作：在进行commit时，执行lint脚本：
 
 ![image-20210723112932943](images/vue3+ts.assets/008i3skNgy1gsqq3hn229j30nf04z74q.jpg)
-
-
-
-
 
 这个时候我们执行git commit的时候会自动对代码进行lint校验。
 
