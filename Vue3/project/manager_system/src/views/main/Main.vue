@@ -15,28 +15,11 @@
 </template>
 
 <script setup lang="ts">
-import { onUpdated, ref } from 'vue'
+import { ref } from 'vue'
 import MainMenu from '@/components/main-menu/MainMenu.vue'
 import MainHeader from '@/components/main-header/MainHeader.vue'
-import { localCache } from '@/utils/cache'
-import { ID } from '@/global/constants'
-import { onMounted } from 'vue'
-import useLoginStore from '@/store/login/login'
 
 const isFold = ref(false) /** main-header是否折叠*/
-const loginStore = useLoginStore()
-
-/** 校验是否已获取用户数据 */
-// ;(() => {
-//   console.log('main组件刷新，并执行过一次')
-//   if (loginStore.userInfo.id || loginStore.userMenus.length !== 0) {
-//     return
-//   }
-//   // 重新获取数据
-//   if (localCache.getCache(ID)) {
-//     loginStore.getUserInfoAction()
-//   }
-// })()
 
 /** 折叠逻辑 */
 function handleFoldChange(nweIsFold: boolean) {

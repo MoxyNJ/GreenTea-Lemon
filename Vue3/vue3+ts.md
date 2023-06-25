@@ -191,7 +191,7 @@ VSCode 中配置：
 
    
 
-### 2.4 git Husky和eslint
+### 2.4 git Husky和eslint (后续)
 
 虽然我们已经要求项目使用eslint了，但是不能保证组员提交代码之前都将eslint中的问题解决掉了：
 
@@ -241,11 +241,11 @@ git init
 
 
 
-### 2.4. git commit规范（后续）
+### 2.4. git commit规范 (后续)
 
 #### 2.4.1 代码提交风格
 
-通常我们的git commit会按照统一的风格来提交，这样可以快速定位每次提交的内容，方便之后对版本进行控制。
+通常 git commit -m 'xxxxxxx' 内容会按照统一的风格来提交。
 
 ![](images/vue3+ts.assets/008i3skNgy1gsqw17gaqjj30to0cj3zp.jpg)
 
@@ -321,7 +321,7 @@ npx commitizen init cz-conventional-changelog --save-dev --save-exact
 
 如果我们按照cz来规范了提交风格，但是依然有同事通过 `git commit` 按照不规范的格式提交应该怎么办呢？
 
-* 我们可以通过commitlint来限制提交；
+* 我们可以通过commit lint来限制提交；
 
 1.安装 @commitlint/config-conventional 和 @commitlint/cli
 
