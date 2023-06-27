@@ -26,8 +26,6 @@ TypeScript 的特点：
 
 
 
-
-
 安装：
 
 ```sh
@@ -188,8 +186,6 @@ never 表示永远不会发生的值，比如一个函数：
 
 - 一个死循环，或者内部发生异常的函数，其返回值时 never；
 
-
-
 ```typescript
 //【1】死循环/报错
 function foo(): never {
@@ -222,15 +218,308 @@ function handleMessage(message: string | number) {
 
 
 
-145
+#### (4) tuple
+
+元组类型：类似数组结构。不同的是，元组可以存放任意不同的数据类型在其中，并且每一个数据的类型都是明确的。
+
+对比：
+
+- 数组：最好保存相同的数据类型，这样可以通过遍历进行整体处理。获取其中的值也无法明确知道其数据类型
+- 对象：为了保存 value，必须明确指出 key。如果 key 无意义的话，增加了代码和数据量。
+- 元组：
+  - 相对数组而言，可以存放不同的数据类型，并知道每一个元素的类型；
+  - 相对对象而言，没有额外的代码和数据量。
+
+用处：
+
+- 常用在函数中，特别是函数的返回值
+
+```ts
+// 想用一种数据类型保存：moxy, 18, 1.88，有三个方法：
+// 1数组
+const info1: any[] = ["moxy", 18, 1.88]
+const info1: (string | number)[] = ['moxy', 18, 1.88]
+
+// 2对象
+const info2 = {
+  name: 'moxy',
+  age: 18,
+  height: 1.88
+}
+
+// 3元组，对每一个元素的类型进行定义
+const info3: [string, number, number] = ["moxy", 18, 1.88]
+
+
+
+/**
+ * 用处：函数返回值
+ * 如：React 中的 useState，可以通过对返回值进行规定，让调用者知道第一个返回值是基本数据类型，第二个返回值是是一个函数。
+ * 细节：T 为范型，通过入参 initialState 类进行自动推导并绑定后续遍历的类型
+ */
+const [count, setCount] = useState(10)
+
+// 定义
+function useState<T>(initialState: T): [T, (newValue: T) => void] {
+  let stateValue = initialState
+
+  function setValue(newValue: T) {
+    stateValue = newValue
+    // 值发生变化，重新渲染组件
+  }
+
+  return [stateValue, setValue]
+}
+
+```
+
+
+
+## 3 细节
+
+### 3.1 类型注解：联合类型、交叉类型
+
+运用多种运算符，从现有类型中构建新类型
+
+- 联合类型：要么是A类型，要么是B类型，满足其一即可。
+- 交叉类型：既是A类型，又是B类型，都要满足。
+- 字面量类型：对 string、numbe 等基本数据类型的内容进行限定。
+
+```ts
+// 【1】联合类型
+let foo: number | string = 'abc'
+type Aligment = 'left'|'right'|'center' // 字面量联合类型
+
+
+// 小心：使用时需进行类型缩小
+if (typeof foo === "string")
+  console.log(foo.length)
+
+// 【2】交叉类型
+interface IKun {
+  name: string
+  age: number
+}
+interface ICoder {
+  name: string
+  coding: () => void
+}
+
+const info: IKun & ICoder = {
+  name: 'why',
+  age: 18,
+  coding: function() {}
+}
+```
+
+
+
+### 3.2 别名&接口: type、interface
+
+类型注解解决了构建新类型的问题，但每次使用该类型时，都需要再重新完整的定义一次，增加代码量。
+
+- 类型别名 type：对类型注解起一个别名，方便定义好的类型注解则各处进行使用。
+
+```js
+// 方便的别名 type
+type MyType = number | string
+```
+
+
+
+对象类型的声明，可以通过「类型别名」，也可以通过「类型声明」。
+
+- type 类似于 `const`，相当于对一个「自定义的类型」定义一个名称。
+- interface 类似于 `class`，相当于对一个「自定义的对象类型」进行声明。
+
+直观上，两个的使用没有区别，但特性上有局部区别：
+
+1. 适用范围
+
+   - `interface` 的使用范围仅适用于对象类型。
+
+   - `type` 的使用范围更广，不仅适用于对象类型， 还可定义其他任意联合类型。
+
+2. 重复定义
+
+   - interface 可以多次声明同一个interface 接口名称（但不推荐，ESLint会报错）。
+
+   - type 仅可以定义一次，不允许两个相同的 type 别名同时存在。
+
+3. 类的继承和实现
+
+   - interface 支持继承，可以被类实现
+   - type 不支持继承
+
+总结：
+
+- 如果是非对象类型的定义，直接使用 type
+- 如果是对象类型的定义，基本使用 interface，因为扩展性更强。
+
+```ts
+// 【2】重复定义
+interface IProp {
+  x: number
+  y: number
+}
+
+
+const obj: IProp = {
+  x: 1,
+  y: 2,
+  z: 3
+}
+
+// 这里可以额外追加属性，并存在接口提升，上面的obj对象中需要加入z变量
+interface IProp {
+  z: number
+}
+
+//【3】继承和类的实现
+interface IPerson {
+  name: string
+}
+
+interface IKun extends IPerson {
+  slogan: string
+}
+
+class Person implements IKun {
+    name = 'why'
+    slogan = '你干嘛'
+}
+```
+
+
+
+### 3.3 类型断言: as
+
+把 x对象 当作 y对象。
+
+规则：断言只能将对象的类型缩小，或者类型扩大，不能指鹿为马。
+
+- 常用1：比如，获取DOM元素，imgEl返回的型为: `Element | null`。但我们确定它是一个 `image Element`，使用类型断言 `HTMLImageElement`，则可访问 `img` 元素的特定属性。
+- 常用2：非空类型断言，程序员向ts表明不需要判断某对象是否为空，强制指出该类型一定存在，ts对该对象跳过判断存在的检测。
+
+```ts
+// 不能指鹿为马
+const age: number = 18
+const age2 = age as string  // 错误
+
+
+// 常用1
+const imgEl = document.querySelector('.someImg') as HTMLImageElement
+imgEl.src = 'xxxx'
+imgEl.alt = '111'
+
+// 常用2
+interface IPerson {
+  name: string
+  friend?: {
+    name: string
+  }
+}
+
+const info: IPerson = {
+  naem: 'moxy',
+  age: 18
+}
+// 访问属性
+info.friend?.name
+// 给属性赋值
+// 方案一：类型缩小
+if (info.friend) info.friend.name = 'ninjee'
+// 方案二：非空类型断言
+info.friend!.name = 'ninjee'
+```
+
+
+
+### 3.4 字面量类型
+
+字面量类型：对 string、numbe 等基本数据类型的内容进行限定。
+
+```ts
+type Aligment = 'left'|'right'|'center' // 字面量联合类型
+type ID = 0 | 1 | 2 | 3 | 4 | 5 | 6  // 类似枚举的作用
+
+
+type MethodType = 'get' | 'post'
+function request(url: string, method: MethodType) {}
+
+request('http://xxxx/com', 'get')
+
+
+const info = {
+  url: 'xxxx',
+  method: 'post'
+} as const
+// 通过 as const 将info对象，转换为 readonly 对象，编译器可以很好的识别其中的内容。
+// method: string 类型便可识别为正确的一个字面量类型。
+request(info.url, info.method)
+```
 
 
 
 
 
+### 类型缩小
 
+- 类型缩小 Type Narrowing / 类型保护 type guards
+- 目的：限制和缩小变量的类型，确保变量可以正确的被使用。
 
+常见的类型保护方式：
 
+- typeof：判断类型
+- ===， !==：平等缩小，一般是判断字面量类型
+- instanceof：属于什么类型的实例
+- in：判断该对象内是不是有指定的属性
+
+```ts
+// [1]typeof
+if (typeof id === 'string') {
+  // id 变量在这里一定是string类型，可以使用String类型的方法
+}
+
+// [2]平等缩小
+type Direction = 'left'|'right'|'up'|'down'
+if (direct === 'left') {
+  // 判断字面量类型
+}
+
+// [3]instanceof
+function printDate(date: string | Date) {
+  if (date instanceof Date) {
+    // 判断 date 是不是 Date 对象的实例
+  }
+}
+
+// [4]in
+interface ISwim {
+  swim: () => void
+}
+  
+interface IRun {
+  run: () => void
+}
+
+function move(animal: ISwim | IRun) {
+  // 通过 in，判断传入的animal对象是否包含指定的属性
+  if ('swim' in animal) animal.swim()
+  else if ('run' in animal) animal.run()
+}
+
+const fish: ISwim = {
+  swim: function() {}
+}
+
+const dog: IRun = {
+  run: function() {}
+}
+
+move(fish);
+move(dog);
+```
 
 
 
