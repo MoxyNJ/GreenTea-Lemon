@@ -380,10 +380,12 @@ interface IPerson {
   name: string
 }
 
+// 接口继承接口
 interface IKun extends IPerson {
   slogan: string
 }
 
+// 类继承接口
 class Person implements IKun {
     name = 'why'
     slogan = '你干嘛'
@@ -461,9 +463,7 @@ request(info.url, info.method)
 
 
 
-
-
-### 类型缩小
+### 3.5 类型缩小
 
 - 类型缩小 Type Narrowing / 类型保护 type guards
 - 目的：限制和缩小变量的类型，确保变量可以正确的被使用。
@@ -520,6 +520,656 @@ const dog: IRun = {
 move(fish);
 move(dog);
 ```
+
+
+
+### 3.6 ts 类型检测 - 鸭子类型
+
+ts 类型检测，并不是类似 Java 的严格审查，而是只关心属性和行为，不关心具体的类型。
+
+```ts
+class Person {
+    constructor(public name: string, public age: number) {}
+}
+
+class Dog {
+    constructor(public name: string, public age: number) {}
+}
+
+function printPerson(p: Person) {
+    console.log(p.name, p.age)
+}
+
+// 以下传入 printPerson 的对象，即便不是 Person 的实例化，只要有类似的属性和方法，便检测通过
+printPerson(new Person('Moxy', 18))
+printPerson({name: '汾酒青花瓷', age: 20})
+printPerson(new Dog('旺财', 3))
+```
+
+
+
+## 4 函数类型
+
+- 函数表达式：`() => void`
+- 函数调用签名：`interface { (): void}`
+- 函数构造签名：`interface {new (): void}`
+
+
+
+### 4.1 函数类型表达式 Function Type Expressions
+
+函数 bar 本身也是一个标识符，也应该有自己的类型。
+
+- 使用函数类型表达式对函数类型进行约束。
+
+```ts
+// 等号左边：标识符 bar 的类型, (num1: number) => string
+// 等号右边：对函数的具体定义, (arg: number): string => {...}
+const bar: (num1: number) => string = (arg: number): string => {
+  return 'OK'
+}
+
+// 如果将 bar 的类型添加别名，则有如下写法：
+type BarType = (num1: number) => string
+
+const newBar: BarType = (arg: number): string => {
+    return 'OK'
+}
+// 有了类型约束，后面对函数的类型约束也可省略
+const newBar2: BarType = (arg) => {
+    return "OK"
+}
+```
+
+
+
+### 4.2 调用签名 Call Signatures
+
+函数的调用签名
+
+- 在 JavaScript 中，函数除了可以调用外，还可拥有自己的属性。
+- 对函数进行类型限定，无法表达其额外的属性，使用调用签名则可满足既有属性，又有函数调用的需求。
+
+应用场景：
+
+1. 如果只是描述函数类型本身（函数可以被调用），使用函数类型表达式 Function Type Expressions。
+2. 如果函数不仅可被调用，还需拥有对象的属性，使用函数调用签名 Call Signatures。
+
+书写区别：
+
+1. 函数类型表达式中，返回值通过 “**箭头**” 规定。
+2. 函数调用签名中，返回值通过 “**冒号**” 规定。
+
+```ts
+interface IBar {
+    name: string
+    age: number
+    // 函数调用签名，(参数列表): 返回值类型
+    (num1: number): number
+}
+
+const bar: IBar = (num1: number): number => {
+    return num1
+}
+
+bar.name = 'moxy'
+bar.age = 18
+bar(123)
+```
+
+
+
+### 4.3 构造签名 
+
+当函数通过 new 来调用，通过构造签名进行类型限定。
+
+- 默认情况下，当在 ts 中 `new foo()` 的方式调用函数时，是不会报错的。但 ts 无法正确推导出 foo 的类型。通过 **构造签名** 可让 ts 对该函数的具体类型进行正确推导。
+- 规则：通过 `new` 关键字，指明该函数可通过 new 调用。
+
+```ts
+class Person {
+}
+
+interface IClassPerson {
+    new (): Person  // 构造签名
+}
+
+
+// 期望描述 fn 是一个可构造的(new) 的一个函数，不报错
+function factory(fn: IClassPerson) {
+    const f = new fn()
+    return f
+}
+```
+
+
+
+其他：可选参数、参数的默认值、剩余参数
+
+- 可选参数：
+  - 定义时，可选类型参数需放在最后；
+
+- 有默认值的参数：
+  - 允许不注明类型(自动推导)；
+  - 允许在调用时不传递参数；
+  - 允许在调用时传递 `undefined`；
+- 剩余参数：
+  - 剩余参数用数组类型进行收集，可对数组成员的类型进行限制。
+
+```ts
+/** 可选参数 */
+function foo(x: number, y?: number) {
+    return x
+}
+
+foo(1, 2)
+foo(1)
+
+
+/** 参数的默认值 */
+function bar(x: number, y = 100) {
+    return x + y
+}
+bar(1, 2)
+bar(1, undefined) // 允许接收 undefined
+bar(1)
+
+
+/** 剩余参数 */
+function foo(...arg: (string|number)[]) {
+    return arg
+}
+foo(123, 123)
+foo('abc', 123)
+```
+
+
+
+### 4.4  函数重载
+
+在实际的业务时，函数重载用的相对较少，更多的用在框架开发，公共方法的开发。
+
+ts 中重载签名的书写方式：
+
+- 仅写函数名称、入参类型、返回值类型，**不编写函数体**
+- 多个重载函数，定义多个重载签名；
+
+```ts
+function add(arg1, arg2) {
+    return arg1 + arg2
+}
+
+// 调用函数时，只能将两个数组，或两个字符串进行相加
+add(10, 20)
+add('abc', 'cba')
+
+/** 函数重载 */
+// 【1】编写重载签名
+function add(arg1: number, arg2: number): number
+function add(arg1: string, arg2: string): string
+
+
+// 【2】编写通用的函数实现
+function add(arg1: any, arg2: any){
+    return arg1 + arg2
+}
+
+// 函数的重载
+add(123, 321)  // 444
+add('moxy ', 'ninjee') // "moxy ninjee" 
+```
+
+
+
+### 4.5 (了解)this 相关的内置工具
+
+ts 提供了一些工具类型来辅助进行常见的类型转换，这些类型全局可用。这些方法在框架开发时会用到，但开发业务代码时用的少。
+
+**`thisParameterType`**
+
+- 用于提取一个函数类型 Type 的 this（opens new window）参数类型；
+- 如果这个函数类型没有 this 参数返回 `unknown`
+
+**`OmitThisParameter`**
+
+- 删除 this 类型，获取其他剩余的函数类型
+
+```ts
+function foo(this: {name: string}, info: {name: string}) {
+    console.log(this, info)
+}
+
+// 函数类型
+type FooType = typeof foo
+// 函数中 this 的类型
+type FooThisType = ThisParameterType<FooType>
+// 删除 this 类型，获取剩余的函数类型
+type PureFooType = OmitThisParameter<FooType>
+```
+
+**`ThisType`**
+
+- 用于绑定一个上下文当中的 this ，提升开发效率
+
+```ts
+interface IState {
+    name: string
+    age: number
+}
+interface IStore {
+    state: IState
+    eating: () => void
+    running: () => void
+}
+
+const store: IStore = {
+    state: {
+        name: 'moxy',
+        age: 18
+    },
+    // 如果要在函数内调用this,必须显示绑定this类型，较为繁琐
+  	// 如果不进行显示定义，而直接使用this，就会直接报错
+    eating: function(this: IState) {
+        console.log(this.name)
+    },
+    running: function(this: IState) {
+        console.log(this.age)
+    }
+}
+
+// 使用ThisType绑定上下文的this，无需在函数中额外定义参数，更简便
+const store2: IStore & ThisType<IState> = {
+    state: {
+        name: 'moxy',
+        age: 18
+    },
+    eating: function() {
+        console.log(this.name)
+    },
+    running: function() {
+        console.log(this.age)
+    }
+}
+```
+
+
+
+## 5 面相对象
+
+### 5.1 ts 类的基本使用
+
+类的成员和属性存在 3 种修饰符：
+
+- `public`：该成员在任何地方可访问、共有的属性 / 方法、默认属性为 `public`；
+- `private`：该成员仅在该类的内部可访问，外界无法访问，私有的属性 / 方法；
+- `protected`：该成员仅在类自身 / 子类 中可访问，外界无法访问，受保护的属性 / 方法；
+
+```ts
+class Person {
+    // 成员属性：声明成员属性
+    public name: string
+    private age: number
+    protected call: string
+
+    constructor(name: string, age: number, call: string) {
+        this.name = name
+        this.age = age
+        this.call = call
+    }
+
+    protected eating() {
+        // 内部允许访问
+        console.log('吃东西', this.age)
+    }
+
+}
+
+const p1 = new Person('moxy', 18, 'hello ~')
+
+p1.name
+// 外部不允许访问
+// p1.age
+// p1.call
+
+class Student extends Person {
+    say() {
+        // protected 子类内部可访问
+        console.log('打招呼', this.call)
+        // private 子类不可访问私有属性
+        // console.log('身高', this.age)
+    }
+}
+
+const s1 = new Student('ninjee', 22, 'hi ~')
+s1.say()
+```
+
+
+
+### 5.2 `readonly` 只读
+
+```ts
+class Person {
+    public readonly name: string
+		private readonly age: number
+    
+    constructor(name: string, age: number) {
+        this.name = name
+        this.age = age
+    }
+}
+```
+
+
+
+### 5.3 getter / setter
+
+私有属性外界无法直接访问，可以通过 getter 和 setter 进行访问。
+
+- 主要作用：getter 和 setter 可视作 class 内部的拦截器，修改和访问变量时可判断操作是否符合预期 / 是否合法，并进行适当修饰。
+
+```ts
+class Person {
+    private _name: string
+    
+    constructor(name: string) {
+        this._name = name
+    }
+
+    // setter/getter
+    set name(newValue: string) {
+        this._name = newValue
+    }
+
+    get name() {
+        return this._name
+    }
+}
+
+const p1 = new Person('moxy')
+
+// 私有属性外界不可访问
+p1._name 
+// 利用 getter / setter 访问私有属性
+p1.name = 'ninjee'
+p1.name
+```
+
+
+
+### 5.4 参数属性 Parameter Properties
+
+把一个构造函数转换成一个同名同值的类属性。
+
+- 是一个语法糖
+  - 在构造函数前添加修饰符 public、prvivate、protected、readonly，创建参数属性，ts 会自动定义参数和赋值。
+
+```ts
+class Person {
+    name: string
+    private readonly age: number
+    protected height: number
+    
+    constructor(name: string, age: number, height: number) {
+        this.name = name
+        this.age = age
+        this.height = height
+    }
+}
+
+// 语法糖：相当于上面的代码。自动：声明属性 + 赋值
+class Person {    
+    constructor(public name: string,private readonly age: number, protected height: number) {}
+}
+
+
+const p1 = new Person('moxy', 18, 180)
+```
+
+
+
+### 5.5 抽象类 abstract
+
+JavaScript 中原生没有抽象类，但 java 中有相关的概念，ts 将其实现了。
+
+- **继承** 是 **多态** 的前提。
+- 在定义通用的调用接口时，通常让调用者传入父类，通过多态来实现更加灵活的调用方式。
+- 但是，父类本身通常不需要对方法进行具体的实现，仅需定义方法的名称、结构等关键信息，以明确方法的用处。具体的方法实现需子类继承后，根据不同的需求进行实现。这种父类称之为 “**抽象类**”，对应的方法称之为 “**抽象方法**”。
+- **多态**：父类引用，指向子类对象。
+
+特点：
+
+- 抽象类、抽象方法，必须添加 `abstract` 关键字；
+- 只有抽象类内，才允许定义抽象方法；
+- 抽象类不允许创建实例，仅允许子类实例化；
+
+```ts
+// 抽象类
+abstract class Shape {
+    // 抽象方法，只有声明，没有实现。让子类必须自行实现
+    abstract getArea(): number
+}
+
+// 矩形
+class Rectangle extends Shape {
+    constructor(public width: number, public height: number) {
+        super()
+    }
+
+    getArea() {
+        return this.width * this.height
+    }
+}
+
+// 圆形
+class Circle extends Shape {
+    constructor(public radius: number){
+        super()
+    }
+
+    getArea() {
+        return this.radius ** 2 * Math.PI
+    }
+}
+
+
+// 【1】多态：父类引用，指向子类对象
+const shape1: Shape = new Rectangle(10, 20)
+const shape2: Shape = new Circle(10)
+
+
+// 【2】通用函数：获取面积
+function calcArea(shape: Shape) {
+    return shape.getArea()
+}
+
+// 鸭子类型
+calcArea(new Rectangle(10, 20))
+calcArea(new Circle(5))
+```
+
+
+
+#### **抽象类** 和 **接口** 的区别：
+
+相同点：
+
+1. 都不能被实例化，都位于继承树的顶端，用于被其他类实现和继承；
+2. 都可以包含抽象方法，实现接口或抽象类的普通子类都必须实现定义的抽象方法。
+
+不同点：
+
+1. 抽象类是事物的抽象，抽象类用来捕捉子类的通用特性，接口通常是一些行为的描述；
+2. 抽象类通常用于一系列关系紧密的类之间，接口只是用来描述一个类应该具有什么行为；
+3. 接口可以被多层实现，而抽象类只能单一继承；
+4. 抽象类中可以有实现体，接口中只能有函数的声明；
+
+
+
+### 5.6 类的特性
+
+类的作用：
+
+1. 可以创建类对应的实例对象；
+2. 类本身可以作为这个实例的类型；
+3. 类也可以当作一个 **有构造签名** 的对象 / 函数；
+
+```ts
+class Person {
+    constructor(public name: string, public age: number) {}
+}
+
+// 2 Person类的名称就是类型
+const p: Person = new Person('ninjee',18)
+
+// 3 一个有构造签名的对象/函数
+function factory(ctor: new(arg1: string, arg2: number) => void) {}
+factory(Person)
+```
+
+
+
+### 5.7 索引签名 Index Signatures
+
+对象类型的索引签名。
+
+- 对一个对象 object 的索引访问： `object[xxx]` 进行约束比如：
+  - `xxx` 的类型，是 string，还是 number 等；
+  - `object[xxx]` 的返回值，是 string，还是 number 等。
+
+```ts
+interface ICollection {
+    // 必须具备 length 属性 
+    length: number
+
+    // 索引签名，标明访问该对象的方式
+    // 这里访问要求访问时必须使用 number 类型，且返回值类型是 string
+    [index: number]: string
+		// [key: string]: string
+}
+
+function iteratorCollection(collection: ICollection) {
+    // 允许下标访问
+    collection[0]
+    // 不允许字符串访问
+    // collection['abc']
+}
+
+iteratorCollection(['abc', 'cba', 'nba'])
+iteratorCollection([123, 111])  // 访问的返回值不是string，报错
+iteratorCollection({length: 10})  // 即使是一个object，满足要求便不报错
+```
+
+
+
+### 5.8 实现接口
+
+不仅接口可以通过 `extends` 继承接口，类也可以通过 `implements` 实现接口。
+
+- 类仅可继承一个类，但可以实现多个接口
+
+```ts
+interface IPerson {
+    name: string
+    age: number
+}
+
+interface IKun {
+    slogan: string
+}
+
+// 类实现多个接口
+class Person implements IPerson, IKun {
+    constructor(public name: string, public age: number, public slogan: string ) {}
+}
+```
+
+
+
+
+
+#### const a = (1, 1, 1, 1)
+
+```ts
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## e 特点：
+
+**Typescript 的编写是否报错，仅遵循与 TypeScript 内部的规则，有许多自己的规定。**
+
+- 细节1：Typescript 对于传入的函数类型的参数个数不进行检测。
+
+```js
+type CalcType = (num1: number, num2: number) => number
+
+function calc(calcFn: CalcType) {}
+
+
+// 原本规定clac传入的函数必须是2个参数，但只传入1个参数也不报错。
+calc(function(10){
+  return 123
+})
+```
+
+- 细节2：Typescript 第一次定义的对象，保持 “新鲜”，必须遵循规定的类型；但在第二次定义时，则不进行类型检测。下例中 info1 不是首次定义，则不报错；info2 是首次定义，报错。
+
+```ts
+interface IPerson {
+    name: string
+    age: number
+}
+
+const p = {
+    name: 'moxy',
+    age: 18,
+    height: 1.88,
+    address: '北京市'
+}
+
+// 不报错
+const info1: IPerson = p
+
+// 报错，IPerson 限定仅有两个属性
+const info2 : IPerson = {
+    name: 'moxy',
+    age: 18,
+    height: 1.88,
+    address: '北京市'
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
