@@ -1088,16 +1088,21 @@ class Person implements IPerson, IKun {
 
 
 
-## 6. 高级数据类型
-
-### 6.1 枚举类型
+### 5.9  枚举类型
 
 把所有可能性的值列举出来。
 
 - 将一组可能出现的值，一个个列举出来，定义在一个类型中，这个类型就是枚举类型。
 - 允许开发这定义一组命名常量，常量可以是数组、字符串类型。
 
+枚举值：
+
+- 枚举类型是有值的，默认第一个类型为 0，以此递增；
+- 如果手动对第一个赋值为 10，则后续枚举类型会递增；
+- 也可手动设置为 string 类型。
+
 ```ts
+// 定义
 enum Direction {
  UP,
  DOWN,
@@ -1105,19 +1110,479 @@ enum Direction {
  RIGHT 
 }
 
+// 使用: 类型约束 + 对象调用
 const d1: Direction = Direction.DOWN
 const d2: Direction = Direction.UP
+
+enum Direction {
+ UP,
+ DOWN,
+ LEFT,
+ RIGHT 
+}
+
+
+// 枚举值：有些框架喜欢通过位运算定义
+enum Operation {
+    READ = 1 << 0,  
+    WRITE = 1 << 1
+}
+// 既可读、又可写：Operation.READ && Operation.WRITE => 值 '11'
 ```
 
 
 
+## 6 范型编程
+
+### 6.1 基本
+
+软件工程的主要目的，不仅是构建明确和一致的 **API**，还要让代码具有很强的 **可重用性**。
+
+- 参数的类型是否可以参数化？
+- 通过传入不同的函数参数，让 API 完成不同的操作。操作完成后的返回值，也有确定的类型和明确的属性（方法）。
+
+下例：通过传入范型，可让函数具有高可用的同时（**支持传入多种类型的入参**），**函数返回值的类型和属性也可进行约束**。
+
+- 调用时，可进行自动类型推断。
+
+**范型 T 相当于是一个变量，用于记录本次调用的类型，所以在整个函数的执行周期中，一直保留这参数的类型。**
+
+````ts
+function bar<Type>(arg: Type) {
+  return arg
+}
+
+const res1 = bar<number>(123)
+const res11 = bar(123)    // 自动类型推断
+const res2 = bar('abc')
+const res3 = bar({name: 'moxy'})
+````
+
+
+
+**举例1：`useState` 的练习**
+
+```js
+// 效果相同的简写：
+// function useState<T>(initialState: T) {
+function useState<T>(initialState: T): [T, (newState: T) => void] {
+    let state = initialState
+    
+    function setState(newState: T) {
+        state = newState
+        // 页面重新渲染
+    }
+
+    return [state, setState]
+}
+
+// 每次在调用时传递不同的类型，通过范型约束返回的 state 和 setState 类型。
+const [count, setCount] = useState<number>(10)
+const [count, setCount] = useState(10)    // 自动推断
+const [banners, setBanners] = useState<string[]>([])  // 数组内容无法正确推断，通常手动定义范型
+
+setCount(20)    // 正确
+setCount('moxy')  // 入参类型错误，报错
+```
+
+
+
+**举例2：**
+
+- 接口使用范型
+- 范型可以添加默认值
+
+```ts
+interface IKun<T = number> {
+    name: string
+    slogan: T
+}
+
+const kun: IKun<string> = {
+    name: 'moxy',
+    slogan: 'haha'
+}
+
+// 范型使用默认值 number
+const kunkun: IKun = {
+    name: 'moxy',
+    slogan: 666
+}
+```
+
+
+
+**举例3：范型类的使用**
+
+```ts
+class Point<T = number> {
+    constructor(public x:T, public y:T) {}
+}
+
+const p1 = new Point(10, 20)  // 使用范型默认值
+const p2 = new Point('111', '112') // 范型类可自动类型推断
+console.log(p1.x)  // 10
+console.log(p2.x)  // '111'
+```
+
+
+
+### 6.2 范型约束 Generic Constraints
+
+**`extends`**：有时候我们希望传入的类型有某些共性，但这些共性可能不是在同一种类型中。
+
+**`keyof`**：`A keyof B` 获取 B 的所有属性名，并构建为成一个联合类型返回给 A。
+
+
+
+**举例1：**extends
+
+- 需求：要求约束传入的对象都是有 length 属性的，且 ts 可正确推断出返回值的类型，和入参类型一致。
+
+- 特点：通过 `T extends ILength` 对范型 T 进行约束，必须遵守 ILength 接口的类型约束。
+
+```ts
+interface ILength {
+    length: number
+}
+
+function getInfo<T extends ILength>(arg: T): T {
+    return arg
+}
+
+const info1 = getInfo('aaaa')
+const info2 = getInfo(['111', '222', '333'])
+const info3 = getInfo({ length: 10})
+const info4 = getInfo({ })  // 报错，没有 length 属性
+```
+
+
+
+**举例2**: keyof
+
+- `A keyof B` 获取 B 的所有属性名，并构建为成一个联合类型返回给 A。
+
+```ts
+interface IKun {
+    name: string
+    age: number
+    slogan: string
+}
+
+type IKunKeys = keyof IKun // 联合类型：'name' | 'age' | 'slogan'
+
+const key1: IKunKeys = 'name'
+const key2: IKunKeys = 'age'
+const key3: IKunKeys = 'height'   // 报错，不属于 IKunKeys 类型
+```
+
+
+
+**举例3:** extends + keyof
+
+- 特点：在范型约束中，使用参数类型。
+- 目的：声明一个类型参数 K，这个类型参数 K 被其他类型参数 O 约束。
+- 需求：该函数要求传入一个对象 obj，和一个属性名 key。要求该对象 obj 内必须有这个属性名 key，所以要对 key 做约束。
+
+```ts
+function getObjectPorperty<O, K extends keyof O>(obj: O, key: K) {
+	return obj[key]
+}
+
+const info = {
+  name: 'why',
+  age: 18, 
+  height: 1.88
+}
+
+const v1 = getObjectPorperty(info, 'address') // 报错，address不属于info对象中的属性
+const v2 = getObjectPorperty(info, 'name')    // 正确
+```
+
+
+
+### 6.3 映射类型、条件类型
+
+#### (1) 映射类型 Mapped Types 基本使用
+
+业务开发用的很少，只有在框架开发时才用，理解较难。
+
+作用：一个类型许油基于另外一个类型来创建，但是不想直接拷贝一份，这个时候考虑使用映射类型。
+
+- 大部分的内置工具是通过映射类型实现的；
+- 大部分的类型体操题目也是通过映射类型完成的。
+
+映射类型建立在索引签名的语法上：
+
+- 必须使用 type，而不能使用 interface；
+- 映射类型，就是使用了 `PropertyKeys` 联合类型的范型；
+- 其中 `PropertyKeys` 大多是通过 keyof 创建，然后循环遍历键名，创建一个类型。
+
+
+
+举例：拷贝一份 IPerson，并对内容进行适当修改，创建新的 NewPerson
+
+```ts
+interface IPerson {
+    name: string
+    age: number
+}
+
+type MapPerson1<T> = {
+    [key in keyof T]?: T[key]
+
+    // 索引类型，依次使用（遍历）,这相当于：
+    // name: T[name]  ==> name?: string
+    // age: T[age]    ==>  age?: number
+}
+
+type MapPerson2<T> = {
+    [key in keyof T]: boolean
+
+    // 这相当于：
+    // name: boolean
+    // age: boolean
+}
+
+type NewPerson1 = MapPerson<IPerson>   // 新 type: {name?: string, age?: number}
+type NewPerson2 = MapPerson<IPerson>   // 新 type: {name: boolean, age: boolean}
+```
+
+
+
+#### (2) 映射类型修饰符 Mapping Modifiers
+
+修饰符：
+
+- `readonly`，设置属性可读；
+
+- `?`，设置属性可选；
+
+
+
+#### (3) 条件类型：
+
+`extends`、`infer`、`as`、`keyof` ....
+
+- 修饰符前可以添加 `+` 和 `-`，如果没有任何添加，则默认添加 `+`。
+- 加号表示添加后面的修饰符，减号表示减去后面的修饰符
+
+```ts
+interface IPerson {
+    name?: string
+    age?: number
+    height?: number
+    address: string
+}
+
+type MapPerson<T> = {
+    +readonly [Property in keyof T]-?: T[Property]
+}
+
+type NewPerson = MapPerson<IPerson>
+// 新的类型：开头添加了 readonly，末尾减去了可选类型
+// type NewPerson = {
+//     readonly name: string;
+//     readonly age: number;
+//     readonly height: number;
+//     readonly address: string;
+// }
+```
+
+
+
+### 6.4 类型工具
 
 
 
 
 
 
-## e 特点：
+
+## 7 扩展
+
+### 7.1 模块
+
+#### (1) 非模块 Non-modules
+
+Ts 认为的模块，与 Js 一样：
+
+- 在 js 中，没有 export 的 js 文件都被认为是一个脚本，而非一个模块；
+- 在一个脚本文件中，变量和类型会被声明在共享的全局作用域中，将多个输入文件合成并输出一个文件，或者在 HTML 使用多个 `<script>` 标签加载这些文件。
+
+非模块 `export {}`
+
+- 如果有一个文件，没有任何 import 或者 export，但是希望他被作为模块处理，添加这行代码：`export {}`
+- 这样会把文件变为一个没有导出任何内容的模块。
+
+类型导入
+
+- 在倒入时添加 type，指定导入的是一个类型，而不是普通对象。即使不添加 type 也可正常使用，但推荐添加 type。
+- 原因：类型仅在编写代码时供 ts 校验使用，而会在编译前删除，不会对 js 代码编译造成性能影响。
+  - 可以让一些非 Typescript 编译器（如 Babel, swc, esbuild (vite) ）知道什么样的导入可以被安全移除。
+
+```ts
+import type { IPerson, IProp } from './type'
+```
+
+
+
+### 7.2 命名空间 namespace
+
+命名空间是 ts 自己的模块化格式，是在 es 模块化标准之前出现的。现在更推荐使用 es 标准。
+
+```ts
+export namespace Price {
+    export const name = 'price'
+    export function format(price: string) {
+        return "$20.00"
+    }
+}
+```
+
+
+
+### 7.3 声明文件 `.d.ts`
+
+`.d.ts` 文件
+
+- 之前编写的 `.ts` 文件，最终会被输出为 `.js` 文件；
+- `.d.ts` 文件，用来做类型的声明 declare，称为类型声明 Type Declaration / 类型定义 Type Definition 文件。
+- 该文件内不会写逻辑，仅仅用来做类型检测。
+
+```ts
+// 内置声明文件
+// 来源：lib.dom.d.ts
+const h2El = document.createElement("h2");
+
+// 来源：lib.es2015.d.ts
+const promise = new Promise((resolve, reject) => {});
+```
+
+类型声明的来源：内置类型声明、第三方库外部定义类型声明、开发者自定义类型声明。
+
+- 内置声明文件：如 `../Microsoft VS Code/../node_modules/typescript/lib/lib.dom.d.ts`，只要安装过 ts 就会内置。
+  - 通常的命名方式：`lib.xxx.d.ts`
+  - `tsconfig.json` 可配置哪些 `.d.ts` 文件可以使用，默认关键字 ：`target: es2015`
+- 外部定义类型声明文件：
+  - 有些第三方库中，自己有类型声明(`.d.ts` 文件)，可以直接使用；
+  - 第三方没有，通过社区的一个公有库 `Definitly Typed` 存放类型声明文件
+    - 库地址：https://github.com/DefinitelyTyped/DefinitelyTyped
+    - 查找地址：https://www.typescriptlang.org/dt/search?search= / https://github.blog/changelog/2020-12-16-npm-displays-packages-with-bundled-typescript-declarations/
+    - 比如 React 的类型声明：`npm i @types/react --save-dev`
+- 自定义类型声明文件：
+  - 如果内置、第三方都没有声明，则可自行声明类型文件：`xxx.d.ts`
+
+
+
+#### declare
+
+`declare module xxx` 模块声明，在一个模块内部导出的类型，都需要通过导入该模块后才可调用：
+
+- 给自己的代码声明一些类型，方便该类代码在多个地方使用。
+
+```ts
+/** moxy.d.ts 自定义声明文件 */
+declare module "moxy" {
+    export function join(...args: any[]): any;
+}
+
+
+/** index.ts */
+// 可以引入自定义的 moxy 模块，并调用其中的方法
+import moxy from "moxy";
+moxy.join(111);
+```
+
+
+
+例子1: 需要自行编写类型声明
+
+```ts
+// 在 index.html 中的 <script> 中定义以下变量，虽然是全局变量，但 ts 无法正确引入
+const moxyName = 'moxy'
+const moxyAge = 18
+const moxyHeight = 180
+
+
+// 解决：创建声明文件：index.d.ts
+declare const moxyName = string
+declare const moxyAge = number
+declare const moxyHeight = number
+
+
+// 在 index.ts 中，我们可以直接使用全局变量：
+console.log(moxyName, moxyAge, moxyHeight);
+```
+
+
+
+例子2: 声明文件模块
+
+- 开发 vue 的过程中，ts 默认不识别 `.vue` 文件，需要进行文件声明；
+- 在开发中需要引入 `jpg` 等文件，ts 也不支持，需要对其声明；
+
+```ts
+// index.d.ts
+declare module "*.png"
+declare module "*.jpg"
+declare module "*.jpeg"
+declare module "*.svg"
+
+declare module "*.vue"
+```
+
+`vue` 默认引入的模块书写方式如下：
+
+![image-20230630204731241](images/Ts.assets/image-20230630204731241.png)
+
+### 7.4 tsconfig 配置文件
+
+作用：
+
+1. 主要作用，让 Typescript Compiler 在编译时，知道如何去编译 Typescript 代码和进行类型检测；
+   - 比如：是否允许不明确的 this  选项，是否允许隐式的 any 类型；
+   - 比如：将 typescript 代码编译成什么版本的 javascript 代码；
+2. 让编辑器，如 VS Code 可以按照正确的方式识别 ts 代码；
+   - 对于哪些语法进行提示、类型错误检测等。
+
+![image-20230630210742486](images/Ts.assets/image-20230630210742486.png)
+
+
+
+**tsconfig 顶层选项**
+
+![image-20230630211246460](images/Ts.assets/image-20230630211246460.png)
+
+```JS
+{
+  "compilerOptions": { ... },
+  "files": [], // 指定项目哪些ts文件需要进行编译，
+	"include": ["src/**/*", "types/**/*"], // 在数组中指出项目中哪些目录中的文件需要编译
+  "exclude": [] // 在include的包含范围内，排除不需要tsc编译的文件
+	//其他选项
+}
+```
+
+**常见的 `compilerOptions`：**
+
+![image-20230630211635971](images/Ts.assets/image-20230630211635971.png)
+
+![image-20230630211942566](images/Ts.assets/image-20230630211942566.png)
+
+- `paths`：修改别名时，这里也需要配置。
+
+
+
+## 8 封装 axios
+
+ts_project 项目中有，课程内容为 ts 课程第四天（day103 202）
+
+
+
+
+
+## 9 特点
 
 **Typescript 的编写是否报错，仅遵循与 TypeScript 内部的规则，有许多自己的规定。**
 
