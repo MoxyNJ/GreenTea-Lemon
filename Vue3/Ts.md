@@ -1301,7 +1301,7 @@ const v2 = getObjectPorperty(info, 'name')    // 正确
 
 
 
-### 6.3 映射类型、条件类型
+### 6.3 映射类型
 
 #### (1) 映射类型 Mapped Types 基本使用
 
@@ -1391,11 +1391,339 @@ type NewPerson = MapPerson<IPerson>
 
 
 
-### 6.4 类型工具
+### 6.4 条件类型 Conditional Types
+
+#### (1) 基本使用
+
+日常开发时，有时会基于输入的值，来决定输出的值；ts 中，也需要基于输入的值的类型，决定输出的值的类型。
+
+- 条件类型：描述输入类型和输出类型之间的关系，类似于三元表达式：
+  - 写法：`SomeType extends OtherType ? TrueType : FalseType`
+
+```ts
+// 判断 number 是否是继承(extends) IDtyp
+type ResType = number extends IDtype ? true : false;  // 返回 true type
+type ResType2 = boolean extends IDtype ? true : false;  // 返回 false type
+```
 
 
 
+举例：函数的重载, 要求两个入参必须相同，如果均是number，返回number；如果是string，返回string
 
+```ts
+function sum<T extends number | string>(num1: T, num2: T): T extends number ? number : string;
+function sum(num1: any, num2: any) {
+    return num1 + num2;
+}
+
+const res = sum(20, 30); // 成功
+const res2 = sum("ninjee", "moxy"); // 成功
+const res3 = sum("ninjee", 123); // 类型不一致，失败
+```
+
+
+
+#### (2) 推断 infer
+
+- infer 关键词，可以从正在比较的类型中推断类型，然后在 true 分支里引用该推断结果
+
+
+
+**举例1：**实现内置工具 `ReturnType` 
+
+- `ReturnType` 的使用：现在有一个函数类型，想要获取这个函数的参数类型和返回值
+
+```ts
+type CalcFnType = (num1: number, num2: number) => number
+
+function foo(){
+    return "abc"
+}
+
+// 内置工具：获取一个函数类型的返回值类型
+type CalcReturnType = ReturnType<CalcFnType>  // number
+type FooReturnType = ReturnType<typeof foo>   //string
+```
+
+- 问题：自己实现一个 ReturnType 工具，MyReturnType
+
+```ts
+// 过程:
+// [1] 基本框架，通过范型定义参数可传入
+type MyReturnType1<T> = any
+// [2] 限制传入的类型，必须是函数：extends (...args: any[]) => any 
+type MyReturnType2<T extends (...args: any[]) => any> = any
+// [3] 定义返回值的判断，如果传入 T 是函数 ? 返回 true : 返回 false 
+type MyReturnType3<T extends (...args: any[]) => any> = T extends (...args: any[]) => any ? true : false
+// [4] 在三元运算符上，利用 infer 推断返回值类型，并返回该类型 R (R单词可随意写)
+type MyReturnType4<T extends (...args: any[]) => any> = T extends (...args: any[]) => infer R ? R : never
+
+// 实现：
+type MyReturnType<T extends (...args: any[]) => any> = T extends (...args: any[]) => infer R ? R : never
+
+type CalcReturnType2 = MyReturnType<CalcFnType>  // number
+type FooReturnType2 = MyReturnType<typeof foo>   //string
+// type FooReturnType3 = MyReturnType<boolean>   // 报错，必须传入 function type
+```
+
+
+
+**举例2**：
+
+- 观察区别 infer X，更像是一个占位符。占据的位置就是需要推断并返回的位置。
+
+```ts
+// 推断返回值类型
+type MyReturnType5<T extends (...args: any[]) => any> = T extends (...args: any[]) => infer R ? R : never
+// 推断参数类型
+type MyParameterType<T extends (...args: any[]) => any> = T extends (...args: infer A) => any ? A : never
+
+// 测试
+type CalcParameterType = MyParameterType<CalcFnType>  // 返回正确推导的元祖类型：[num1: number, num2: number]
+type FooParameterType = MyParameterType<typeof foo>   // [s: string]
+```
+
+
+
+#### (3) 分发条件类型
+
+分发条件类型，Distributive Condition Types
+
+- 当在范型中使用条件类型的时候，如果传入一个联合类型，就会变成 **分发的** (`distributive`)。
+- 只有在做类型体操的题目是才会使用，日常业务中用的非常少。
+
+
+
+举例：
+
+- 实现：通过 toArray，传入一个类型，返回由该类型组成的数组类型
+- 如：传入 `number` 类型，返回 `number[]` 类型
+  - `type NumArray = toArray<number>`
+- 如：传入 `number | string`，返回 `number[] | string[]` 类型
+
+```ts
+// 实现：
+// 如果是传入的联合类型，在三元运算符会进行分发：
+// 先用 number 带入三元运算符中，返回一个判断结果
+// 在用 string 带入三元运算符中，返回一个判断结果
+type toArray<T> = T extends any ? T[] : never
+
+// 返回的类型为：string[] | number[]，可以看到是两个结果
+type NumArray = toArray<number | string>
+
+
+// 对比：
+// 如果不采用三元运算符，则不分发，用联合类型进行整体判断，返回一个结果
+type toArray2<T> = T[]
+
+// 返回的类型为：(string | number)[]，是一个成员是联合类型的数组
+type NumArray2 = toArray2<number | string>
+```
+
+
+
+### 6.5 类型工具
+
+#### 对象类型的属性
+
+##### `Partial<Type>`
+
+- 将 Type 内所有属性都设置为 **可选类型**，并返回一个新类型。
+
+##### `Required<Type>`
+
+- 将 Type 内所有属性都设置为 **必选类型**，并返回一个新类型。
+
+##### `Readonly<Type>`
+
+- 将 Type 内所有属性都设置为 **只读类型**，并返回一个新类型。
+
+```ts
+interface IKun {
+    name: string
+    age: number
+    slogan?: string
+}
+
+/** 官方 */
+type IKunOptinal = Partial<IKun>  // 都可选
+type IKunRequired = Required<IKun>  // 都必选
+type IKunReadonly = Readonly<IKun>  // 都只读
+
+
+/** 自行实现 */
+// 可选
+type MyPartial<T> = {
+    [Key in keyof T]? : Key
+}
+
+// 必选
+type MyRequired<T> = {
+    [Key in keyof T]-? : Key
+}
+
+// 只读
+type MyReadonly<T> = {
+    readonly [Key in keyof T] : Key
+}
+```
+
+
+
+#### 对象类型的遍历
+
+##### `Record<Keys, Type>`
+
+- 返回一个新的对象类型，其中它的成员：所有的 key 都是 Keys 类型，所有的 value 都是 Type 类型
+
+```ts
+interface IKun {
+    name: string
+    age: number
+    slogan?: string
+}
+
+type t1 = "上海" | "北京" | "洛杉矶"
+
+type Ikuns = Record<t1, IKun>
+// type Ikun2 = {
+//     '上海': IKun;
+//     '北京': IKun;
+//     '洛杉矶': IKun;
+// }
+
+const localIkun: Ikuns = {
+    '上海': {
+        name: 'xxx',
+        age: 19
+    },
+    '北京': {
+        name: 'yyy',
+        age: 15
+    },
+    '洛杉矶': {
+        name: 'zzz',
+        age: 10
+    }
+}
+
+
+// 自行实现
+type MyRecord<Keys extends keyof any, T> = {
+    [P in Keys]: T
+}
+
+// 确保 Keys 是一个联合类型的方法
+// extends keyof any，会返回 ‘string | number | symbol’
+```
+
+
+
+#### 对象类型的筛选
+
+##### `Pick<Type, Keys>`
+
+- 从 Type 类型中挑选一些属性 Keys，并返回构造好的新类型
+
+##### `Omit<Type, Keys>`
+
+- 从 Type 类型中过滤一些属性 Keys，并返回构造好的新类型
+
+```ts
+interface IKun {
+    name: string
+    age: number
+    slogan?: string
+}
+
+
+/** 官方 */
+type ISKun = Pick<IKun, "name" | "slogan"> // 返回已选择的类型
+type 
+
+/** 自行实现 */
+// 选择
+type MyPick<T, K extends keyof any> = {
+    [P in K] : T
+}
+
+// 过滤
+type MyOmit<T, K extends keyof any> = {
+    [P in keyof T as P extends K ? never : P] : T[P]
+}
+
+// 过滤另一种实现
+type MyOmit<T, K> = Pick<T, Exclude<keyof T, K>
+```
+
+
+
+#### 联合类型的筛选
+
+##### `Exclude<UnionType, ExcludedMembers>`
+
+- 从 UnionType 联合类型里，排除所有可以赋值给 ExcludedMembers 的类型，返回构造好的新类型
+
+##### `Extract<UnionType, ExtractedMembers>`
+
+- 从 UnionType 联合类型里，提取所有可以赋值给 ExtractedMembers 的类型，返回构造好的新类型
+
+##### `NonNullable<Type>`
+
+- 从 Type 中删除所有 null、undefined 类型
+
+```ts
+type PropertyTypes = "name" | "age" | "height"
+type PropertyNonTypes = "name" | "age" | "height" | null | undefined
+
+/** 范例 */
+// 过滤
+type NewTypes = Exclude<PropertyTypes, "height">  // "name" | "age"
+// 选择
+type NewTypes2 = Extract<PropertyTypes, "name" | "age">  // "name" | "age"
+
+
+/** 自行实现 */
+type MyExclude<T, E> = T extends E ? never : T  // 过滤
+type MyExtract<T, E> = T extends E ? T : never  // 选择
+```
+
+#### 函数类型
+
+##### `ReturnType<FuncType>`
+
+- 传入的一个函数类型，获取他的返回值类型
+
+```ts
+function foo(){
+    return "abc";
+}
+
+/** 使用 */
+type FooReturnType = ReturnType<typeof foo>   // 返回值类型，string
+
+/** 自行实现 */
+// 返回值类型
+type MyReturnType<T extends (...args: any[]) => any> = T extends (...args: any[]) => infer R ? R : never
+```
+
+#### 实例类型
+
+##### `InstanceType<Type>`
+
+- 略。平时用的少，框架在用
+- 构造一个所有 Type 的构造函数的实例类型组成的类型。
+
+```ts
+class Person {}
+
+// typeof Person：获取构造函数的类型
+// InstanceType<...>：获取构造函数创建出来的实例对象的类型
+type MyPerson = InstanceType<typeof Person>
+const p: MyPerson = new Person()
+// 这相当于：
+const p2: Person = new Person()
+```
 
 
 
@@ -1577,8 +1905,6 @@ declare module "*.vue"
 ## 8 封装 axios
 
 ts_project 项目中有，课程内容为 ts 课程第四天（day103 202）
-
-
 
 
 
