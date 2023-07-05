@@ -239,7 +239,7 @@ git init
 
 ![image-20210723112648927](images/vue3+ts.assets/008i3skNgy1gsqq0o5jxmj30bb04qwen.jpg)
 
-2.在项目目录下创建 `.husky` 文件夹：
+2.在项目h目录下创建 `.husky` 文件夹：
 
 ![image-20210723112719634](images/vue3+ts.assets/008i3skNgy1gsqq16zo75j307703mt8m.jpg)
 
@@ -385,6 +385,20 @@ pm.globals.set("token", res.data.token);
 接口文档v2版本：（有部分更新）
 
 - https://documenter.getpostman.com/view/12387168/TzzDKb12
+
+
+
+项目账号：
+
+```ts
+账号：coderwhy
+密码：123456
+
+账号：coderdemo
+密码：123456
+```
+
+
 
 
 
